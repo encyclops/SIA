@@ -265,6 +265,4 @@ class Training extends CI_Controller {
 
 		}
 	}
-
-
 }

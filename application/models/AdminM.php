@@ -64,6 +64,16 @@ class AdminM extends CI_Model
         return $this->db->update($this->t_tag, $data, $where);
 	}
 
+    public function checkIsTagExist($id)
+    {
+        $query = $this->db->query(
+            "   SELECT *
+                FROM $this->t_tagdetail
+                WHERE id_tag = $id      "
+        );
+        return $query->row()->count_rows > 0;
+    }
+
     public function isNpkAdmin($npk)
     {
         return $this->db->where('npk', $npk)
