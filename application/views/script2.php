@@ -1,21 +1,21 @@
 <!-- Starter Function -->
 <script>
-	// Global Variables
-	var empArrAdmin = [];
+    // Global Variables
+    var empArrAdmin = [];
 	var empArrNon = [];
 	var tags = [];
 	var admins;
 	var rowCountMateriForm = 0;
 	var isAdmin = '<?php echo $this->session->userdata['role']; ?>' == 'admin';
 
-	function changeForm(kode) {
+    function changeForm(kode) {
 		var listCardDiv = document.getElementById('listCardDiv');
 		var detailFormDiv = document.getElementById('detailFormDiv');
 		changeDisplayOfElements('block', ['temaDiv', 'substanceDiv']);
 
 		if (kode.includes('edit')) {
 			changeDisplayOfElements('block', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
-			changeDisplayOfElements('none', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail', 'editBtn', 'deleteBtn']);
+			changeDisplayOfElements('none', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail', 'editBtn', 'deleteBtn', 'publishBtn']);
 			changeTitle('Ubah Training', true);
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
@@ -239,7 +239,7 @@
 
 		tr.appendChild(cell);
 	}
-
+	
 	async function createCheckboxCell(name, value, tr, id, code, stat) {
 		try {
 			var tema = value.match(/[a-zA-Z]+|\d+/g)[0];
@@ -260,12 +260,12 @@
 
 			// A condition to disable checking in training detail, specific for admin
 			if (code != 'edit' && admins.includes(npk)) input.checked = input.disabled = true;
-
+			
 			// A condition to check whether the participant is allowed to edit or not in training detail
 			if (code == 1) {
 				input.checked = true;
 			}
-
+			
 			// A condition when editing training
 			else if (code == 'edit' && id != null) {
 				// Condition if the user is not an admin
@@ -323,7 +323,7 @@
 		tr.appendChild(cell);
 	}
 
-	async function createMultipleCells(emp, tr, id, file, part, stat) {
+    async function createMultipleCells(emp, tr, id, file, part, stat) {
 		await createCheckboxCell('chkBoxAcc', 'part' + emp, tr, id, part, stat);
 		await createCheckboxCell('chkBoxAcc', 'file' + emp, tr, id, file, stat);
 		if (stat == 2) {
@@ -366,7 +366,7 @@
 		input.value = value;
 	}
 
-	function isDataTableExist(counter, kode, colspan, idname, tbodyName) {
+    function isDataTableExist(counter, kode, colspan, idname, tbodyName) {
 		const tableBody = document.getElementById(tbodyName);
 		if (kode != 1) {
 			for (var i = tableBody.rows.length - 1; i >= 0; i--) {
@@ -407,12 +407,12 @@
 		form.submit();
 	}
 
-	function modifyAccess(code, value, npk, header) {
+    function modifyAccess(code, value, npk, header) {
 		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = function () {
 			if (xhr.readyState == 4) {
 				if (xhr.status === 200) {
-
+					
 				} else {
 					console.error('Error fetching data');
 				}
@@ -420,9 +420,9 @@
 		};
 
 		var params = 'code=' + encodeURIComponent(code) +
-			'&value=' + encodeURIComponent(value) +
-			'&npk=' + encodeURIComponent(npk) +
-			'&header=' + encodeURIComponent(header);
+					'&value=' + encodeURIComponent(value) +
+					'&npk=' + encodeURIComponent(npk) +
+					'&header=' + encodeURIComponent(header);
 
 		xhr.open('POST', '<?php echo base_url('Plus/modifyAccess/') ?>', true);
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -431,38 +431,38 @@
 
 	function modifyApproval(idDetail, npk, id, status) {
 		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = function () {
 			if (xhr.readyState == 4) {
 				if (xhr.status === 200) {
-
+					
 				} else {
 					console.error('Error fetching data');
 				}
 			}
 		};
 		var params = 'idDetail=' + encodeURIComponent(idDetail) +
-			'&npk=' + encodeURIComponent(npk) +
-			'&id=' + encodeURIComponent(id) +
-			'&status=' + encodeURIComponent(status);
+					'&npk=' + encodeURIComponent(npk) +
+					'&id=' + encodeURIComponent(id) +
+					'&status=' + encodeURIComponent(status);
 
 		xhr.open('POST', '<?php echo base_url('Training/modifyApproval/') ?>', true);
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.send(params);
 	}
 
-	async function getAdmins() {
+    async function getAdmins() {
 		try {
 			const fetchedAdmins = await new Promise((resolve, reject) => {
 				var xhr = new XMLHttpRequest();
-				xhr.onreadystatechange = function() {
+				xhr.onreadystatechange = function () {
 					if (xhr.readyState === XMLHttpRequest.DONE) {
 						if (xhr.status === 200) {
-							const admins = JSON.parse(xhr.responseText).map(obj => obj.npk);
-							resolve(admins);
-						} else {
-							console.error('Error fetching data');
-							reject(new Error('Error fetching data'));
-						}
+                            const admins = JSON.parse(xhr.responseText).map(obj => obj.npk);
+                            resolve(admins);
+                        } else {
+                            console.error('Error fetching data');
+                            reject(new Error('Error fetching data'));
+                        }
 					}
 				};
 
@@ -475,7 +475,7 @@
 		}
 	}
 
-	async function getAccessData(npk, id) {
+    async function getAccessData(npk, id) {
 		try {
 			const response = await fetch('<?php echo base_url('Plus/getAccessData?') ?>npk=' + npk + '&id=' + id);
 			if (response.ok) {
@@ -491,7 +491,7 @@
 		}
 	}
 
-	async function getTrainingByNPK(isAll, keyword, tagID) {
+    async function getTrainingByNPK(isAll, keyword, tagID) {
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -512,30 +512,30 @@
 
 <!-- Training Detail -->
 <script>
-	showPage(1);
+    showPage(1);
 
-	function showPage(pageNumber) {
-		var cards = document.getElementById('listCardDiv').getElementsByClassName('card-item');
-		var pageItems = document.getElementsByClassName('page-item');
-		for (var i = 0; i < pageItems.length; i++) {
-			pageItems[i].classList.remove('active');
-		}
-		document.querySelector('.pagination li[data-page="' + pageNumber + '"]').classList.add('active');
+    function showPage(pageNumber) {
+        var cards = document.getElementById('listCardDiv').getElementsByClassName('card-item');
+        var pageItems = document.getElementsByClassName('page-item');
+        for (var i = 0; i < pageItems.length; i++) {
+            pageItems[i].classList.remove('active');
+        }
+        document.querySelector('.pagination li[data-page="' + pageNumber + '"]').classList.add('active');
 
-		for (var i = 0; i < cards.length; i++) {
-			if (i >= (pageNumber - 1) * 4 && i < pageNumber * 4) {
-				cards[i].classList.remove('fade-out');
-				cards[i].classList.remove('hide-after-fade-out');
-				cards[i].classList.add('fade-in');
-			} else {
-				cards[i].classList.remove('fade-in');
-				cards[i].classList.add('fade-out');
-				cards[i].classList.add('hide-after-fade-out');
-			}
-		}
-	}
+        for (var i = 0; i < cards.length; i++) {
+            if (i >= (pageNumber - 1) * 4 && i < pageNumber * 4) {
+                cards[i].classList.remove('fade-out');
+                cards[i].classList.remove('hide-after-fade-out');
+                cards[i].classList.add('fade-in');
+            } else {
+                cards[i].classList.remove('fade-in');
+                cards[i].classList.add('fade-out');
+                cards[i].classList.add('hide-after-fade-out');
+            }
+        }
+    }
 
-	async function showDetail(id) {
+    async function showDetail(id) {
 		rowCountMateriForm = 1;
 		await getAdmins();
 		var tableBody = document.getElementById('tBodyDetailEmp');
@@ -546,7 +546,7 @@
 		}
 
 		changeForm('detail');
-
+		
 		empArrAdmin = [];
 		const promises = [];
 		const checked = [];
@@ -604,6 +604,7 @@
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
 					var judul_training_header = data.header[0].id_training_header;
 					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').href = (base_url + judul_training_header) + 0;
+					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
 					isDataTableExist(rowCountMateriForm, 'x', 3, 'emptyData', 'tBodySubstanceTableDetail');
@@ -624,7 +625,7 @@
 					}
 
 					populateTagsSection(data.tags, 'detail');
-
+					
 					const accessData = getAccessData(<?php echo $this->session->userdata['npk']; ?>, id).then(access => {
 						if (access.part == 1 || access.file == 1 || isAdmin) {
 							arr = ['editBtn'];
@@ -641,16 +642,16 @@
 				.catch(error => {
 					console.error('Error fetching data showdetail:', error);
 				});
-
+				
 		}
 	}
 
-	function modifyTrainingTable(trainings) {
+    function modifyTrainingTable(trainings) {
 		const container = document.getElementById('trainingContainer');
 		const paging = document.getElementById('pagingContainer');
 		container.innerHTML = '';
 		paging.innerHTML = '';
-
+		
 		var counter = 1;
 		trainings.forEach((t, index) => {
 			console.log(t);
@@ -700,7 +701,7 @@
 						<div class="col-md-4">
 							<div class="card" style="border-radius: 20px;">
 								<div class="card-header">
-									<img src="assets/img/picLog.png" style="width: 100%">
+									<img src="assets/img/dataEmpty1.jpg" style="max-height: 163px">
 								</div>
 								<div class="card-body">
 									<div class="row">
@@ -749,20 +750,26 @@
 		document.getElementById('pagingContainer').innerHTML += paginationHTML;
 	}
 
-	async function toggleMine(select) {
-		await getTrainingByNPK(!select, document.getElementById('search_training').value.trim());
+    async function tagFilter(id, name) {
+		document.getElementById('ddTags').textContent = name;
+        document.getElementById('ddTags').name = id;
+        await getTrainingByNPK(!document.getElementById('myTraining').checked, document.getElementById('search_training').value.trim(), id);
+	}
+
+    async function toggleMine(select) {
+		await getTrainingByNPK(!select, document.getElementById('search_training').value.trim(), document.getElementById('ddTags').name.trim());
 	}
 
 	document.getElementById('search_training').addEventListener('keyup', function() {
 		(async () => {
-			await getTrainingByNPK(!document.getElementById('myTraining').checked, this.value.trim());
+			await getTrainingByNPK(!document.getElementById('myTraining').checked, this.value.trim(), document.getElementById('ddTags').name.trim());
 		})();
 	});
 </script>
 
 <!-- Participant Section -->
 <script>
-	function toggleAll(select) {
+    function toggleAll(select) {
 		var checkboxes = document.querySelectorAll('.form-check-input');
 		checkboxes.forEach(checkbox => {
 			if (!checkbox.disabled) {
@@ -774,7 +781,7 @@
 		});
 	}
 
-	document.getElementById('search_keyword').addEventListener('keyup', function() {
+    document.getElementById('search_keyword').addEventListener('keyup', function() {
 		var keyword = this.value.trim();
 		searchKeyword(keyword, '', 'allEmpTable');
 	});
@@ -784,7 +791,8 @@
 			document.getElementById('dropdownMenu1').textContent = dept;
 		}
 		if (dept == '') dept = document.getElementById('dropdownMenu1').textContent.trim();
-		if (name == '') name = document.getElementById('search_keyword').value.trim();
+		if (name == '') name = document.getElementById('search_keyword') ? document.getElementById('search_keyword').value.trim()
+			: document.getElementById('search_employee').value.trim();
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -825,7 +833,7 @@
 		isDataTableExist(filteredData.length, 1, 4, 'emptyParticipant', tableName);
 	}
 
-	async function addEmp(id) {
+    async function addEmp(id) {
 		console.log('adm: ' + isAdmin);
 		if (isAdmin) {
 			var index = empArrAdmin.indexOf(id);
@@ -848,7 +856,6 @@
 <!-- Substance Section -->
 <script>
 	var no = 0;
-
 	function addRow() {
 		var tableBody = document.getElementById('tBodySubstanceTableEdit');
 		var tableBody2 = document.getElementById('tBodySubstanceTableEdit2');
@@ -859,17 +866,19 @@
 		console.log(idNow2);
 		var no1 = 0;
 		idNow3 = idNow2 + no1;
-
-		if (idNow2 < 2) {
+		
+		if(idNow2 < 2){
 			console.log("sdf");
-		} else {
-			if (no == 0 || idNow < idNow2) {
+		}
+		else
+		{ 
+			if(no == 0 || idNow < idNow2){
 				no = no + 1;
 				var idNow4 = idNow3;
 				idNow = idNow4;
 			}
 		}
-
+			
 		materiRow.id = 'rowFormMateri' + idNow;
 		createInputCell('materiTitle' + idNow, 'text', 'Masukkan judul materi...', materiRow);
 		createInputCell('materiFile' + idNow, 'file', '', materiRow);
@@ -893,12 +902,12 @@
 
 <!-- Tags Section -->
 <script>
-	function mouseIn(id, color) {
+    function mouseIn(id, color) {
 		var hoverDiv = document.getElementById(id);
 		var rgb = parseInt(color.slice(1), 16);
 		var r = (rgb >> 16) & 0xff;
-		var g = (rgb >> 8) & 0xff;
-		var b = (rgb >> 0) & 0xff;
+		var g = (rgb >>  8) & 0xff;
+		var b = (rgb >>  0) & 0xff;
 
 		r = Math.max(0, r - 20);
 		g = Math.max(0, g - 20);
@@ -941,7 +950,7 @@
 		});
 	}
 
-	function addTags(id) {
+    function addTags(id) {
 		if (!document.getElementById('cardTitle').textContent.toLowerCase().includes('detail')) {
 			var span = document.getElementById(id);
 			var index = tags.indexOf(parseInt(id.substr("tags".length)));
@@ -953,12 +962,12 @@
 				span.style.borderColor = 'blue';
 			}
 		}
-	}
+    }
 </script>
 
 <!-- Training Edit -->
 <script>
-	async function doEdit(id) {
+    async function doEdit(id) {
 		let npk = <?php echo $this->session->userdata('npk'); ?>;
 
 		let canEdit = false;
@@ -1047,7 +1056,7 @@
 
 		return found;
 	}
-
+    
 	function validateForm() {
 		var inputFields = [
 			'temaTraining'
@@ -1061,12 +1070,12 @@
 
 		var errors = [];
 
-		inputFields.forEach(function(fieldId) {
+		inputFields.forEach(function (fieldId) {
 			var fieldValue = document.getElementById(fieldId).value.trim();
 			var fieldElement = document.getElementById(fieldId);
 
 			if (fieldValue === '') {
-
+				
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldId + '"]');
 				var labelText = label ? label.textContent.trim() : '' + fieldId;
@@ -1080,19 +1089,9 @@
 
 		if (errors.length > 0) {
 			// Handle error messages as needed
-			document.body.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start'
-			});
+			document.body.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		} else {
-			errorMessages.textContent = '';
-			Swal.fire({
-				icon: 'success',
-				title: 'Success!',
-				text: 'Data berhasil disimpan',
-			}).then(function() {
-				submitEdit();
-			});
+			errorMessages.textContent = ''; // Clear error messages
 			submitEdit('training');
 		}
 	}

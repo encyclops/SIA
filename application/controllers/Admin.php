@@ -26,7 +26,7 @@ class Admin extends CI_Controller
         }
         $npk = $this->session->userdata('npk');
         $data['admin']      = $detailEmployee;
-        $data['tags']        = $this->AdminM->getTags();
+        $data['tags']       = $this->AdminM->getTags();
         $data['countAdmin'] = $this->AdminM->getAdminTotal();
         $data['employee']   = $this->OracleDBM->getAllEmp();
         $data['dept']       = $this->OracleDBM->getAllDept();
@@ -59,7 +59,7 @@ class Admin extends CI_Controller
                 $this->AdminM->saveAdmin((string)$admin);
             }
         }
-        // redirect('Admin');
+        redirect('Admin');
     }
 
     public function deleteAdmin($npk)
@@ -81,7 +81,12 @@ class Admin extends CI_Controller
     public function deleteTag($id)
     {
         if (!$this->isAllowed()) return redirect(site_url());
-        $this->AdminM->deleteTag($id);
+        if ($this->AdminM->checkIsTagExist($id)) {
+            $this->session->set_flashdata('error_message', 'Tidak dapat menghapus tag karena masih digunakan dalam pelatihan.');
+        } else {
+            // $this->AdminM->deleteTag($id);
+            $this->session->set_flashdata('error_message', 'Tidak error.');
+        }
         redirect(site_url('Admin'));
     }
 }

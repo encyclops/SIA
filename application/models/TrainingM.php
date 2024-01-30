@@ -238,8 +238,8 @@ class TrainingM extends CI_Model
         $npk = $this->session->userdata('npk');
         $column = $isAll ? '' : 'a.*,';
         $column .= $tag == '' ? '' : 'td.*,';
-        $table = $isAll ? '' : 'JOIN training_access a ON h.id_training_header = a.id_training_header';
-        $table .= $tag == '' ? '' : 'JOIN training_tag_detail td ON h.id_training_header = td.id_training_header';
+        $table = $isAll ? '' : ' JOIN training_access a ON h.id_training_header = a.id_training_header';
+        $table .= $tag == '' ? '' : ' JOIN training_tag_detail td ON h.id_training_header = td.id_training_header';
         $queryAdd = $isAll ? '' : " AND a.npk = '$npk' AND a.access_permission = 1";
         $queryAdd .= $tag == '' ? '' : " AND td.id_tag = $tag";
         $searchBy = $keyword == '' ? '' : " AND LOWER(h.judul_training_header) LIKE '%$keyword%'";
@@ -363,6 +363,7 @@ class TrainingM extends CI_Model
                     COALESCE([part], 0) AS [part]
                 FROM $this->t_access
                 WHERE npk = '$npk'
+                AND access_permission = 1
                 AND id_training_header = $id
                 UNION ALL
                 SELECT 
@@ -371,6 +372,7 @@ class TrainingM extends CI_Model
                     SELECT 1 FROM training_access 
                     WHERE npk = '$npk'
                     AND id_training_header = $id
+                    AND access_permission = 1
                 )"
         );
         return $query->result();
