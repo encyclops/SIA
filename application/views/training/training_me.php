@@ -122,43 +122,19 @@ ob_start();
   </div>
   <div class="col-md-5">
     <div class="card">
-      <div class="card-body">
-        <!-- <div class="progress-card">
-											<div class="d-flex justify-content-between mb-1">
-												<span class="text-muted">Persentase Materi Belum</span>
-												<span class="text-muted fw-bold"> <?php echo $getCountMyNotDone; ?>%</span>
-											</div>
-											<div class="progress mb-2 bg-success" style="height: 7px;">
-												<div class="progress-bar bg-danger" role="progressbar" style="width: <?php echo $getCountMyNotDone; ?>%" aria-valuenow="<?php echo $getCountMyDoneLesson; ?>" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title="78%"></div>
-											</div>
-										</div> -->
-        <div class="progress-card">
-          <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted">Persentase Materi Sudah</span>
-            <span class="text-muted fw-bold"> <?php echo $getCountMyDonePercent; ?>%</span>
+      <div class="card-body" style="overflow-y: scroll">
+        <?php foreach ($getCountMyDonePercent as $e) { ?>
+          <div class="progress-card">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted"><?php echo $e->judul_training_header; ?></span>
+              <span class="text-muted fw-bold"> <?php echo $e->percentage; ?></span>
+            </div>
+            <div class="progress mb-2" style="height: 7px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $e->percentage; ?>%" aria-valuenow="<?php echo $e->percentage; ?>" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title=""></div>
+            </div>
           </div>
-          <div class="progress mb-2" style="height: 7px;">
-            <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $getCountMyDonePercent; ?>%" aria-valuenow="<?php echo $getCountMyDonePercent; ?>" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title=""></div>
-          </div>
-        </div>
-        <div class="progress-card">
-          <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted">DIISI APA 1</span>
-            <span class="text-muted fw-bold"> 70%</span>
-          </div>
-          <div class="progress mb-2" style="height: 7px;">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title="70%"></div>
-          </div>
-        </div>
-        <div class="progress-card">
-          <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted">DIISI APA 2</span>
-            <span class="text-muted fw-bold"> 60%</span>
-          </div>
-          <div class="progress mb-2" style="height: 7px;">
-            <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-placement="top" title="60%"></div>
-          </div>
-        </div>
+        <?php };  ?>
+
       </div>
     </div>
   </div>

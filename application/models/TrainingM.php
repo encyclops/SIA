@@ -3,9 +3,9 @@
 class TrainingM extends CI_Model
 {
     private $t_header = "training_header";
-	private $t_detail = "training_detail";
-	private $t_access = "training_access";
-	private $t_progress = "training_progress";
+    private $t_detail = "training_detail";
+    private $t_access = "training_access";
+    private $t_progress = "training_progress";
     private $t_tagdetail = "training_tag_detail";
 
     /* Notes */
@@ -13,28 +13,31 @@ class TrainingM extends CI_Model
         Notification from line 300+
     */
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->session->userdata('role') == 'admin';
     }
 
-    public function saveTraining() {
+    public function saveTraining()
+    {
         $data = array(
-			'status'                => 1,
-			'judul_training_header' => $this->input->post('temaTraining'),
+            'status'                => 1,
+            'judul_training_header' => $this->input->post('temaTraining'),
             'pemateri'              => $this->input->post('pemateri'),
-			'created_date'          => date('Y/m/d H:i:s'),
-			'modified_date'         => date('Y/m/d H:i:s'),
+            'created_date'          => date('Y/m/d H:i:s'),
+            'modified_date'         => date('Y/m/d H:i:s'),
             'created_by'            => $this->session->userdata('npk'),
             'modified_by'           => $this->session->userdata('npk'),
-		);
+        );
         return $this->db->insert($this->t_header, $data);
     }
 
-    public function saveParticipant($npk, $id) {
+    public function saveParticipant($npk, $id)
+    {
         $data = array(
             'access_permission' => $this->isAdmin() ? 1 : 2,
             'npk'               => $npk,
-            'id_training_header'=> $id,
+            'id_training_header' => $id,
             'created_date'      => date('Y/m/d H:i:s'),
             'modified_date'     => date('Y/m/d H:i:s'),
             'created_by'        => $this->session->userdata('npk'),
@@ -43,7 +46,8 @@ class TrainingM extends CI_Model
         return $this->db->insert($this->t_access, $data);
     }
 
-    public function saveSubstance($path, $judul, $id) {
+    public function saveSubstance($path, $judul, $id)
+    {
         $data = array(
             'path_file_training_detail' => $path,
             'judul_training_detail'     => $judul,
@@ -57,15 +61,17 @@ class TrainingM extends CI_Model
         return $this->db->insert($this->t_detail, $data);
     }
 
-    public function saveTagDetail($id_tag, $id_header) {
+    public function saveTagDetail($id_tag, $id_header)
+    {
         $data = array(
             'id_tag'            => $id_tag,
-            'id_training_header'=> $id_header,
+            'id_training_header' => $id_header,
         );
         return $this->db->insert($this->t_tagdetail, $data);
     }
 
-    public function saveProgress($id) {
+    public function saveProgress($id)
+    {
         $npk = $this->session->userdata('npk');
         $query = $this->db->query(
             "   SELECT *
@@ -74,68 +80,72 @@ class TrainingM extends CI_Model
                 AND id_training_detail = $id    "
         );
 
-		$data = array(
-			'npk'               => $npk,
-			'id_training_detail'=> $id,
+        $data = array(
+            'npk'               => $npk,
+            'id_training_detail' => $id,
             'progress_status'   => 1,
-			'created_date'      => date('Y/m/d H:i:s'),
+            'created_date'      => date('Y/m/d H:i:s'),
             'modified_date'     => date('Y/m/d H:i:s'),
-		);
+        );
 
         if ($query->row()) {
             return $this->db->where('npk', $npk)
-                            ->where('id_training_detail', $id)
-                            ->set('progress_status', 'progress_status + 1', FALSE)
-                            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                            ->update($this->t_progress);
+                ->where('id_training_detail', $id)
+                ->set('progress_status', 'progress_status + 1', FALSE)
+                ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                ->update($this->t_progress);
         } else {
             return $this->db->insert($this->t_progress, $data);
         }
     }
 
-    public function modifyApproval($npk, $status) {
+    public function modifyApproval($npk, $status)
+    {
         if ($npk != '') {
             return $this->db->where('id_training_header', $this->input->post('id'))
-                            ->where('npk', $npk)
-                            ->set('access_permission', $status, FALSE)
-                            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                            ->set('modified_by', $this->session->userdata('npk'), FALSE)
-                            ->update($this->t_access);
+                ->where('npk', $npk)
+                ->set('access_permission', $status, FALSE)
+                ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                ->set('modified_by', $this->session->userdata('npk'), FALSE)
+                ->update($this->t_access);
         } else {
             return $this->db->where('id_training_detail', $this->input->post('idDetail'))
-                            ->set('status', $status, FALSE)
-                            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                            ->set('modified_by', $this->session->userdata('npk'), FALSE)
-                            ->update($this->t_detail);
+                ->set('status', $status, FALSE)
+                ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                ->set('modified_by', $this->session->userdata('npk'), FALSE)
+                ->update($this->t_detail);
         }
     }
 
-    public function modifyAccess($key, $value) {
-        $data = array (
+    public function modifyAccess($key, $value)
+    {
+        $data = array(
             $key => $value,
             'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
         );
         $where = array(
-			'id_training_header'	=> $this->input->post('header'),
-			'npk'					=> $this->input->post('npk'),
-		);
-		return $this->db->update($this->t_access, $data, $where);
+            'id_training_header'    => $this->input->post('header'),
+            'npk'                    => $this->input->post('npk'),
+        );
+        return $this->db->update($this->t_access, $data, $where);
     }
 
-    public function modifyTraining($id, $code) {
+    public function modifyTraining($id, $code)
+    {
         $data = array(
-			'status'        => $code,
-			'modified_by'   => $this->session->userdata('npk'),
+            'status'        => $code,
+            'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
-		);
+        );
         $where = array(
-			'id_training_header'    => $id,
-		);
+            'id_training_header'    => $id,
+        );
         return $this->db->update($this->t_header, $data, $where);
     }
 
-    public function modifyTrainingHeader() {
+    public function modifyTrainingHeader()
+    {
         $data = array(
             'judul_training_header' => $this->input->post('temaTraining'),
             'pemateri'              => $this->input->post('pemateri'),
@@ -143,57 +153,61 @@ class TrainingM extends CI_Model
             'modified_by'           => $this->session->userdata('npk'),
         );
         $where = array(
-			'id_training_header'    => $this->input->post('idTraining')
-		);
-		return $this->db->update($this->t_header, $data, $where);
+            'id_training_header'    => $this->input->post('idTraining')
+        );
+        return $this->db->update($this->t_header, $data, $where);
     }
 
-    public function modifySubstance($id) {
+    public function modifySubstance($id)
+    {
         return $this->db->where('id_training_detail', $id)
-                        ->set('status', 0, FALSE)
-                        ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                        ->set('modified_by', $this->session->userdata('npk'), FALSE)
-                        ->update($this->t_detail);
-    }
-    
-    public function modifyParticipant($npk, $id) {
-        return $this->db->where('id_training_header', $id)
-                        ->where('npk', $npk)
-                        ->set('access_permission', $this->isAdmin() ? 1 : 2, FALSE)
-                        ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                        ->set('modified_by', $this->session->userdata('npk'), FALSE)
-                        ->update($this->t_access);
+            ->set('status', 0, FALSE)
+            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+            ->set('modified_by', $this->session->userdata('npk'), FALSE)
+            ->update($this->t_detail);
     }
 
-    public function resetParticipant($npks, $id) {
+    public function modifyParticipant($npk, $id)
+    {
+        return $this->db->where('id_training_header', $id)
+            ->where('npk', $npk)
+            ->set('access_permission', $this->isAdmin() ? 1 : 2, FALSE)
+            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+            ->set('modified_by', $this->session->userdata('npk'), FALSE)
+            ->update($this->t_access);
+    }
+
+    public function resetParticipant($npks, $id)
+    {
         if (empty($npks)) {
             return;
         }
-    
+
         $npk = implode("','", $npks);
         $status = $this->isAdmin() ? '0' : '2';
-        $this->db   ->where('id_training_header', $id)
-                    ->set('access_permission', $status, FALSE)
-                    ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-                    ->set('modified_by', $this->session->userdata('npk'), FALSE);
+        $this->db->where('id_training_header', $id)
+            ->set('access_permission', $status, FALSE)
+            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+            ->set('modified_by', $this->session->userdata('npk'), FALSE);
 
         if ($this->isAdmin()) {
-            $this->db   ->where_not_in('npk', $npk);
+            $this->db->where_not_in('npk', $npk);
         } else {
-            $this->db   ->where_in('npk', $npks, FALSE)
-                        ->where('access_permission !=', 1);
+            $this->db->where_in('npk', $npks, FALSE)
+                ->where('access_permission !=', 1);
         }
         $this->db->update($this->t_access);
     }
 
-    public function resetTags($tagID, $id) {
+    public function resetTags($tagID, $id)
+    {
         if (empty($tagID)) {
             return;
         }
         $tag = implode(",", $tagID);
-        $this->db   ->where('id_training_header', $id)
-                    ->where_not_in('id_tag', explode(",", $tag));
-    
+        $this->db->where('id_training_header', $id)
+            ->where_not_in('id_tag', explode(",", $tag));
+
         $this->db->delete($this->t_tagdetail);
     }
 
@@ -209,14 +223,14 @@ class TrainingM extends CI_Model
     }
 
     public function getTrainingHeader($id)
-	{
-		$query = $this->db->query(
+    {
+        $query = $this->db->query(
             "   SELECT *
                 FROM $this->t_header
                 WHERE id_training_header = " . $id
         );
         return $query->result();
-	}
+    }
 
     public function getTrainingByNPK($isAll, $keyword, $tag)
     {
@@ -254,7 +268,8 @@ class TrainingM extends CI_Model
         return $query->result();
     }
 
-    public function getSubstanceByTraining($id) {
+    public function getSubstanceByTraining($id)
+    {
         $status = $this->isAdmin() ? '> 0' : '= 1';
         $query = $this->db->query(
             "   SELECT *
@@ -265,7 +280,8 @@ class TrainingM extends CI_Model
         return $query->result();
     }
 
-    public function getEmployeeByTraining($id) {
+    public function getEmployeeByTraining($id)
+    {
         $status = $this->isAdmin() ? '> 0' : '= 1';
         $query = $this->db->query(
             "   SELECT npk
@@ -276,17 +292,19 @@ class TrainingM extends CI_Model
         return $query->result();
     }
 
-    public function getAccessByNPKID($npk, $id) {
+    public function getAccessByNPKID($npk, $id)
+    {
         $query = $this->db->query(
             "   SELECT access_permission
                 FROM $this->t_access
                 WHERE id_training_header = $id
-                AND npk = $npk                  " 
+                AND npk = $npk                  "
         );
         return $query->row();
     }
 
-    public function getProgress($id, $npk) {
+    public function getProgress($id, $npk)
+    {
         $query = $this->db->query(
             "   WITH Counts AS (
                     SELECT 
@@ -325,7 +343,8 @@ class TrainingM extends CI_Model
         return $query->row();
     }
 
-    public function hasRead($id) {
+    public function hasRead($id)
+    {
         $npk = $this->session->userdata('npk');
         $query = $this->db->query(
             "   SELECT COUNT(*) as record_count
@@ -336,7 +355,8 @@ class TrainingM extends CI_Model
         return $query->row()->record_count > 0;
     }
 
-    public function getAccessData($npk, $id) {
+    public function getAccessData($npk, $id)
+    {
         $query = $this->db->query(
             "   SELECT TOP 1 
                     COALESCE([file], 0) AS [file],
@@ -391,14 +411,14 @@ class TrainingM extends CI_Model
                 access_permission = '3' 
                 AND ta.created_by = " . $npk
         );
-    
+
         return $query->result();
     }
-    
+
     //notif
     public function getNotif($npk)
-	{
-		$query = $this->db->query(
+    {
+        $query = $this->db->query(
             "   
             SELECT
             th.judul_training_header AS judul,
@@ -418,47 +438,49 @@ class TrainingM extends CI_Model
         );
 
         return $query->result();
-	}
+    }
 
     public function getNotifMateri($npk)
-	{
-		$query = $this->db->query(
+    {
+        $query = $this->db->query(
             "   
             select td.judul_training_detail as judul_training_detail, th.judul_training_header as judul, td.id_training_detail as id_training_detail
             from training_detail td 
             inner join training_header th on th.id_training_header = td.id_training_header
-            where td.status ='2' and td.created_by = ". $npk
+            where td.status ='2' and td.created_by = " . $npk
         );
 
         return $query->result();
-	}
-    
-    public function removeNotif($id) {
+    }
+
+    public function removeNotif($id, $npk)
+    {
         $data = array(
-			'access_permission'        => 0,
-         
-			'modified_by'   => $this->session->userdata('npk'),
+            'access_permission'        => 0,
+
+            'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
-		);
+        );
         $where = array(
-			'id_training_header'    => $id,
-            'npk'=> $this->session->userdata('npk'),
-		);
+            'id_training_header'    => $id,
+            'npk' => $npk
+        );
 
         return $this->db->update($this->t_access, $data, $where);
     }
 
-    public function removeNotifMateri($id) {
+    public function removeNotifMateri($id)
+    {
         $data = array(
-			'status'        => 0,
-         
-			'modified_by'   => $this->session->userdata('npk'),
+            'status'        => 0,
+
+            'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
-		);
+        );
         $where = array(
-			'id_training_detail'    => $id
-		);
+            'id_training_detail'    => $id
+        );
 
         return $this->db->update($this->t_detail, $data, $where);
     }
-}   
+}

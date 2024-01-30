@@ -49,22 +49,37 @@ function isActive($url)
 
 							</a>
 							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
-								<li>
+								<!-- <li>
 									<div class="dropdown-title" id="totalNotifTitle">Kamu memiliki <?php echo $totalNotif; ?> notifikasi</div>
-								</li>
+								</li> -->
 								<li>
 									<div class="notif-center">
 
 										<?php foreach ($notif as $e) { ?>
-											<div class="notification-container" data-id="<?= $e->id_training_header ?>">
-												<a href="javascript:void(0)" onclick="removeNotification(<?= $e->id_training_header ?>, $('#totalNotif'));" class="time">
-													<div class="notif-icon notif-warning"> <i class="la la-trash"></i> </div>
+											<div class="notification-container" data-id="<?= $e->npk ?>">
+												<a href="javascript:void(0)" onclick="removeNotification(<?= $e->npk ?>, <?= $e->id_training_header ?>, $('#totalNotif'));" class="time">
+													<div class="notif-icon notif-danger"> <i class="la la-trash"></i> </div>
 													<div class="notif-content">
 														<span class="block">
 															<?php echo $e->judul; ?>
 														</span>
-														<span class="time">Pengajuan Ditolak</span>
-														<!-- <span class="time">(Klik untuk Hapus</span> -->
+														<span class="time"> Pengajuan <?php echo $e->npk; ?> ditolak</span><br>
+														<span class="time">(Klik untuk Hapus)</span>
+													</div>
+												</a>
+											</div>
+
+										<?php } ?>
+										<?php foreach ($notifMateri as $m) { ?>
+											<div class="notification-container" data-id="<?= $m->id_training_detail ?>">
+												<a href="javascript:void(0)" onclick="removeNotifMateri(<?= $m->id_training_detail ?>, $('#totalNotif'));" class="time">
+													<div class="notif-icon notif-danger"> <i class="la la-trash"></i> </div>
+													<div class="notif-content">
+														<span class="block">
+															<?php echo $m->judul; ?>
+														</span>
+														<span class="time">Pengajuan <?php echo $m->judul_training_detail ?> Ditolak</span><br>
+														<span class="time">Klik untuk Hapus</span>
 													</div>
 												</a>
 											</div>
@@ -242,10 +257,14 @@ function isActive($url)
 		}, 500);
 	}, 1000);
 
-	function removeNotification(id, totalNotifElement) {
+	function removeNotification(npk, id, totalNotifElement) {
 		$.ajax({
-			url: '<?= base_url('Training/removeNotif/') ?>' + id,
-			method: 'POST',
+			url: '<?= base_url('Training/removeNotif/') ?>',
+			type: 'POST',
+			data: {
+				id: id,
+				npk: npk
+			},
 			success: function() {
 				console.log(id + "sf");
 				$('.notification-container[data-id="' + id + '"]').hide();
@@ -271,7 +290,34 @@ function isActive($url)
 		});
 	}
 
+	function removeNotifMateri(id, totalNotifElement) {
+		$.ajax({
+			url: '<?= base_url('Training/removeNotifMateri/') ?>' + id,
+			method: 'POST',
+			success: function() {
+				console.log(id + "sf");
+				$('.notification-container[data-id="' + id + '"]').hide();
 
+				// Update totalNotif dynamically
+				totalNotifElement.text(function(i, text) {
+					// Extract the current totalNotif value
+					var currentTotalNotif = parseInt(text, 10);
+					// Decrease the totalNotif count
+					currentTotalNotif--;
+					// Return the updated text
+					return currentTotalNotif;
+				});
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.error('AJAX Error:', textStatus, errorThrown);
+				if (jqXHR.status === 404) {
+					alert('Notification not found.');
+				} else {
+					alert('Failed to remove notification. Please try again.');
+				}
+			}
+		});
+	}
 
 	function showDeleteText(element) {
 		const deleteText = element.querySelector('.delete-text');

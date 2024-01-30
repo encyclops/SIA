@@ -1,57 +1,59 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Chart extends CI_Controller {
+class Chart extends CI_Controller
+{
 
-    public function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model("OracleDBM");
-        $this->load->model("ChartM");
-        $this->load->model("AdminM");
+		$this->load->model("ChartM");
+		$this->load->model("AdminM");
 		$this->load->model("TrainingM");
-        $this->load->helper(array('form', 'url'));
+		$this->load->helper(array('form', 'url'));
 		$this->load->library('session');
-        $this->load->library('form_validation');
+		$this->load->library('form_validation');
 	}
-		
-		public function index()
-		{
-			if (!$this->isAllowed()) return redirect(site_url());
-			$data['getCountTraining']   = $this->ChartM->getCountTraining();
-			$data['getCountSubstance']   = $this->ChartM->getCountSubstance();
-			$data['getCountDoneLesson']   = $this->ChartM->getCountDoneLesson();
-			$data['getFavoriteSubstance']   = $this->ChartM->getFavoriteSubstance();
-			$getHighestEmployee2    = $this->ChartM->getHighestEmployee();
-			$getHighest = [];
-			foreach($getHighestEmployee2 as $a){
-				$employee   = $this->OracleDBM->getEmpBy('NPK', $a->npk);
-				$combine = [
-					'npk'       => $employee->NPK,
-					'nama'      => $employee->NAMA,
-					'departemen'=> $employee->DEPARTEMEN,
-					'progress_status'   => $a->progress_status,
-					'total'      => $a->total
-				];
-				$getHighest[] = $combine;
-			}
-		
-			$data['getHighestEmployee']   = $getHighest;
-			$data['getCountNotDoneEmp']   = $this->ChartM->getCountNotDoneEmp();
-			$data['getFavoriteTraining']   = $this->ChartM->getFavoriteTraining();
-			$data['getNotDoneLesson']   = $this->ChartM->getNotDoneLesson();
-			$data['getNotOpenTrain']   = $this->ChartM->getNotDoneEmployee();
-			
-			$npk = $this->session->userdata('npk');
-			$data['notif']   = $this->TrainingM->getNotif($npk);
-			$data['totalNotif'] = count($data['notif']);
-			$data['getTrendAccess']   = $this->ChartM->getTrendAccess();
-	
-			$this->load->view('training/training_chart', $data);
+
+	public function index()
+	{
+		if (!$this->isAllowed()) return redirect(site_url());
+		$data['getCountTraining']   = $this->ChartM->getCountTraining();
+		$data['getCountSubstance']   = $this->ChartM->getCountSubstance();
+		$data['getCountDoneLesson']   = $this->ChartM->getCountDoneLesson();
+		$data['getFavoriteSubstance']   = $this->ChartM->getFavoriteSubstance();
+		$getHighestEmployee2    = $this->ChartM->getHighestEmployee();
+		$getHighest = [];
+		foreach ($getHighestEmployee2 as $a) {
+			$employee   = $this->OracleDBM->getEmpBy('NPK', $a->npk);
+			$combine = [
+				'npk'       => $employee->NPK,
+				'nama'      => $employee->NAMA,
+				'departemen' => $employee->DEPARTEMEN,
+				'progress_status'   => $a->progress_status,
+				'total'      => $a->total
+			];
+			$getHighest[] = $combine;
 		}
 
-    public function isAllowed() {
-        return $this->session->userdata('isLogin');
-    }
+		$data['getHighestEmployee']   = $getHighest;
+		$data['getCountNotDoneEmp']   = $this->ChartM->getCountNotDoneEmp();
+		$data['getFavoriteTraining']   = $this->ChartM->getFavoriteTraining();
+		$data['getNotDoneLesson']   = $this->ChartM->getNotDoneLesson();
+		$data['getNotOpenTrain']   = $this->ChartM->getNotDoneEmployee();
 
+		$npk = $this->session->userdata('npk');
+		$data['notif']   = $this->TrainingM->getNotif($npk);
+		$data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
+		$data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+		$data['getTrendAccess']   = $this->ChartM->getTrendAccess();
+
+		$this->load->view('training/training_chart', $data);
+	}
+
+	public function isAllowed()
+	{
+		return $this->session->userdata('isLogin');
+	}
 }
