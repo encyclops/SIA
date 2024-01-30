@@ -615,7 +615,7 @@
 
 							createTextCell(counterSub, row, 'number', 'center');
 							createTextCell(substance.judul_training_detail, row, 'text', 'left');
-							createFileCell(substance.id_training_detail, substance.path_file_training_detail, '', row);
+							createFileCell(substance.id_training_detail, substance.path_file_training_detail, substance.status == 2 ? '' : 'detail', row);
 							if (substance.status == 2) {
 								createBadgeApproval(substance.id_training_detail, '', '', row);
 							}
