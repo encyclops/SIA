@@ -80,7 +80,8 @@ class Admin extends CI_Controller {
         if ($this->AdminM->checkIsTagExist($id)) {
             $this->session->set_flashdata('error_message', 'Tidak dapat menghapus tag karena masih digunakan dalam pelatihan.');
         } else {
-            $this->AdminM->deleteTag($id);
+            // $this->AdminM->deleteTag($id);
+            $this->session->set_flashdata('error_message', 'Tidak error.');
         }
         redirect(site_url('Admin'));
 	}

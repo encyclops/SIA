@@ -71,7 +71,7 @@ class AdminM extends CI_Model
                 FROM $this->t_tagdetail
                 WHERE id_tag = $id      "
         );
-        return $query->row()->count_rows > 0;
+        return (!empty($query->row()));
     }
 
     public function isNpkAdmin($npk)

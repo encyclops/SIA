@@ -251,7 +251,6 @@ class Training extends CI_Controller {
 			return redirect('Login');
 		} else {
 			$this->TrainingM->removeNotif($id);
-
 		}
 	}
 

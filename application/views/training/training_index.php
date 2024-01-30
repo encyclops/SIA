@@ -43,13 +43,13 @@ $combinedDataJSON = json_encode($combinedData);
 								<label for="search_keyword">Filter Tag:&nbsp;&nbsp;</label>
 							</div>
                             <div class="col-md-2">
-								<button class="btn btn-primary dropdown-toggle" type="button" id="ddTags" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
+								<button class="btn btn-primary dropdown-toggle" type="button" name="" id="ddTags" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
 									ALL
 								</button>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, 0px, 0px); top: 0px; left: 0px; will-change: transform; max-height: 200px; overflow-y: auto;">
-									<a class="dropdown-item" id="all" href="javascript:void(0)">ALL</a>
+									<a class="dropdown-item" id="all" href="javascript:void(0)" onclick="tagFilter('', 'ALL')">ALL</a>
 								<?php foreach ($tags as $t) { ?>
-									<a class="dropdown-item" id="<?php echo $t->id_tag ?>" href="javascript:void(0)"><?php echo $t->name_tag ?></a>
+									<a class="dropdown-item" id="<?php echo $t->id_tag ?>" href="javascript:void(0)" onclick="tagFilter(<?php echo $t->id_tag ?>, '<?php echo $t->name_tag ?>')"><?php echo $t->name_tag ?></a>
 								<?php } ?>
 								</ul>
 							</div>
@@ -134,11 +134,9 @@ $combinedDataJSON = json_encode($combinedData);
 								<p class="card-category"><i class="la la-file-pdf-o"></i>&ensp;<?php echo $t->detail_count?> materi</p>
 								<p class="card-category"><i class="la la-users"></i>&ensp;<?php echo $t->participant_count?> partisipan</p>
 							</div>
-							<?php if ($this->session->userdata['role'] == 'admin') { ?>
 							<div class="col d-flex align-items-center justify-content-end p-0 pr-3">
 								<a href="javascript:void(0)" onclick="showDetail(<?php echo $t->id_training_header?>)" class="btn btn-primary px-2"><i class="la la-bars" style="font-size: 16px;"></i> Detail</a>
 							</div>
-							<?php } ?>
 						</div>
 					</div>
 				</div>

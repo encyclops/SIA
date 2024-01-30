@@ -1,6 +1,15 @@
 <?php
 ob_start();
 ?>
+<script>
+	<?php if ($this->session->flashdata('error_message')) : ?>
+		Swal.fire({
+			icon: 'error',
+			title: 'Oops...',
+			text: '<?php echo $this->session->flashdata('error_message'); ?>',
+		});
+	<?php endif; ?>
+</script>
 <div class="container-fluid">
 	<div class="row" id="adminPage">
 		<div class="col-md-6">
