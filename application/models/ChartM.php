@@ -110,7 +110,7 @@ class ChartM extends CI_Model
                         INNER JOIN training_header th ON th.id_training_header = td.id_training_header
                         where td.status = 1 and th.status = 2
                 )
-                SELECT
+                SELECT top 10
                     rp.id_training_detail,
                     MAX([total]) AS total,
                     rp.judul_training_header,
@@ -164,7 +164,7 @@ class ChartM extends CI_Model
                                 rp.judul_training_header,
                                 rp.judul_training_detail
                         )
-                        SELECT
+                        SELECT top 10
                             at.id_training_detail,
                             at.id_training_header,
                             at.total,
@@ -187,31 +187,17 @@ class ChartM extends CI_Model
     {
         $status = $this->session->userdata('role') == 'admin' ? '> 0' : '= 2';
         $query = $this->db->query(
-            "   WITH RankedProgress AS (
-                    SELECT
-                        ka.npk,
-                        tp.[progress_status],
-                        ROW_NUMBER() OVER (PARTITION BY ka.npk ORDER BY tp.[npk]) AS row_num
-                    FROM
-                        [training].[dbo].training_access ka
-                    inner JOIN
-                        training_progress tp ON tp.npk = ka.npk
-                )
-                SELECT 
-                    npk,
-                    progress_status,
-                    total
-                FROM (
-                    SELECT
-                        npk,
-                        progress_status,
-                        SUM(progress_status) OVER (PARTITION BY npk) AS total,
-                        row_num
-                    FROM
-                        RankedProgress
-                ) AS ranked
-                WHERE
-                    row_num = 1; "
+            "  SELECT TOP 10 a.npk, SUM(p.progress_status) AS total_progress
+            FROM training_progress p
+            INNER JOIN training_access a ON p.npk = a.npk 
+            INNER JOIN training_detail d ON d.id_training_detail = p.id_training_detail
+            INNER JOIN training_header h ON d.id_training_header = h.id_training_header
+            WHERE a.access_permission = '1' -- and d.status = '1' and h.status = '2'
+            GROUP BY a.npk
+            ORDER BY total_progress DESC;
+            
+            
+             "
         );
 
         return $query->result();
