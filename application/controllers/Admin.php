@@ -37,6 +37,7 @@ class Admin extends CI_Controller
         foreach ($data['employee'] as &$employee) {
             $employee->isAdmin = $this->AdminM->isNpkAdmin($employee->NPK);
         }
+
         $this->load->view('admin_index', $data);
     }
 
@@ -56,6 +57,7 @@ class Admin extends CI_Controller
         $admins = json_decode($this->input->post('empSelected'));
         if (!empty($admins)) {
             foreach ($admins as $admin) {
+
                 $this->AdminM->saveAdmin((string)$admin);
             }
         }

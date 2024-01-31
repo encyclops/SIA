@@ -502,7 +502,8 @@ ob_start();
             foreach ($getNotDoneLesson as $e) {
             ?>
               <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3">
+                <div class="avatar flex-shrink-0 me-3 ">
+
                   <img src="<?= base_url('assets/img/alert.png') ?>" alt="User" class="rounded-circle img-fluid" style="max-width: 30px; max-height: 30px; " />
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-3">
@@ -544,8 +545,7 @@ ob_start();
           $i = 1;
           if (empty($getNotOpenTrain)) {
           ?>
-
-            <div class="avatar flex-shrink-0 me-3">
+            <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
               <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
             </div>
 
@@ -573,7 +573,6 @@ ob_start();
               $i++;
             }
           } ?>
-
         </ul>
 
       </div>

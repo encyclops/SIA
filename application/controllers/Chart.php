@@ -31,8 +31,7 @@ class Chart extends CI_Controller
 				'npk'       => $employee->NPK,
 				'nama'      => $employee->NAMA,
 				'departemen' => $employee->DEPARTEMEN,
-				'progress_status'   => $a->progress_status,
-				'total'      => $a->total
+				'total'      => $a->total_progress
 			];
 			$getHighest[] = $combine;
 		}
