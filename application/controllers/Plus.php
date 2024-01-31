@@ -38,6 +38,11 @@ class Plus extends CI_Controller {
 		echo json_encode($this->TrainingM->getTrainingByNPK($isAll, $key, $tag));
 	}
 
+    public function getTrainingByStatus() {
+		$status	= $this->input->post('status');
+		echo json_encode($this->TrainingM->getTrainingByStatus($status));
+	}
+
 	public function getAccessData()
 	{
 		$npk = $this->input->get('npk');
@@ -65,5 +70,10 @@ class Plus extends CI_Controller {
     public function getAdmins()
 	{
         echo json_encode($this->AdminM->getAdmins());
+	}
+
+    public function allEmp()
+	{
+        print_r($this->OracleDBM->getAllEmp());
 	}
 }
