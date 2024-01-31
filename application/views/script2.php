@@ -52,17 +52,30 @@
 		}
 	}
 
+	function clearTema(judul) {
+		document.getElementById('errorMessages').textContent = '';
+		if (!judul.classList.contains('mb-3')) {
+			judul.classList.add('mb-3');
+		}
+		judul.removeAttribute('style');
+	}
+
 	function clearForm() {
-		document.getElementById('temaTraining').value = '';
+		const judul = document.getElementById('temaTraining');
 		document.getElementById('pemateri').value = '';
 		document.getElementById('search_keyword').value = '';
+		judul.value = '';
+		clearTema(judul);
 		empArrAdmin = [];
 		empArrNon = [];
 		searchKeyword('', '', 'allEmpTable');
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
 		populateTagsSection(<?php echo json_encode($tags) ?>, 'clear');
-		toggleAll(false);
+		var checkboxes = document.querySelectorAll('.form-check-input');
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = false;
+		});
 		document.getElementById('dropdownMenu1').textContent = 'ALL';
 	}
 
@@ -224,10 +237,12 @@
 		var spanA = document.createElement("span");
 		spanA.className = "badge badge-success";
 		spanA.textContent = "Approve";
+		spanA.id = "sAcc" + tr.id;
 		spanA.style.cursor = "pointer";
 		spanA.onclick = function() {
 			if (!spanA.disabled) {
 				modifyApproval(idDetail, npk, id, 1);
+				spanA.removeAttribute('id');
 				cell.removeChild(spanR);
 				spanA.disabled = true;
 			}
@@ -237,10 +252,12 @@
 		var spanR = document.createElement("span");
 		spanR.className = "badge badge-danger";
 		spanR.textContent = "Reject";
+		spanR.id = "sRej" + tr.id;
 		spanR.style.cursor = "pointer";
 		spanR.onclick = function() {
 			if (!spanR.disabled) {
 				modifyApproval(idDetail, npk, id, 3);
+				spanR.removeAttribute('id');
 				cell.removeChild(spanA);
 				spanR.disabled = true;
 			}
@@ -714,8 +731,8 @@
 							<div class="row">
 								<div class="col-sm-8 pr-0">
 									<h4 class="card-title">${t.judul_training_header.length > 15 ? t.judul_training_header.substring(0, 15) + '...' : t.judul_training_header}</h4>
-									<p class="card-category">${t.detail_count} materi</p>
-									<p class="card-category">${t.participant_count} partisipan</p>
+									<p class="card-category"><i class="la la-file-pdf-o"></i>&ensp;${t.detail_count} materi</p>
+									<p class="card-category"><i class="la la-users"></i>&ensp;${t.participant_count} partisipan</p>
 								</div>
 								<div class="col d-flex align-items-center justify-content-end p-0 pr-3">
 									<a href="javascript:void(0)" onclick="showDetail(${t.id_training_header})" class="btn btn-primary px-2">
@@ -1012,17 +1029,39 @@
 
 <!-- Training Edit -->
 <script>
+	document.getElementById('temaTraining').addEventListener('keyup', function() {
+		if (this.value.trim() != '') clearTema(document.getElementById('temaTraining'));
+	});
+
     async function doEdit(id) {
-		let npk = <?php echo $this->session->userdata('npk'); ?>;
+		let npk = '<?php echo $this->session->userdata('npk'); ?>';
+		let part = '';
+		let file = '';
 
-		let canEdit = false;
-		if (await checkAccess(npk, id)) canEdit = true;
-		// else if (isAdmin) canEdit = true;
+		const accessData = getAccessData(npk, id).then(async access => {
+			if (!(access.part == 1 || access.file == 1 || isAdmin)) {
+				Swal.fire({
+					title: 'ERROR',
+					text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+					icon: 'error',
+					confirmButtonColor: '#d33',
+					confirmButtonText: 'OK'
+				});
+				return;
+			}
+			else {
+				part = access.part;
+				file = access.file;
+			}
+		});
 
-		if (!canEdit) {
+		const sAccElements = document.querySelectorAll('[id^="sAcc"]');
+		const sRejElements = document.querySelectorAll('[id^="sRej"]');
+
+		if (sAccElements.length > 0 || sRejElements.length > 0) {
 			Swal.fire({
 				title: 'ERROR',
-				text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+				text: 'Masih ada permintaan modifikasi. Mohon cek semua modifikasi!',
 				icon: 'error',
 				confirmButtonColor: '#d33',
 				confirmButtonText: 'OK'
@@ -1031,7 +1070,7 @@
 		}
 
 		changeForm('edit');
-		// await checkAccess(npk, id);
+		await checkAccess(part, file);
 		rowCountMateriForm = 0;
 		var counterSub = 1;
 		var idHeader = document.getElementById('idTraining').value;
@@ -1051,7 +1090,7 @@
 		isDataTableExist(rowCountMateriForm, 'x', 4, 'emptyData', 'tBodySubstanceTableEdit');
 		var tableBody = document.getElementById('tBodySubstanceTableEdit2');
 		<?php echo $combinedDataJSON ?>.forEach(function(substance) {
-			if (substance.id_header == idHeader) {
+			if (substance.id_header == idHeader && substance.status == 1) {
 				var materiRow = document.createElement('tr');
 				var idNow = rowCountMateriForm + 1;
 				materiRow.id = 'rowFormMateri' + idNow;
@@ -1078,28 +1117,13 @@
 		});
 	}
 
-	async function checkAccess(npk, id) {
-		const accessData = await getAccessData(npk, id);
-		if (!accessData) {
-			return false;
+	async function checkAccess(part, file) {
+		if (part == 0) {
+			changeDisplayOfElements('none', ['allEmpDiv']);
 		}
-
-		let found = false;
-
-		if (accessData.part == 1) {
-			changeDisplayOfElements('block', ['allEmpDiv']);
-			found = true;
+		if (file == 0) {
+			changeDisplayOfElements('none', ['substanceDiv']);
 		}
-		if (accessData.file == 1) {
-			changeDisplayOfElements('block', ['substanceDiv']);
-			found = true;
-		}
-		if ('<?php echo $this->session->userdata['role']; ?>' == 'admin') {
-			changeDisplayOfElements('block', ['substanceDiv', 'allEmpDiv', 'temaDiv']);
-			found = true;
-		}
-
-		return found;
 	}
     
 	function validateForm() {

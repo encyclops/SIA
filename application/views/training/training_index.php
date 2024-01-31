@@ -193,7 +193,7 @@ $combinedDataJSON = json_encode($combinedData);
 						</div>
 					</div>
 					<div id="temaDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-						<label for="temaTraining" class="my-2">Tema Training<span style="color: red;">*</span></label>
+						<label for="temaTraining" class="my-2">Tema Training <span style="color: red;">*</span></label>
 						<input type="text" class="form-control input-pill mb-3" name="temaTraining" id="temaTraining" placeholder="Masukkan Tema Training">
 						<span style="color: red;" class="mb-3" id="errorMessages"></span>
 						<input type="text" name="idTraining" id="idTraining" hidden>

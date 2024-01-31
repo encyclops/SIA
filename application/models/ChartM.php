@@ -384,7 +384,8 @@ class ChartM extends CI_Model
                      JOIN training_access a ON a.id_training_header = d.id_training_header
                      WHERE a.npk = hi.npk 
                        AND d.id_training_header = hi.id_training_header
-                       AND a.access_permission = 1) AS total_count
+                       AND a.access_permission = 1
+                       AND d.status = 1) AS total_count
                 FROM HeaderInfo hi
             )
             SELECT

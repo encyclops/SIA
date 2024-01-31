@@ -358,6 +358,7 @@ class TrainingM extends CI_Model
                         WHERE a.npk = '$npk'
                         AND d.id_training_header = $id
                         AND a.access_permission = 1
+                        AND d.status = 1
                     ) AS total_count
                 )
                 SELECT 
