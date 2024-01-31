@@ -23,7 +23,7 @@ $combinedDataJSON = json_encode($combinedData);
 	<div id="listCardDiv">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card p-2">
+				<div class="card p-2 mb-3">
 					<div class="card-header">
 						<div class="row">
 							<div class="col">
@@ -69,42 +69,30 @@ $combinedDataJSON = json_encode($combinedData);
 								</label>
 							</div>
 						</div>
-						<!-- <div class="row py-2">
-							<div class="col-md-1 d-flex mb-2 align-items-center">
-								<label for="search_keyword">Departemen:&nbsp;&nbsp;</label>
-							</div>
-                            <div class="col-md-3">
-								<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
-									ALL
-								</button>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, 0px, 0px); top: 0px; left: 0px; will-change: transform; max-height: 200px; overflow-y: auto;">
-									<a class="dropdown-item" id="all" href="javascript:void(0)" onclick="searchKeyword('', 'ALL', 'allEmpTable');">ALL</a>
-								<?php foreach ($dept as $d) { ?>
-									<a class="dropdown-item" id="<?php echo $d->DEPARTEMEN ?>" href="javascript:void(0)" onclick="searchKeyword('', '<?php echo $d->DEPARTEMEN ?>', 'allEmpTable')"><?php echo $d->DEPARTEMEN ?></a>
-								<?php } ?>
-								</ul>
-							</div>
-							<div class="col-md-1"></div>
-							<div class="col-md-4">
-								<div class="form-group form-inline p-0">
-									<label for="search_keyword" class="col-md-3 col-form-label p-0">Cari Nama: </label>
-									<div class="col-md-9 p-0">
-										<input type="text" class="form-control input-full" id="search_keyword" placeholder="Enter Input">
-									</div>
-								</div>
-							</div>
-							<div class="col-md-1"></div>
-							<div class="col-md-2">
-								<label class="form-radio-label mb-3 mr-3 float-right">
-									<span class="form-radio-sign">Select All: &nbsp;&nbsp;</span>
-									<input type="checkbox" data-toggle="toggle" data-onstyle="info" data-style="btn-round" name="optionsRadiosA" value="" onchange="toggleAll(this.checked);">
-								</label>
-							</div>
-						</div> -->
 					</div>
 				</div>
 			</div>
 		</div>
+		<?php if($this->session->userdata('role') == 'admin') { ?>
+		<div class="row">
+			<div class="col-md-12 mb-2 p-3 d-flex justify-content-center">
+				<ul class="nav nav-pills nav-primary" id="statusTabs">
+					<li class="nav-item">
+						<a id="allTab" class="nav-link active" href="javascript:void(0)" onclick="toggleTab('all')">All</a>
+					</li>
+					<li class="nav-item">
+						<a id="publishedTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('published')">Published</a>
+					</li>
+					<li class="nav-item">
+						<a id="draftTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('draft')">Draft</a>
+					</li>
+					<li class="nav-item">
+						<a id="allWithRequestTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('allWithRequest')">Published with Request</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<?php } ?>
 		<div class="row" id="trainingContainer">
 			<?php $i = 1; $j = 1;
 			foreach ($training as $t) { ?>

@@ -262,7 +262,42 @@ class TrainingM extends CI_Model
                         AND a.access_permission = 2) > 0, 'true', 'false') AS participant_request
                 FROM $this->t_header h "
                 . $table . "
-                WHERE h.status " . $status . $queryAdd . $searchBy
+                WHERE h.status " . $status . $queryAdd . $searchBy . " 
+                ORDER BY detail_request, participant_request DESC"
+        );
+
+        return $query->result();
+    }
+
+    public function getTrainingByStatus($status)
+    {
+        $quer = '';
+        if ($status == '> x') { 
+            $status = '> 0';
+            $quer = "WHERE subquery.detail_request = 'true' OR subquery.participant_request = 'true'";
+        }
+        $query = $this->db->query(
+            "   SELECT *
+                FROM (
+                    SELECT h.*,
+                        (   SELECT COUNT(*)
+                            FROM $this->t_detail d
+                            WHERE d.id_training_header = h.id_training_header
+                            AND d.status = 1) AS detail_count,
+                        (   SELECT COUNT(*)
+                            FROM $this->t_access a
+                            WHERE a.id_training_header = h.id_training_header
+                            AND a.access_permission = 1) AS participant_count,
+                        IIF((SELECT COUNT(*) FROM $this->t_detail d
+                            WHERE d.id_training_header = h.id_training_header
+                            AND d.status = 2) > 0, 'true', 'false') AS detail_request,
+                        IIF((SELECT COUNT(*) FROM $this->t_access a
+                            WHERE a.id_training_header = h.id_training_header
+                            AND a.access_permission = 2) > 0, 'true', 'false') AS participant_request
+                    FROM $this->t_header h
+                    WHERE h.status $status
+                ) AS subquery " . $quer . "
+                ORDER BY subquery.detail_request, subquery.participant_request DESC"
         );
 
         return $query->result();
@@ -270,7 +305,7 @@ class TrainingM extends CI_Model
 
     public function getSubstanceByTraining($id)
     {
-        $status = $this->isAdmin() ? '> 0' : '= 1';
+        $status = $this->isAdmin() ? '> 0 AND status < 3' : '= 1';
         $query = $this->db->query(
             "   SELECT *
                 FROM $this->t_detail
@@ -282,7 +317,7 @@ class TrainingM extends CI_Model
 
     public function getEmployeeByTraining($id)
     {
-        $status = $this->isAdmin() ? '> 0' : '= 1';
+        $status = $this->isAdmin() ? '> 0 AND access_permission < 3' : '= 1';
         $query = $this->db->query(
             "   SELECT npk
                 FROM $this->t_access

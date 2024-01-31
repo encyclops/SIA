@@ -92,6 +92,16 @@
 		loader.classList.remove('fade-out');
 	}
 
+	function activateClassActive(tabName) {
+		var tabs = document.querySelectorAll('#statusTabs .nav-link');
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        var clickedTab = document.getElementById(tabName + 'Tab');
+        clickedTab.classList.add('active');
+	}
+
 	function createInputCell(idname, type, placeholder, tr) {
 		var cell = document.createElement('td');
 		var input = document.createElement('input');
@@ -267,7 +277,7 @@
 			}
 			
 			// A condition when editing training
-			else if (code == 'edit' && id != null) {
+			else if (code == 'edit' && id != null && stat != 'admin') {
 				// Condition if the user is not an admin
 				if (id == 'non') {
 					// Condition if the data choosen by non-admin has the value checked
@@ -508,9 +518,28 @@
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.send('isAll=' + encodeURIComponent(isAll) + '&keyword=' + encodeURIComponent(keyword) + '&tag=' + encodeURIComponent(tagID));
 	}
+
+	async function getTrainingByStatus(status) {
+		console.log(status);
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === XMLHttpRequest.DONE) {
+				if (xhr.status === 200) {
+					const data = JSON.parse(xhr.responseText);
+					modifyTrainingTable(data);
+				} else {
+					console.error('Error fetching data');
+				}
+			}
+		};
+
+		xhr.open('POST', '<?php echo base_url('Plus/getTrainingByStatus/') ?>', true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send('status=' + status);
+	}
 </script>
 
-<!-- Training Detail -->
+<!-- Training Detail Section -->
 <script>
     showPage(1);
 
@@ -642,9 +671,18 @@
 				.catch(error => {
 					console.error('Error fetching data showdetail:', error);
 				});
-				
 		}
 	}
+
+	async function toggleTab(tabName) {
+        activateClassActive(tabName);
+		status = '';
+		if (tabName == 'all') status = '> 0';
+		else if (tabName == 'published') status = '= 2';
+		else if (tabName == 'draft') status = '= 1';
+		else if (tabName == 'allWithRequest') status = '> x';
+		await getTrainingByStatus(status);
+    }
 
     function modifyTrainingTable(trainings) {
 		const container = document.getElementById('trainingContainer');
@@ -653,8 +691,8 @@
 		paging.innerHTML = '';
 		
 		var counter = 1;
+		console.log(trainings);
 		trainings.forEach((t, index) => {
-			console.log(t);
 			const cardHTML = `
 				<div class="col-sm-3 card-item ${counter <= 4 ? 'fade-in' : 'fade-out hide-after-fade-out'}">
 					<div class="card" style="border-radius: 20px;">
@@ -753,15 +791,18 @@
     async function tagFilter(id, name) {
 		document.getElementById('ddTags').textContent = name;
         document.getElementById('ddTags').name = id;
+		if (isAdmin) activateClassActive('all');
         await getTrainingByNPK(!document.getElementById('myTraining').checked, document.getElementById('search_training').value.trim(), id);
 	}
 
     async function toggleMine(select) {
+		if (isAdmin) activateClassActive('all');
 		await getTrainingByNPK(!select, document.getElementById('search_training').value.trim(), document.getElementById('ddTags').name.trim());
 	}
 
 	document.getElementById('search_training').addEventListener('keyup', function() {
 		(async () => {
+			if (isAdmin) activateClassActive('all');
 			await getTrainingByNPK(!document.getElementById('myTraining').checked, this.value.trim(), document.getElementById('ddTags').name.trim());
 		})();
 	});
@@ -773,12 +814,16 @@
 		var checkboxes = document.querySelectorAll('.form-check-input');
 		checkboxes.forEach(checkbox => {
 			if (!checkbox.disabled) {
+				var index = empArrAdmin.indexOf(checkbox.value);
 				checkbox.checked = select;
-				if (select) {
+				if (index !== -1) {
+					empArrAdmin.splice(index, 1);
+				} else {
 					empArrAdmin.push(checkbox.value);
 				}
 			}
 		});
+		console.log('emp: ' + empArrAdmin);
 	}
 
     document.getElementById('search_keyword').addEventListener('keyup', function() {

@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="assets/fonts/fonts.css">
 	<link rel="stylesheet" href="assets/css/ready.css">
 	<link rel="stylesheet" href="assets/css/demo.css">
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <?php
@@ -231,18 +231,25 @@ function isActive($url)
 		});
 	}
 
-	function confirmDeleteTag(id) {
+	function confirmDeleteTag(id, total) {
 		Swal.fire({
 			title: 'Konfirmasi Hapus Tagar',
-			text: 'Apakah Anda yakin ingin menghapus data ini?',
-			icon: 'warning',
+			text: total < 1 ? 'Apakah Anda yakin ingin menghapus data ini?' : 'Tag masih terhubung dengan training!',
+			icon: total < 1 ? 'warning' : 'error',
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
-			confirmButtonText: 'Ya',
-			cancelButtonText: 'Tidak'
+			confirmButtonText: total < 1 ? 'Ya' : 'Ok',
+			cancelButtonText: 'Tidak',
+			cancelButtonAriaLabel: 'Tidak',
+			didOpen: () => {
+				if (total >= 1) {
+					const cancelButton = Swal.getCancelButton();
+					cancelButton.style.display = 'none';
+				}
+			}
 		}).then((result) => {
-			if (result.isConfirmed) {
+			if (result.isConfirmed && total < 1) {
 				window.location.href = '<?= base_url('Admin/deleteTag/') ?>' + id;
 			}
 		});
@@ -328,6 +335,7 @@ function isActive($url)
 		const deleteText = element.querySelector('.delete-text');
 		deleteText.style.animation = 'slideOut 0.3s ease-in-out';
 	}
+
 	// Get the username and department elements
 	var usernameElement = document.getElementById('username');
 	var departmentElement = document.getElementById('user-department');
