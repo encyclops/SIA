@@ -137,9 +137,9 @@
 						if (fileType !== 'application/pdf' || (file && file.size > 10 * 1024 * 1024)) {
 							let errorMessage = '';
 							if (fileType !== 'application/pdf') {
-								errorMessage = 'Upload File harus berjenis PDF!';
+								errorMessage = 'File yang diunggah harus berjenis PDF!';
 							} else if (file && file.size > 10 * 1024 * 1024) {
-								errorMessage = 'Ukuran file maksimal 10MB!';
+								errorMessage = 'File yang diunggah harus di bawah 10MB!';
 							}
 							Swal.fire({
 								icon: 'error',
@@ -393,6 +393,15 @@
 		let value = input.value.replace(/\D/g, '');
 		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		input.value = value;
+	}
+
+	function restrictInput(event) {
+		var pressedKey = event.key;
+		var allowedCharacters = /^[a-zA-Z0-9\b\s\-\;\/\,]*$/;
+		if (!allowedCharacters.test(pressedKey)) {
+			event.preventDefault();
+			return false;
+		}
 	}
 
 	function isDataTableExist(counter, kode, colspan, idname, tbodyName) {
@@ -694,6 +703,14 @@
 	}
 
 	async function toggleTab(tabName) {
+		document.getElementById('search_training').value = '';
+		document.getElementById('ddTags').textContent = 'ALL';
+		document.getElementById('ddTags').name = '';
+		const element = document.getElementsByClassName('btn-info')[0];
+		if (element) {
+			element.classList.add('btn-default', 'off');
+			element.classList.remove('btn-info');
+		}
 		activateClassActive(tabName);
 		status = '';
 		if (tabName == 'all') status = '> 0';
@@ -1038,25 +1055,6 @@
 
     async function doEdit(id) {
 		let npk = '<?php echo $this->session->userdata('npk'); ?>';
-		let part = '';
-		let file = '';
-
-		const accessData = getAccessData(npk, id).then(async access => {
-			if (!(access.part == 1 || access.file == 1 || isAdmin)) {
-				Swal.fire({
-					title: 'ERROR',
-					text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
-					icon: 'error',
-					confirmButtonColor: '#d33',
-					confirmButtonText: 'OK'
-				});
-				return;
-			}
-			else {
-				part = access.part;
-				file = access.file;
-			}
-		});
 
 		const sAccElements = document.querySelectorAll('[id^="sAcc"]');
 		const sRejElements = document.querySelectorAll('[id^="sRej"]');
@@ -1072,8 +1070,23 @@
 			return;
 		}
 
+		const accessData = getAccessData(npk, id).then(async access => {
+			if (!(access.part == 1 || access.file == 1 || isAdmin)) {
+				Swal.fire({
+					title: 'ERROR',
+					text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+					icon: 'error',
+					confirmButtonColor: '#d33',
+					confirmButtonText: 'OK'
+				});
+				return;
+			}
+			else {
+				await checkAccess(access.part, access.file);
+			}
+		});
+
 		changeForm('edit');
-		await checkAccess(part, file);
 		rowCountMateriForm = 0;
 		var counterSub = 1;
 		var idHeader = document.getElementById('idTraining').value;
@@ -1121,6 +1134,7 @@
 	}
 
 	async function checkAccess(part, file) {
+		if (isAdmin) return;
 		if (part == 0) {
 			changeDisplayOfElements('none', ['allEmpDiv']);
 		}

@@ -201,12 +201,9 @@ class TrainingM extends CI_Model
 
     public function resetTags($tagID, $id)
     {
-        if (empty($tagID)) {
-            return;
-        }
         $tag = implode(",", $tagID);
         $this->db->where('id_training_header', $id)
-            ->where_not_in('id_tag', explode(",", $tag));
+                ->where_not_in('id_tag', explode(",", $tag));
 
         $this->db->delete($this->t_tagdetail);
     }
@@ -412,6 +409,17 @@ class TrainingM extends CI_Model
                 )"
         );
         return $query->result();
+    }
+
+    public function getDataTag($idTag, $id)
+    {
+        $query = $this->db->query(
+            "   SELECT COUNT(*) AS total
+                FROM $this->t_tagdetail
+                WHERE id_training_header = $id
+                AND id_tag = $idTag             "
+        );
+        return $query->row()->total > 0;
     }
 
     public function getNotifications($npk)
