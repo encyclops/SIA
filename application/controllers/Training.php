@@ -134,7 +134,6 @@ class Training extends CI_Controller
 
 				$this->TrainingM->resetParticipant(json_decode($employees), $id);
 				foreach (json_decode($employees) as $employee) {
-
 					$getId = $this->TrainingM->getAccessByNPKID($employee, $id);
 					if ($getId == null) {
 						$this->TrainingM->saveParticipant($employee, $id);

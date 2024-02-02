@@ -70,44 +70,16 @@ ob_start();
 												<p class="m-0" style="font-size: 12px;"><?php echo $t->DEPARTEMEN ?></p>
 											</div>
 										</div>
+										<?php if ($countAdmin < 2) { ?>
 										<div class="close-icon" onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+										<?php } ?>
 									</div>
 								</div>
-
 							<?php $i++;
 							} ?>
 						</div>
 					</div>
 				</div>
-				<!-- <div class="card-body" style="max-height: 300px; overflow-y: scroll;">
-					<table id="mainTable" name="table" class="table table-hover table-head-bg-info my-2">
-						<thead>
-							<tr>
-								<th scope="col" class="text-center" style="width: 50px;">No.</th>
-								<th scope="col" class="text-center" style="width: 700px;">Nama</th>
-								<th scope="col" class="text-center" style="width: 700px;">Departemen</th>
-								<th scope="col" class="text-center">Aksi</th>
-							</tr>
-						</thead>
-						<tbody id="tBodymainTable">
-							<?php $i = 1;
-							foreach ($admin as $t) { ?>
-								<tr >
-									<td><?php echo $i ?></td>
-									<td><?php echo $t->NAMA ?></td>
-									<td><?php echo $t->DEPARTEMEN ?></td>
-									<td class="text-center">
-										<?php if ($countAdmin < 2) { ?>
-											<button title="Hapus" class="btn btn-danger float-right" disabled >Hapus</button></td>
-										<?php } else {
-										?><a href="javascript:void(0)" onclick="confirmDeleteAdmin(<?php echo $t->NPK ?>)" title="Hapus" class="btn btn-danger float-right">Hapus</a></td>
-										<?php } ?>
-									</tr>
-							<?php $i++;
-							} ?>
-						</tbody>
-					</table>
-				</div> -->
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -146,7 +118,7 @@ ob_start();
 									<b>
 										<h5 class="mb-0 ml-3 my-3" style="color: <?php echo $textColor ?>"><?php echo $t->name_tag ?></h5>
 									</b>
-									<div class="close-icon" onclick="confirmDeleteTag(<?php echo $t->id_tag ?>)"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+									<div class="close-icon" onclick="confirmDeleteTag(<?php echo $t->id_tag . ',' . $t->total ?>)"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
 								</div>
 							</div>
 						<?php $i++;
