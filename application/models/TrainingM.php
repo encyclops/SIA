@@ -169,12 +169,23 @@ class TrainingM extends CI_Model
 
     public function modifyParticipant($npk, $id)
     {
-        return $this->db->where('id_training_header', $id)
-            ->where('npk', $npk)
-            ->set('access_permission', $this->isAdmin() ? 1 : 2, FALSE)
-            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-            ->set('modified_by', $this->session->userdata('npk'), FALSE)
-            ->update($this->t_access);
+        $this->db->where('id_training_header', $id)
+             ->where('npk', $npk);
+
+        $access_permission = $this->db->get($this->t_access)->row()->access_permission;
+
+        $this->db->where('id_training_header', $id)
+             ->where('npk', $npk);
+        $this->db->set('access_permission', $this->isAdmin() ? 1 : 2, FALSE)
+                ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                ->set('modified_by', $this->session->userdata('npk'), FALSE);
+
+        if ($access_permission == 0) {
+            $this->db->set('created_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                    ->set('created_by', $this->session->userdata('npk'), FALSE);
+        }
+
+        return $this->db->update($this->t_access);
     }
 
     public function resetParticipant($npks, $id)
@@ -185,28 +196,25 @@ class TrainingM extends CI_Model
 
         $npk = implode("','", $npks);
         $status = $this->isAdmin() ? '0' : '2';
-        $this->db->where('id_training_header', $id)
-            ->set('access_permission', $status, FALSE)
-            ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
-            ->set('modified_by', $this->session->userdata('npk'), FALSE);
-
+        $this->db   ->where('id_training_header', $id)
+                    ->set('access_permission', $status, FALSE)
+                    ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
+                    ->set('modified_by', $this->session->userdata('npk'), FALSE);
+            
         if ($this->isAdmin()) {
-            $this->db->where_not_in('npk', $npk);
+            $this->db   ->where_not_in('npk', $npk);
         } else {
-            $this->db->where_in('npk', $npks, FALSE)
-                ->where('access_permission !=', 1);
+            $this->db   ->where_in('npk', $npks, FALSE)
+                        ->where('access_permission !=', 1);
         }
         $this->db->update($this->t_access);
     }
 
     public function resetTags($tagID, $id)
     {
-        if (empty($tagID)) {
-            return;
-        }
         $tag = implode(",", $tagID);
-        $this->db->where('id_training_header', $id)
-            ->where_not_in('id_tag', explode(",", $tag));
+        $this->db   ->where('id_training_header', $id)
+                    ->where_not_in('id_tag', explode(",", $tag));
 
         $this->db->delete($this->t_tagdetail);
     }
@@ -358,6 +366,7 @@ class TrainingM extends CI_Model
                         WHERE a.npk = '$npk'
                         AND d.id_training_header = $id
                         AND a.access_permission = 1
+                        AND d.status = 1
                     ) AS total_count
                 )
                 SELECT 
@@ -411,6 +420,17 @@ class TrainingM extends CI_Model
                 )"
         );
         return $query->result();
+    }
+
+    public function getDataTag($idTag, $id)
+    {
+        $query = $this->db->query(
+            "   SELECT COUNT(*) AS total
+                FROM $this->t_tagdetail
+                WHERE id_training_header = $id
+                AND id_tag = $idTag             "
+        );
+        return $query->row()->total > 0;
     }
 
     public function getNotifications($npk)

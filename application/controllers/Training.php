@@ -135,7 +135,6 @@ class Training extends CI_Controller
 
 				$this->TrainingM->resetParticipant(json_decode($employees), $id);
 				foreach (json_decode($employees) as $employee) {
-
 					$getId = $this->TrainingM->getAccessByNPKID($employee, $id);
 					if ($getId == null) {
 						$this->TrainingM->saveParticipant($employee, $id);
@@ -146,23 +145,13 @@ class Training extends CI_Controller
 			}
 
 			$tags = json_decode($this->input->post('tags'));
+			$this->TrainingM->resetTags($tags, $this->input->post('idTraining'));
 			if (!empty($tags)) {
 				$id =	$this->input->post('idTraining');
-
-				$this->TrainingM->resetTags($tags, $id);
-				// foreach (json_decode($employees) as $employee) {
-
-				// 	$getId = $this->TrainingM->getAccessByNPKID($employee, $id);
-				// 	if ($getId == null) {
-				// 		$this->TrainingM->saveParticipant($employee, $id);
-				// 	} else {
-				// 		$this->TrainingM->modifyParticipant($employee, $id);	
-				// 	}
-				// }
 				foreach ($tags as $tag) {
-					$this->TrainingM->saveTagDetail($tag, $id);
+					if (!$this->TrainingM->getDataTag($tag, $id)) $this->TrainingM->saveTagDetail($tag, $id);
 				}
-			}
+			} 
 
 			$idDetail = $this->TrainingM->getSubstanceByTraining($id);
 			$materiIdArray = array();

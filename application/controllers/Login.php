@@ -37,7 +37,7 @@ class Login extends CI_Controller
 				$this->session->set_userdata($newdata);
 				redirect('Training');
 			} else {
-				$this->session->set_flashdata('error_message', 'NPK atau Password salah!');
+				$this->session->set_flashdata('error_message', 'NPK atau Password yang dimasukkan tidak sesuai!');
 
 				redirect(site_url());
 			}

@@ -112,7 +112,8 @@ class AdminM extends CI_Model
     {
         $query = $this->db->query(
             "   SELECT COUNT(*) AS total
-                FROM $this->t_admin           "
+                FROM $this->t_admin
+                WHERE status = 1           "
         );
         return $query->row()->total;
     }

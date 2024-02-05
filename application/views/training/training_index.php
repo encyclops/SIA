@@ -34,37 +34,36 @@ $combinedDataJSON = json_encode($combinedData);
 							</div>
 							<?php if ($this->session->userdata['role'] == 'admin') { ?>
 								<div class="col d-flex align-items-center justify-content-end">
-									<a href="javascript:void(0)" onclick="changeForm('tambah')" class="btn btn-primary"></i> Tambah</a>
+									<a href="javascript:void(0)" onclick="changeForm('tambah')" class="btn btn-primary"> Tambah</a>
 								</div>
 							<?php } ?>
 						</div>
 					</div>
 					<div class="card-body">
 						<div class="row py-2">
-							<div class="col-md-1 d-flex mb-3 align-items-center">
+							<div class="col-md-4 d-flex mb-3 align-items-center pr-0 justify content-between">
 								<label for="search_keyword">Filter Tag:&nbsp;&nbsp;</label>
+								<div class="col">
+									<button class="btn btn-primary dropdown-toggle" type="button" name="" id="ddTags" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
+										ALL
+									</button>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, 0px, 0px); top: 0px; left: 0px; will-change: transform; max-height: 200px; overflow-y: auto;">
+										<a class="dropdown-item" id="all" href="javascript:void(0)" onclick="tagFilter('', 'ALL')">ALL</a>
+										<?php foreach ($tags as $t) { ?>
+											<a class="dropdown-item" id="<?php echo $t->id_tag ?>" href="javascript:void(0)" onclick="tagFilter(<?php echo $t->id_tag ?>, '<?php echo $t->name_tag ?>')"><?php echo $t->name_tag ?></a>
+										<?php } ?>
+									</ul>
+								</div>
 							</div>
-							<div class="col-md-2">
-								<button class="btn btn-primary dropdown-toggle" type="button" name="" id="ddTags" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
-									ALL
-								</button>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, 0px, 0px); top: 0px; left: 0px; will-change: transform; max-height: 200px; overflow-y: auto;">
-									<a class="dropdown-item" id="all" href="javascript:void(0)" onclick="tagFilter('', 'ALL')">ALL</a>
-									<?php foreach ($tags as $t) { ?>
-										<a class="dropdown-item" id="<?php echo $t->id_tag ?>" href="javascript:void(0)" onclick="tagFilter(<?php echo $t->id_tag ?>, '<?php echo $t->name_tag ?>')"><?php echo $t->name_tag ?></a>
-									<?php } ?>
-								</ul>
-							</div>
-							<div class="col-md-1"></div>
-							<div class="col-md-6">
+							<div class="col-md-5 pl-5 pr-0">
 								<div class="form-group form-inline p-0">
 									<label for="search_training">Search:&nbsp;&nbsp;</label>
-									<div class="col-md-9 p-0">
+									<div class="col p-0">
 										<input type="text" class="form-control input-full" id="search_training" name="search_training" style="width: 100%;">
 									</div>
 								</div>
 							</div>
-							<div class="col-md-2">
+							<div class="col-md-3 pl-0">
 								<label class="form-radio-label mb-3 float-right">
 									<span class="form-radio-sign">My Training: &nbsp;&nbsp;</span>
 									<input type="checkbox" data-toggle="toggle" data-onstyle="info" data-style="btn-round" name="optionsRadiosA" value="" id="myTraining" onchange="toggleMine(this.checked);">
@@ -208,14 +207,14 @@ $combinedDataJSON = json_encode($combinedData);
 						</div>
 					</div>
 					<div id="temaDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-						<label for="temaTraining" class="my-2">Tema Training<span style="color: red;">*</span></label>
+						<label for="temaTraining" class="my-2">Tema Training <span style="color: red;">*</span></label>
 						<input type="text" class="form-control input-pill mb-3" name="temaTraining" id="temaTraining" placeholder="Masukkan Tema Training">
 						<span style="color: red;" class="mb-3" id="errorMessages"></span>
 						<input type="text" name="idTraining" id="idTraining" hidden>
 						<div class="row">
 							<div class="col">
 								<label class="my-2">Pemateri</label>
-								<input type="text" class="form-control input-pill mb-3" name="pemateri" id="pemateri" placeholder="Masukkan Pemateri">
+								<input type="text" class="form-control input-pill mb-3" name="pemateri" id="pemateri" placeholder="Masukkan Pemateri" onkeydown="restrictInput(event)">
 							</div>
 							<div class="col">
 								<label class="my-2">Tags</label><br />
