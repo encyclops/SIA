@@ -7,6 +7,24 @@
 	var admins;
 	var rowCountMateriForm = 0;
 	var isAdmin = '<?php echo $this->session->userdata['role']; ?>' == 'admin';
+	var trStat = 0;
+
+	function confirmDeleteTraining(id) {
+		Swal.fire({
+			title: 'Konfirmasi Hapus Training',
+			text: 'Apakah Anda yakin ingin menghapus data ini?',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya',
+			cancelButtonText: 'Tidak'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				window.location.href = '<?= base_url('Training/modifyTraining/') ?>' + id;
+			}
+		});
+	}
 
 	function changeForm(kode) {
 		var listCardDiv = document.getElementById('listCardDiv');
@@ -88,8 +106,9 @@
 	function changeTitle(title, call) {
 		document.getElementById('cardTitle').textContent = title;
 		document.getElementById('cardCategory').textContent = 'Training / ' + title;
-		document.getElementById('temaTraining').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
-		document.getElementById('pemateri').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
+		const isEditable = title.includes('Tambah') || (title.includes('Ubah') && trStat != 2);
+		document.getElementById('temaTraining').readOnly = !isEditable;
+		document.getElementById('pemateri').readOnly = !isEditable;
 		if (call) callLoader();
 	}
 
@@ -312,8 +331,9 @@
 			}
 
 			// A condition when adding new admin
-			else if (stat == 'admin' && admins.includes(value)) {
-				input.checked = input.disabled = true;
+			else if (stat == 'admin') {
+				if (empArrAdmin.includes(value)) input.checked = true;
+				if (admins.includes(value)) input.checked = input.disabled = true;
 			}
 
 			label.appendChild(input);
@@ -621,6 +641,7 @@
 				.then(response => {
 					var data = JSON.parse(response);
 					console.log(data);
+					trStat = data.header[0].status;
 					data.employee.forEach(async function(emp) {
 						if (emp.STATUS != 3) {
 							empArrAdmin.push(emp.NPK);
@@ -660,7 +681,7 @@
 
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
 					var judul_training_header = data.header[0].id_training_header;
-					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').href = (base_url + judul_training_header) + 0;
+					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').onclick = () => confirmDeleteTraining(judul_training_header + '0');
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
@@ -917,7 +938,6 @@
 	}
 
 	async function addEmp(id) {
-		console.log('adm: ' + isAdmin);
 		if (isAdmin) {
 			var index = empArrAdmin.indexOf(id);
 			if (index !== -1) {
@@ -933,6 +953,7 @@
 				empArrNon.push(id);
 			}
 		}
+		console.log(empArrAdmin);
 	}
 </script>
 
@@ -1020,11 +1041,12 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
+		const quer = trStat == 2 ? '' : onclick="addTags('tags${tag.id_tag}')";
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
 			// 
 			const cardHTML = `
-				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" onclick="addTags('tags${tag.id_tag}')"
+				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" ` + quer + `
 				onmouseover="mouseIn('tags${tag.id_tag}', '${tag.color}')" onmouseout="mouseOut('tags${tag.id_tag}', '${tag.color}')">${tag.name_tag}</span>
 			`;
 			if (code == 'detail') tags.push(tag.id_tag);
@@ -1127,10 +1149,12 @@
 			}
 		});
 
-		populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
-		tags.forEach(function(tag) {
-			document.getElementById('tags' + tag).style.borderColor = 'blue';
-		});
+		if (trStat != 2) {
+			populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
+			tags.forEach(function(tag) {
+				document.getElementById('tags' + tag).style.borderColor = 'blue';
+			});
+		}
 	}
 
 	async function checkAccess(part, file) {

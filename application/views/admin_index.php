@@ -70,7 +70,7 @@ ob_start();
 												<p class="m-0" style="font-size: 12px;"><?php echo $t->DEPARTEMEN ?></p>
 											</div>
 										</div>
-										<?php if ($countAdmin < 2) { ?>
+										<?php if ($countAdmin > 1) { ?>
 										<div class="close-icon" onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
 										<?php } ?>
 									</div>
