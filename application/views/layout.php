@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="assets/css/demo.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-WL4O1u9KxWui+de0KFLjHg2i3pgMVzS+5PxqU5FuFvRFA5R0d9tmmysBpRKnfdpDv2bR5Xs5Q+RipZgi8VtObQ==" crossorigin="anonymous" />
+
 </head>
 <?php
 $mode = '';

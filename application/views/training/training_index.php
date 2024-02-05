@@ -325,7 +325,7 @@ $combinedDataJSON = json_encode($combinedData);
 										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(4)">Persentase</th>
 										<th scope="col" class="text-center" style="width: 100px;">Tambah Partisipan</th>
 										<th scope="col" class="text-center" style="width: 100px;">Upload Materi</th>
-										<th scope="col" class="text-center">Permintaan</th>
+										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(7)">Permintaan</th>
 									</tr>
 								</thead>
 
@@ -347,12 +347,13 @@ $combinedDataJSON = json_encode($combinedData);
 								<thead>
 									<tr>
 										<th scope="col" class="text-center" style="width: 50px;">No.</th>
-										<th scope="col" class="text-center">Nama Karyawan</th>
-										<th scope="col" class="text-center" style="width: 300px;">Departemen</th>
-										<th scope="col" class="text-center" style="width: 100px;">Progres</th>
-										<th scope="col" class="text-center" style="width: 100px;">Persentase</th>
+										<th scope="col" class="text-center" onclick="sortDetailOnlyEmpTable(1)">Nama Karyawan</th>
+										<th scope="col" class="text-center" onclick="sortDetailOnlyEmpTable(2)">Departemen</th>
+										<th scope="col" class="text-center" onclick="sortDetailOnlyEmpTable(3)">Progres</th>
+										<th scope="col" class="text-center" onclick="sortDetailOnlyEmpTable(4)">Persentase</th>
 									</tr>
 								</thead>
+
 								<tbody id="tBodyDetailOnlyEmp">
 								</tbody>
 							</table>
@@ -423,6 +424,8 @@ $combinedDataJSON = json_encode($combinedData);
 
 			for (i = 1; i < rows.length - 1; i++) {
 				shouldSwitch = false;
+				var xNo = rows[i].getElementsByTagName("td")[0].innerHTML.toLowerCase();
+				var yNo = rows[i + 1].getElementsByTagName("td")[0].innerHTML.toLowerCase();
 				x = rows[i].getElementsByTagName("td")[column].innerHTML.toLowerCase();
 				y = rows[i + 1].getElementsByTagName("td")[column].innerHTML.toLowerCase();
 
@@ -446,6 +449,10 @@ $combinedDataJSON = json_encode($combinedData);
 					switching = true;
 					switchcount++;
 				}
+
+				// Update the No. column to maintain its original order
+				rows[i].getElementsByTagName("td")[0].innerHTML = i;
+				rows[i + 1].getElementsByTagName("td")[0].innerHTML = i + 1;
 			}
 
 			// Toggle the sorting direction if no switching occurred in the loop
@@ -456,16 +463,70 @@ $combinedDataJSON = json_encode($combinedData);
 		}
 
 		// Update the sorting icon in the table header
-		updateSortingIcon(column, dir);
+		updateSortingIcon(column, dir, "detailEmpTable");
 	}
 
-	function updateSortingIcon(column, dir) {
-		var headerRow = document.getElementById("detailEmpTable").getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+
+
+	function sortDetailOnlyEmpTable(column) {
+		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		table = document.getElementById("detailOnlyEmpTable");
+		switching = true;
+		dir = "asc"; // Set the initial sorting direction to ascending
+
+		while (switching) {
+			switching = false;
+			rows = table.rows;
+
+			for (i = 1; i < rows.length - 1; i++) {
+				shouldSwitch = false;
+				var xNo = rows[i].getElementsByTagName("td")[0].innerHTML.toLowerCase();
+				var yNo = rows[i + 1].getElementsByTagName("td")[0].innerHTML.toLowerCase();
+				x = rows[i].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+				y = rows[i + 1].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+
+				// Check if the two rows should switch places based on the sorting direction and column
+				if (dir === "asc") {
+					shouldSwitch = x.localeCompare(y) > 0;
+				} else if (dir === "desc") {
+					shouldSwitch = x.localeCompare(y) < 0;
+				}
+
+				if (shouldSwitch) {
+					rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+					switching = true;
+					switchcount++;
+				}
+
+				// Update the No. column to maintain its original order
+				rows[i].getElementsByTagName("td")[0].innerHTML = i;
+				rows[i + 1].getElementsByTagName("td")[0].innerHTML = i + 1;
+			}
+
+			// Toggle the sorting direction if no switching occurred in the loop
+			if (switchcount === 0 && dir === "asc") {
+				dir = "desc";
+				switching = true;
+			}
+		}
+
+		// Update the sorting icon in the table header
+		updateSortingIcon(column, dir, "detailOnlyEmpTable");
+	}
+
+	function updateSortingIcon(column, dir, tableName) {
+		var headerRow = document.getElementById(tableName).getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
 		var columns = headerRow.getElementsByTagName("th");
 
 		// Remove existing sorting icons
 		for (var i = 0; i < columns.length; i++) {
-			var icon = columns[i].getElementsByClassName("sorting-icon")[0];
+			var icon = columns[i].getElementsByClassName("la-chevron-circle-up")[0];
+			if (icon) {
+				columns[i].removeChild(icon);
+			}
+		}
+		for (var i = 0; i < columns.length; i++) {
+			var icon = columns[i].getElementsByClassName("la-chevron-circle-down")[0];
 			if (icon) {
 				columns[i].removeChild(icon);
 			}
@@ -473,7 +534,7 @@ $combinedDataJSON = json_encode($combinedData);
 
 		// Add new sorting icon to the clicked column
 		var icon = document.createElement("i");
-		icon.className = dir === "asc" ? "fas fa-sort-up sorting-icon" : "fas fa-sort-down sorting-icon";
+		icon.className = dir === "asc" ? "la la-chevron-circle-up " : "la la-chevron-circle-down";
 		columns[column].appendChild(icon);
 	}
 </script>
