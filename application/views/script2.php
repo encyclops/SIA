@@ -194,11 +194,11 @@
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
+
 		a.href = 'javascript:void(0)';
 		a.addEventListener('click', function(event) {
 			if (code == 'detail') {
 				fetch('<?= base_url('Training/addProgress/') ?>' + id)
-
 					.then(response => {
 						return response.text();
 					})
@@ -206,38 +206,36 @@
 						console.error('Error fetching data:', error);
 					});
 			}
-			var modal = document.getElementById('pdfModal');
-			modal.style.display = 'block';
 
-			var pdfViewer = document.getElementById('pdfViewer');
-			pdfViewer.src = `${path}#toolbar=0&zoom=100&view=FitH`;
+			// Check if the PDF row already exists
+			var pdfRow = tr.nextSibling;
+			if (pdfRow && pdfRow.classList.contains('pdf-row')) {
+				pdfRow.remove(); // Remove the existing PDF row
+			} else {
+				// Create a new row for displaying the PDF file
+				var newRow = document.createElement('tr');
+				newRow.classList.add('pdf-row');
 
-			var closeButton = document.getElementsByClassName('close')[0];
-			closeButton.onclick = function() {
-				if (code == 'main') window.location.reload();
-				else {
-					modal.style.display = 'none';
-					pdfViewer.src = '';
-					pdfViewer.contentWindow.document.body.oncontextmenu = function() {
-						return false;
-					}
-				}
+				var newCell = document.createElement('td');
+				newCell.colSpan = 3; // Set the colspan based on the number of columns in your table
+
+				var pdfViewer = document.createElement('iframe');
+				pdfViewer.src = `${path}#toolbar=0&zoom=100&view=FitH`;
+				pdfViewer.width = '100%'; // Set the width based on your preference
+				pdfViewer.height = '500px'; // Set the height based on your preference
+
+				newCell.appendChild(pdfViewer);
+				newRow.appendChild(newCell);
+
+				// Insert the new row below the current row
+				tr.parentNode.insertBefore(newRow, tr.nextSibling);
 			}
-
-			window.onclick = function(event) {
-				if (event.target === modal) {
-					modal.style.display = 'none';
-					pdfViewer.src = '';
-					pdfViewer.contentWindow.document.body.oncontextmenu = function() {
-						return false;
-					};
-				}
-			};
 		});
 
 		cell.appendChild(a);
 		tr.appendChild(cell);
 	}
+
 
 	function createTextCell(text, tr, code, align) {
 		var cell = document.createElement('td');
