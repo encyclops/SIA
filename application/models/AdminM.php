@@ -6,11 +6,6 @@ class AdminM extends CI_Model
     private $t_tag = "training_tag";
     private $t_tagdetail = "training_tag_detail";
 
-    /* Notes */
-    /*
-        getTagsByID($id)
-    */
-
     public function saveAdmin($npk)
     {
         $data = array(

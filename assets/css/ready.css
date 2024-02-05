@@ -6911,7 +6911,7 @@ body {
   color: red;
   padding: 10px;
   border-radius: 50%;
-  
+  display: none;
   cursor: pointer;
 }
 
@@ -6947,7 +6947,7 @@ body {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.card-color:hover , .card-admin:hover  {
+.close-icon, .card-admin:hover .close-icon  {
   display: block;
   top: 13% !important;
   right: 10% !important;
@@ -6959,8 +6959,6 @@ body {
   border-style: solid;
   border-width: 1px;
 }
-
-
 
 .demo-preview {
   padding-top: 100px;
