@@ -26,7 +26,7 @@
 		});
 	}
 
-	function changeForm(kode) {
+	function changeForm(kode, status) {
 		var listCardDiv = document.getElementById('listCardDiv');
 		var detailFormDiv = document.getElementById('detailFormDiv');
 		changeDisplayOfElements('block', ['temaDiv', 'substanceDiv']);
@@ -35,7 +35,7 @@
 
 			changeDisplayOfElements('block', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('none', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail', 'editBtn', 'deleteBtn', 'publishBtn']);
-			changeTitle('Ubah Training', true);
+			changeTitle('Ubah Training', true, status);
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
@@ -56,13 +56,13 @@
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
 			});
-			changeTitle('Tambah Training', true);
+			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
 			listCardDiv.style.display = 'none';
 			detailFormDiv.style.display = 'block';
 			changeDisplayOfElements('none', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('block', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail']);
-			changeTitle('Detail Training', true);
+			changeTitle('Detail Training', true, '');
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'none';
@@ -91,12 +91,15 @@
 		});
 	}
 
-	function changeTitle(title, call) {
+	function changeTitle(title, call, status) {
 		document.getElementById('cardTitle').textContent = title;
 		document.getElementById('cardCategory').textContent = 'Training / ' + title;
-		const isEditable = title.includes('Tambah') || (title.includes('Ubah') && trStat != 2);
-		document.getElementById('temaTraining').readOnly = !isEditable;
-		document.getElementById('pemateri').readOnly = !isEditable;
+		document.getElementById('temaTraining').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
+		document.getElementById('pemateri').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
+		if (status == 2) {
+			document.getElementById('temaTraining').readOnly = true;
+			document.getElementById('pemateri').readOnly = true;
+		}
 		if (call) callLoader();
 	}
 
@@ -123,7 +126,6 @@
 	}
 
 	function createInputCell(idname, type, placeholder, tr) {
-
 		var cell = document.createElement('td');
 		var input = document.createElement('input');
 		input.type = type;
@@ -324,9 +326,8 @@
 			}
 
 			// A condition when adding new admin
-			else if (stat == 'admin') {
-				if (empArrAdmin.includes(value)) input.checked = true;
-				if (admins.includes(value)) input.checked = input.disabled = true;
+			else if (stat == 'admin' && admins.includes(value)) {
+				input.checked = input.disabled = true;
 			}
 
 			label.appendChild(input);
@@ -606,7 +607,7 @@
 			t.deleteRow(i);
 		}
 
-		changeForm('detail');
+		changeForm('detail', '');
 
 		empArrAdmin = [];
 		const promises = [];
@@ -625,7 +626,9 @@
 				.then(response => {
 					var data = JSON.parse(response);
 					console.log(data);
-					trStat = data.header[0].status;
+					var status = data.header[0].status;
+					console.log(status + "sdf");
+
 					data.employee.forEach(async function(emp) {
 
 						if (emp.STATUS != 3) {
@@ -661,12 +664,12 @@
 					document.getElementById('temaTraining').value = data.header[0].judul_training_header;
 					document.getElementById('pemateri').value = data.header[0].pemateri;
 					document.getElementById('editBtn').onclick = function() {
-						doEdit(id);
+						doEdit(id, status);
 					};
 
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
 					var judul_training_header = data.header[0].id_training_header;
-					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').onclick = () => confirmDeleteTraining(judul_training_header + '0');
+					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').href = (base_url + judul_training_header) + 0;
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
@@ -1024,12 +1027,11 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
-		const quer = trStat == 2 ? '' : onclick="addTags('tags${tag.id_tag}')";
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
 			// 
 			const cardHTML = `
-			<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" ` + quer + `
+				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" onclick="addTags('tags${tag.id_tag}')"
 				onmouseover="mouseIn('tags${tag.id_tag}', '${tag.color}')" onmouseout="mouseOut('tags${tag.id_tag}', '${tag.color}')">${tag.name_tag}</span>
 			`;
 			if (code == 'detail') tags.push(tag.id_tag);
@@ -1054,7 +1056,7 @@
 
 <!-- Training Edit -->
 <script>
-	async function doEdit(id) {
+	async function doEdit(id, status) {
 		let npk = <?php echo $this->session->userdata('npk'); ?>;
 
 		let canEdit = false;
@@ -1072,7 +1074,7 @@
 			return;
 		}
 
-		changeForm('edit');
+		changeForm('edit', status);
 		// await checkAccess(npk, id);
 		rowCountMateriForm = 0;
 		var counterSub = 1;
@@ -1114,12 +1116,10 @@
 			}
 		});
 
-		if (trStat != 2) {
-			populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
-			tags.forEach(function(tag) {
-				document.getElementById('tags' + tag).style.borderColor = 'blue';
-			});
-		}
+		populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
+		tags.forEach(function(tag) {
+			document.getElementById('tags' + tag).style.borderColor = 'blue';
+		});
 	}
 
 	async function checkAccess(npk, id) {
@@ -1161,7 +1161,6 @@
 
 		materiTitleFields.forEach(function(fieldElement) {
 			var fieldValue = fieldElement.value.trim();
-
 			if (fieldValue === '') {
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
@@ -1174,21 +1173,21 @@
 			}
 		});
 
-		var additionalFields = [
+		var inputFields = [
 			'temaTraining'
-			// Add more fields if needed
+			// Add other input field IDs as needed
 		];
 
-		additionalFields.forEach(function(fieldId) {
+		inputFields.forEach(function(fieldId) {
 			var fieldValue = document.getElementById(fieldId).value.trim();
 			var fieldElement = document.getElementById(fieldId);
 
 			if (fieldValue === '') {
 				fieldElement.style.borderColor = 'red';
-				//	var label = document.querySelector('label[for="' + fieldId + '"]');
-				//var labelText = label ? label.textContent.trim() : fieldId;
-				// errors.push(labelText);
-				// errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				var label = document.querySelector('label[for="' + fieldId + '"]');
+				var labelText = label ? label.textContent.trim() : fieldId;
+				errors.push(labelText);
+				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
 			} else {
 				fieldElement.style.borderColor = ''; // Reset border
