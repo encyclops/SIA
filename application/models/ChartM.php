@@ -453,26 +453,30 @@ class ChartM extends CI_Model
         $npk = $this->session->userdata('npk');
         $query = $this->db->query(
             "   
-                SELECT
-                CONCAT(
-                    YEAR(modified_date),
-                    ' ',
-                    FORMAT(modified_date, 'MMMM', 'id-ID')
-                ) AS YearMonth,
-                COUNT(*) AS RecordCount
-            FROM
-                [training].[dbo].[training_progress]
-            WHERE
-                modified_date >= DATEADD(MONTH, -5, GETDATE()) 
-                and npk =  '$npk'
-            GROUP BY
-                YEAR(modified_date),
-                FORMAT(modified_date, 'MMMM', 'id-ID'),
-                MONTH(modified_date)
-            ORDER BY
-                YEAR(modified_date) ASC,
-                MONTH(modified_date) ASC;
-            
+            SELECT
+            CONCAT(
+                YEAR(tp.modified_date),
+                ' ',
+                FORMAT(tp.modified_date, 'MMMM', 'id-ID')
+            ) AS YearMonth,
+            COUNT(*) AS RecordCount
+        FROM
+            training_progress tp 
+            inner join training_detail td on  tp.id_training_detail = td.id_training_detail
+            inner join training_header th on th.id_training_header = td.id_training_header
+        WHERE
+            tp.modified_date >= DATEADD(MONTH, -5, GETDATE()) 
+            and npk =  '$npk'
+            and th.status = 2
+            and td.status =1
+        GROUP BY
+            YEAR(tp.modified_date),
+            FORMAT(tp.modified_date, 'MMMM', 'id-ID'),
+            MONTH(tp.modified_date)
+        ORDER BY
+            YEAR(tp.modified_date) ASC,
+            MONTH(tp.modified_date) ASC;
+        
             
               "
         );
