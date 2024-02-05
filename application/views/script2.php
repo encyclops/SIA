@@ -8,15 +8,16 @@
 	var rowCountMateriForm = 0;
 	var isAdmin = '<?php echo $this->session->userdata['role']; ?>' == 'admin';
 
-	function changeForm(kode) {
+	function changeForm(kode, status) {
 		var listCardDiv = document.getElementById('listCardDiv');
 		var detailFormDiv = document.getElementById('detailFormDiv');
 		changeDisplayOfElements('block', ['temaDiv', 'substanceDiv']);
 
 		if (kode.includes('edit')) {
+
 			changeDisplayOfElements('block', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('none', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail', 'editBtn', 'deleteBtn', 'publishBtn']);
-			changeTitle('Ubah Training', true);
+			changeTitle('Ubah Training', true, status);
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
@@ -37,13 +38,13 @@
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
 			});
-			changeTitle('Tambah Training', true);
+			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
 			listCardDiv.style.display = 'none';
 			detailFormDiv.style.display = 'block';
 			changeDisplayOfElements('none', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('block', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail']);
-			changeTitle('Detail Training', true);
+			changeTitle('Detail Training', true, '');
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'none';
@@ -72,11 +73,15 @@
 		});
 	}
 
-	function changeTitle(title, call) {
+	function changeTitle(title, call, status) {
 		document.getElementById('cardTitle').textContent = title;
 		document.getElementById('cardCategory').textContent = 'Training / ' + title;
 		document.getElementById('temaTraining').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
 		document.getElementById('pemateri').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
+		if (status == 2) {
+			document.getElementById('temaTraining').readOnly = true;
+			document.getElementById('pemateri').readOnly = true;
+		}
 		if (call) callLoader();
 	}
 
@@ -103,12 +108,18 @@
 	}
 
 	function createInputCell(idname, type, placeholder, tr) {
+
 		var cell = document.createElement('td');
 		var input = document.createElement('input');
 		input.type = type;
 		input.id = idname;
 		input.name = idname;
 		input.classList.add('form-control', 'form-control-sm');
+		console.log("dsfsd" + idname);
+		if (idname.includes('materiTitle')) {
+			console.log("dsd" + idname);
+			input.required = true;
+		}
 
 		type == 'hidden' ? input.value = placeholder : input.placeholder = placeholder;
 		if (type == 'hidden') {
@@ -219,38 +230,40 @@
 	}
 
 	function createBadgeApproval(idDetail, npk, id, tr) {
-		var cell = document.createElement('td');
-		cell.classList.add('text-center');
+		<?php if ($this->session->userdata('role') == 'admin') { ?>
+			var cell = document.createElement('td');
+			cell.classList.add('text-center');
 
-		var spanA = document.createElement("span");
-		spanA.className = "badge badge-success";
-		spanA.textContent = "Approve";
-		spanA.style.cursor = "pointer";
-		spanA.onclick = function() {
-			if (!spanA.disabled) {
-				modifyApproval(idDetail, npk, id, 1);
-				cell.removeChild(spanR);
-				spanA.disabled = true;
-			}
-		};
-		cell.appendChild(spanA);
+			var spanA = document.createElement("span");
+			spanA.className = "badge badge-success";
+			spanA.textContent = "Approve";
+			spanA.style.cursor = "pointer";
+			spanA.onclick = function() {
+				if (!spanA.disabled) {
+					modifyApproval(idDetail, npk, id, 1);
+					cell.removeChild(spanR);
+					spanA.disabled = true;
+				}
+			};
+			cell.appendChild(spanA);
 
-		var spanR = document.createElement("span");
-		spanR.className = "badge badge-danger";
-		spanR.textContent = "Reject";
-		spanR.style.cursor = "pointer";
-		spanR.onclick = function() {
-			if (!spanR.disabled) {
-				modifyApproval(idDetail, npk, id, 3);
-				cell.removeChild(spanA);
-				spanR.disabled = true;
-			}
-		};
-		cell.appendChild(spanR);
+			var spanR = document.createElement("span");
+			spanR.className = "badge badge-danger";
+			spanR.textContent = "Reject";
+			spanR.style.cursor = "pointer";
+			spanR.onclick = function() {
+				if (!spanR.disabled) {
+					modifyApproval(idDetail, npk, id, 3);
+					cell.removeChild(spanA);
+					spanR.disabled = true;
+				}
+			};
+			cell.appendChild(spanR);
 
-		tr.appendChild(cell);
+			tr.appendChild(cell);
+
+		<?php } ?>
 	}
-
 	async function createCheckboxCell(name, value, tr, id, code, stat) {
 		try {
 			//	console.log("stat", name, value, tr, id, code, stat);
@@ -576,7 +589,7 @@
 			t.deleteRow(i);
 		}
 
-		changeForm('detail');
+		changeForm('detail', '');
 
 		empArrAdmin = [];
 		const promises = [];
@@ -595,7 +608,11 @@
 				.then(response => {
 					var data = JSON.parse(response);
 					console.log(data);
+					var status = data.header[0].status;
+					console.log(status + "sdf");
+
 					data.employee.forEach(async function(emp) {
+
 						if (emp.STATUS != 3) {
 							empArrAdmin.push(emp.NPK);
 							// Data row
@@ -629,7 +646,7 @@
 					document.getElementById('temaTraining').value = data.header[0].judul_training_header;
 					document.getElementById('pemateri').value = data.header[0].pemateri;
 					document.getElementById('editBtn').onclick = function() {
-						doEdit(id);
+						doEdit(id, status);
 					};
 
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
@@ -669,6 +686,7 @@
 							changeDisplayOfElements('block', arr);
 						}
 					});
+
 				})
 				.catch(error => {
 					console.error('Error fetching data showdetail:', error);
@@ -691,9 +709,12 @@
 		const paging = document.getElementById('pagingContainer');
 		container.innerHTML = '';
 		paging.innerHTML = '';
-
+		<?php if ($this->session->userdata('role') == 'admin') { ?>
+			$abc = 1;
+		<?php } ?>
 		var counter = 1;
 		console.log(trainings);
+		console.log(isAdmin + "tes");
 		trainings.forEach((t, index) => {
 			const cardHTML = `
 				<div class="col-sm-3 card-item ${counter <= 4 ? 'fade-in' : 'fade-out hide-after-fade-out'}">
@@ -708,7 +729,9 @@
 								</div>
 								<div class="col-sm-6 justify-content-end d-flex">
 								${t.detail_request == "true" || t.participant_request == "true" ? 
-									'<span class="badge badge-warning">!</span>' : ''}
+									'<?php if ($this->session->userdata("role") == "admin") { ?>'+	
+									'<span class="badge badge-warning">!</span>'+
+									'<?php } ?>' : ''}
 								</div>
 							</div>
 						</div>
@@ -1015,7 +1038,7 @@
 
 <!-- Training Edit -->
 <script>
-	async function doEdit(id) {
+	async function doEdit(id, status) {
 		let npk = <?php echo $this->session->userdata('npk'); ?>;
 
 		let canEdit = false;
@@ -1033,7 +1056,7 @@
 			return;
 		}
 
-		changeForm('edit');
+		changeForm('edit', status);
 		// await checkAccess(npk, id);
 		rowCountMateriForm = 0;
 		var counterSub = 1;
@@ -1106,9 +1129,6 @@
 	}
 
 	function validateForm() {
-		var inputFields = [
-			'temaTraining'
-		];
 		var errorMessages = document.getElementById('errorMessages');
 
 		if (!errorMessages) {
@@ -1118,18 +1138,40 @@
 
 		var errors = [];
 
-		inputFields.forEach(function(fieldId) {
+		// Use attribute selector to select elements whose IDs or names contain 'materiTitle'
+		var materiTitleFields = document.querySelectorAll('[id*="materiTitle"], [name*="materiTitle"]');
+
+		materiTitleFields.forEach(function(fieldElement) {
+			var fieldValue = fieldElement.value.trim();
+
+			if (fieldValue === '') {
+				fieldElement.style.borderColor = 'red';
+				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
+				var labelText = label ? label.textContent.trim() : fieldElement.id;
+				errors.push(labelText);
+				//	errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				fieldElement.classList.remove('mb-3');
+			} else {
+				fieldElement.style.borderColor = ''; // Reset border
+			}
+		});
+
+		var additionalFields = [
+			'temaTraining'
+			// Add more fields if needed
+		];
+
+		additionalFields.forEach(function(fieldId) {
 			var fieldValue = document.getElementById(fieldId).value.trim();
 			var fieldElement = document.getElementById(fieldId);
 
 			if (fieldValue === '') {
-
 				fieldElement.style.borderColor = 'red';
-				var label = document.querySelector('label[for="' + fieldId + '"]');
-				var labelText = label ? label.textContent.trim() : '' + fieldId;
-				errors.push(labelText);
-				errorMessages.textContent = '* Tema training wajib diisi!';
-				document.getElementById('temaTraining').classList.remove('mb-3');
+				//	var label = document.querySelector('label[for="' + fieldId + '"]');
+				//var labelText = label ? label.textContent.trim() : fieldId;
+				// errors.push(labelText);
+				// errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				fieldElement.classList.remove('mb-3');
 			} else {
 				fieldElement.style.borderColor = ''; // Reset border
 			}

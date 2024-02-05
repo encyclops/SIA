@@ -83,7 +83,32 @@ class Admin extends CI_Controller
     public function deleteTag($id)
     {
         if (!$this->isAllowed()) return redirect(site_url());
-        $this->AdminM->deleteTag($id);
+        $count = $this->AdminM->getCountTag($id);
+        print_r($count);
+        if ($count > 0) {
+            echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+            echo '<script>
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Taggar tidak bisa dihapus karena masih digunakan",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                    });
+                  </script>';
+        } else {
+            $this->AdminM->deleteTag($id);
+            echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+            echo '<script>
+                Swal.fire({
+                    title: "Success!",
+                    text: "Taggar berhasil dihapus",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }).then(function(){
+                    window.location.href = "' . site_url('Admin') . '";
+                });
+              </script>';
+        }
         redirect(site_url('Admin'));
     }
 }

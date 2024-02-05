@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="assets/css/demo.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-WL4O1u9KxWui+de0KFLjHg2i3pgMVzS+5PxqU5FuFvRFA5R0d9tmmysBpRKnfdpDv2bR5Xs5Q+RipZgi8VtObQ==" crossorigin="anonymous" />
 </head>
 <?php
 $mode = '';
@@ -49,9 +50,11 @@ function isActive($url)
 
 							</a>
 							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
-								<!-- <li>
-									<div class="dropdown-title" id="totalNotifTitle">Kamu memiliki <?php echo $totalNotif; ?> notifikasi</div>
-								</li> -->
+								<?php if ($totalNotif == 0) { ?>
+									<li>
+										<div class="dropdown-title" id="totalNotifTitle">Kamu memiliki tidak memiliki notifikasi</div>
+									</li>
+								<?php } ?>
 								<li>
 									<div class="notif-center">
 
@@ -64,7 +67,7 @@ function isActive($url)
 															<?php echo $e->judul; ?>
 														</span>
 														<span class="time"> Pengajuan <?php echo $e->npk; ?> ditolak</span><br>
-														<span class="time">(Klik untuk Hapus)</span>
+														<span class="time">(Tandai telah dibaca)</span>
 													</div>
 												</a>
 											</div>
@@ -122,7 +125,7 @@ function isActive($url)
 							<a href="<?php echo base_url('Chart') ?>">
 								<i class="la la-user-secret"></i>
 								<p>Dashboard</p>
-								<span class="badge badge-count">50</span>
+								<!-- <span class="badge badge-count">50</span> -->
 							</a>
 						</li>
 					<?php } ?>
@@ -131,15 +134,15 @@ function isActive($url)
 						<a href="<?php echo base_url('Training') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Training</p>
-							<span class="badge badge-count">5</span>
+							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
 					<?php if ($this->session->userdata('role') == 'admin') { ?>
 						<li class="nav-item <?php echo isActive('Admin') ?>">
 							<a href="<?php echo base_url('Admin') ?>">
 								<i class="la la-user-secret"></i>
-								<p>Admin</p>
-								<span class="badge badge-count">50</span>
+								<p>Master Data</p>
+								<!-- <span class="badge badge-count">50</span> -->
 							</a>
 						</li>
 					<?php } ?>
@@ -147,7 +150,7 @@ function isActive($url)
 						<a href="<?php echo base_url('Personal') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Rangkuman Saya</p>
-							<span class="badge badge-count">5</span>
+							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
 				</ul>
@@ -156,7 +159,7 @@ function isActive($url)
 						<a href="javascript:void(0)" onclick="confirmLogout()">
 							<i class="la la-sign-out"></i>
 							<p>Logout</p>
-							<span class="badge badge-count">5</span>
+							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
 				</ul>
@@ -166,14 +169,15 @@ function isActive($url)
 			<div class="content">
 				<?php echo $contentPlaceHolder; ?>
 			</div>
-			<footer class="footer">
-				<div class="container-fluid">
-					<div class="copyright ml-auto">
-						<i class="la la-copyright"></i> 2023 - IT <i class="la la-heart heart text-danger"></i> - PT. Akashi Wahana Indonesia. All Rights Reserved.
-					</div>
-				</div>
-			</footer>
+
 		</div>
+		<footer class="footer">
+			<div class="container-fluid">
+				<div class="copyright ml-auto ">
+					<i class="la la-copyright"></i> 2023 - IT <i class="la la-heart heart text-danger"></i> - PT. Akashi Wahana Indonesia. All Rights Reserved.
+				</div>
+			</div>
+		</footer>
 	</div>
 	</div>
 </body>
@@ -234,6 +238,7 @@ function isActive($url)
 	function confirmDeleteTag(id, total) {
 		Swal.fire({
 			title: 'Konfirmasi Hapus Tagar',
+
 			text: total < 1 ? 'Apakah Anda yakin ingin menghapus data ini?' : 'Tag masih terhubung dengan training!',
 			icon: total < 1 ? 'warning' : 'error',
 			showCancelButton: true,

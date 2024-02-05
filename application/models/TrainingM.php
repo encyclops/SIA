@@ -272,7 +272,7 @@ class TrainingM extends CI_Model
     public function getTrainingByStatus($status)
     {
         $quer = '';
-        if ($status == '> x') { 
+        if ($status == '> x') {
             $status = '> 0';
             $quer = "WHERE subquery.detail_request = 'true' OR subquery.participant_request = 'true'";
         }
@@ -519,5 +519,15 @@ class TrainingM extends CI_Model
         );
 
         return $this->db->update($this->t_detail, $data, $where);
+    }
+
+    public function checkStatusTrain($id)
+    {
+        $query = $this->db->query(
+            "   
+            select status from training_header where id_training_header = " . $id
+        );
+
+        return $query->result();
     }
 }

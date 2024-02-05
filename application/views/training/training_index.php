@@ -21,11 +21,6 @@ foreach ($substance as $s) {
 }
 $combinedDataJSON = json_encode($combinedData);
 ?>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-<!-- Remember to include jQuery :) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 <div class="container-fluid">
 	<div id="listCardDiv">
 		<div class="row">
@@ -80,25 +75,25 @@ $combinedDataJSON = json_encode($combinedData);
 				</div>
 			</div>
 		</div>
-		<?php if($this->session->userdata('role') == 'admin') { ?>
-		<div class="row">
-			<div class="col-md-12 mb-2 p-3 d-flex justify-content-center">
-				<ul class="nav nav-pills nav-primary" id="statusTabs">
-					<li class="nav-item">
-						<a id="allTab" class="nav-link active" href="javascript:void(0)" onclick="toggleTab('all')">All</a>
-					</li>
-					<li class="nav-item">
-						<a id="publishedTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('published')">Published</a>
-					</li>
-					<li class="nav-item">
-						<a id="draftTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('draft')">Draft</a>
-					</li>
-					<li class="nav-item">
-						<a id="allWithRequestTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('allWithRequest')">Published with Request</a>
-					</li>
-				</ul>
+		<?php if ($this->session->userdata('role') == 'admin') { ?>
+			<div class="row">
+				<div class="col-md-12 mb-2 p-3 d-flex justify-content-center">
+					<ul class="nav nav-pills nav-primary" id="statusTabs">
+						<li class="nav-item">
+							<a id="allTab" class="nav-link active" href="javascript:void(0)" onclick="toggleTab('all')">All</a>
+						</li>
+						<li class="nav-item">
+							<a id="publishedTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('published')">Published</a>
+						</li>
+						<li class="nav-item">
+							<a id="draftTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('draft')">Draft</a>
+						</li>
+						<li class="nav-item">
+							<a id="allWithRequestTab" class="nav-link" href="javascript:void(0)" onclick="toggleTab('allWithRequest')">Published with Request</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</div>
 		<?php } ?>
 		<div class="row" id="trainingContainer">
 			<?php $i = 1;
@@ -117,9 +112,14 @@ $combinedDataJSON = json_encode($combinedData);
 									<?php } ?>
 								</div>
 								<div class="col-sm-6 justify-content-end d-flex">
-									<?php if ($t->detail_request == 'true' || $t->participant_request == 'true') { ?>
-										<span class="badge badge-warning">!</span>
-									<?php } ?>
+									<?php
+									if ($t->detail_request == 'true' || $t->participant_request == 'true') {
+										if ($this->session->userdata("role") == "admin") {
+											echo '<span class="badge badge-warning">!</span>';
+										}
+									}
+									?>
+
 								</div>
 							</div>
 						</div>
@@ -319,15 +319,16 @@ $combinedDataJSON = json_encode($combinedData);
 								<thead>
 									<tr>
 										<th scope="col" class="text-center" style="width: 60px;">No.</th>
-										<th scope="col" class="text-center" style="width: 350px;">Nama Karyawan</th>
-										<th scope="col" class="text-center" style="width: 300px;">Departemen</th>
-										<th scope="col" class="text-center" style="width: 100px;">Progres</th>
-										<th scope="col" class="text-center" style="width: 100px;">Persentase</th>
+										<th scope="col" class="text-center" style="width: 350px;" onclick="sortDetailEmpTable(1)">Nama Karyawan</th>
+										<th scope="col" class="text-center" style="width: 300px;" onclick="sortDetailEmpTable(2)">Departemen</th>
+										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(3)">Progres</th>
+										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(4)">Persentase</th>
 										<th scope="col" class="text-center" style="width: 100px;">Tambah Partisipan</th>
 										<th scope="col" class="text-center" style="width: 100px;">Upload Materi</th>
 										<th scope="col" class="text-center">Permintaan</th>
 									</tr>
 								</thead>
+
 								<tbody id="tBodyDetailEmp">
 								</tbody>
 							</table>
@@ -409,6 +410,74 @@ $combinedDataJSON = json_encode($combinedData);
 		$('#detailEmpTable').DataTable();
 	});
 </script>
+<script>
+	function sortDetailEmpTable(column) {
+		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		table = document.getElementById("detailEmpTable");
+		switching = true;
+		dir = "asc"; // Set the initial sorting direction to ascending
+
+		while (switching) {
+			switching = false;
+			rows = table.rows;
+
+			for (i = 1; i < rows.length - 1; i++) {
+				shouldSwitch = false;
+				x = rows[i].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+				y = rows[i + 1].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+
+				// Check if the two rows should switch places based on the sorting direction and column
+				if (dir === "asc") {
+					if (column === 1 || column === 2) {
+						shouldSwitch = x.localeCompare(y) > 0;
+					} else if (column === 3 || column === 4) {
+						shouldSwitch = parseFloat(x) > parseFloat(y);
+					}
+				} else if (dir === "desc") {
+					if (column === 1 || column === 2) {
+						shouldSwitch = x.localeCompare(y) < 0;
+					} else if (column === 3 || column === 4) {
+						shouldSwitch = parseFloat(x) < parseFloat(y);
+					}
+				}
+
+				if (shouldSwitch) {
+					rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+					switching = true;
+					switchcount++;
+				}
+			}
+
+			// Toggle the sorting direction if no switching occurred in the loop
+			if (switchcount === 0 && dir === "asc") {
+				dir = "desc";
+				switching = true;
+			}
+		}
+
+		// Update the sorting icon in the table header
+		updateSortingIcon(column, dir);
+	}
+
+	function updateSortingIcon(column, dir) {
+		var headerRow = document.getElementById("detailEmpTable").getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+		var columns = headerRow.getElementsByTagName("th");
+
+		// Remove existing sorting icons
+		for (var i = 0; i < columns.length; i++) {
+			var icon = columns[i].getElementsByClassName("sorting-icon")[0];
+			if (icon) {
+				columns[i].removeChild(icon);
+			}
+		}
+
+		// Add new sorting icon to the clicked column
+		var icon = document.createElement("i");
+		icon.className = dir === "asc" ? "fas fa-sort-up sorting-icon" : "fas fa-sort-down sorting-icon";
+		columns[column].appendChild(icon);
+	}
+</script>
+
 
 <?php include __DIR__ . '/../script2.php'; ?>
 <?php

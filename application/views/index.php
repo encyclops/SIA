@@ -42,11 +42,11 @@
 								<form action="<?php echo base_url() ?>login/checkLogin" method="post" enctype="multipart/form-data">
 									<div class="card-body">
 										<div class="form-group">
-											<label for="pillInput">NPK</label>
+											<label for="pillInput">NPK<span style="color: red;">*</span></label>
 											<input type="text" class="form-control input-pill" id="npk" name="npk" placeholder="NPK" required>
 										</div>
 										<div class="form-group">
-											<label for="pillInput"> Password</label>
+											<label for="pillInput"> Password<span style="color: red;">*</span></label>
 											<input type="password" class="form-control input-pill" id="password" name="password" placeholder="Password">
 										</div>
 									</div>

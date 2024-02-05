@@ -167,8 +167,8 @@ class ChartM extends CI_Model
                         SELECT top 10
                             at.id_training_detail,
                             at.id_training_header,
-                            at.total,
-                            at.judul_training_header,
+                            at.total AS total,
+                            at.judul_training_header judul_training_header,
                             at.judul_training_detail,
                             SUM(at.total) OVER (PARTITION BY at.id_training_header) AS total2
                         FROM
@@ -366,11 +366,12 @@ class ChartM extends CI_Model
                        AND d.id_training_header = hi.id_training_header
                        AND d.status = 1) AS progress_count,
                     (SELECT COUNT(*)
-                     FROM training_detail d
-                     JOIN training_access a ON a.id_training_header = d.id_training_header
-                     WHERE a.npk = hi.npk 
-                       AND d.id_training_header = hi.id_training_header
-                       AND a.access_permission = 1) AS total_count
+                    FROM training_detail d
+                    JOIN training_access a ON a.id_training_header = d.id_training_header
+                    inner join training_header he on a.id_training_header = he.id_training_header
+                    WHERE a.npk = hi.npk 
+                      AND d.id_training_header = hi.id_training_header
+                      AND a.access_permission = 1 AND he.status='2' and d.status='1') AS total_count
                 FROM HeaderInfo hi
             )
             SELECT

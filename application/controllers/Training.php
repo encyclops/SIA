@@ -127,6 +127,7 @@ class Training extends CI_Controller
 		if (!$this->session->userdata('isLogin')) {
 			return redirect('Login');
 		} else {
+			// $checkStatus = $this->TrainingM->checkStatustrain($id);
 			$this->TrainingM->modifyTrainingHeader();
 			$employees = $this->input->post('empSelected');
 			if (!empty($employees)) {

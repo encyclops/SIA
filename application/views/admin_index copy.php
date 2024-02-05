@@ -25,47 +25,84 @@ ob_start();
 						</div>
 					</div>
 				</div>
-				<div class="card-body" style="max-height: 480px; overflow-y: scroll; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-					<?php
-					$i = 1;
-					if (empty($admin)) {
-					?>y
-					<div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
-
-						<img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
-
+				<!-- <div class="card-body pt-1">
+				<?php $i = 1;
+				foreach ($admin as $t) { ?>
+					<div class="row m-0 py-2 user" style="border-bottom: 1px solid #ebedf2 !important;">
+						<div class="col-sm-1 p-0 photo">
+							<img src="assets/img/profile.jpg">
+						</div>
+						<div class="col-sm-9 info">
+							<b><p class="m-0 pt-1"><?php echo $t->NAMA ?></p></b>
+							<p class="m-0"><?php echo $t->DEPARTEMEN ?></p>
+						</div>
+						<?php if ($countAdmin < 2) { ?>
+							<div class="close-icon" onclick="confirmDeleteAdmin('x')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+						<?php } else { ?>
+							<div class="close-icon" onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+						<?php } ?>
+						
 					</div>
-					<hr>
-					<h5 style="text-align: center;">Data Tidak Ada</h5>
-					<?php
-					} else {
-						foreach ($admin as $t) {
-					?>
-						<li class="d-flex mb-2	 pb-1  ">
-							<div class="avatar flex-shrink-0 me-3">
-								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="max-width: 40px; max-height: 40px; " />
-							</div>
-							<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-3">
-								<div class="me-2" style="padding-right: 10px; padding-left: 10px">
-									<span class="user-level" style="font-size:larger;">
-										<h6> <?php echo $t->NAMA ?></h6>
-									</span>
-									<small class="text-muted d-block mb-1">
-										<h8><?php echo $t->DEPARTEMEN ?></h8>
-									</small>
+				<?php $i++;
+				} ?>
+				</div> -->
+				<div class="card-body pt-1">
+					<div class="card-body" style="max-height: 480px; overflow-y: scroll;">
+
+						<div class="row" id="adminList">
+							<?php $i = 1;
+							foreach ($admin as $t) { ?>
+								<div class="col-sm-6 my-2">
+									<div class="card-rounded card-admin" id="<?php echo $t->NPK ?>">
+										<div class="m-0 p-3 user">
+											<div class="photo mb-2" style="max-width: 100px;">
+												<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg">
+											</div>
+											<div class="info">
+												<b>
+													<p class="m-0 pt-1"><?php echo $t->NAMA ?></p>
+												</b>
+												<p class="m-0" style="font-size: 12px;"><?php echo $t->DEPARTEMEN ?></p>
+											</div>
+										</div>
+										<div class="close-icon" onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+									</div>
 								</div>
 
-								<div class="user-progress d-flex align-items-center gap-1">
-									<a onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></a>
-								</div>
-							</div>
-						</li>
-						<hr>
-				<?php
-							$i++;
-						}
-					} ?>
+							<?php $i++;
+							} ?>
+						</div>
+					</div>
 				</div>
+				<!-- <div class="card-body" style="max-height: 300px; overflow-y: scroll;">
+					<table id="mainTable" name="table" class="table table-hover table-head-bg-info my-2">
+						<thead>
+							<tr>
+								<th scope="col" class="text-center" style="width: 50px;">No.</th>
+								<th scope="col" class="text-center" style="width: 700px;">Nama</th>
+								<th scope="col" class="text-center" style="width: 700px;">Departemen</th>
+								<th scope="col" class="text-center">Aksi</th>
+							</tr>
+						</thead>
+						<tbody id="tBodymainTable">
+							<?php $i = 1;
+							foreach ($admin as $t) { ?>
+								<tr >
+									<td><?php echo $i ?></td>
+									<td><?php echo $t->NAMA ?></td>
+									<td><?php echo $t->DEPARTEMEN ?></td>
+									<td class="text-center">
+										<?php if ($countAdmin < 2) { ?>
+											<button title="Hapus" class="btn btn-danger float-right" disabled >Hapus</button></td>
+										<?php } else {
+										?><a href="javascript:void(0)" onclick="confirmDeleteAdmin(<?php echo $t->NPK ?>)" title="Hapus" class="btn btn-danger float-right">Hapus</a></td>
+										<?php } ?>
+									</tr>
+							<?php $i++;
+							} ?>
+						</tbody>
+					</table>
+				</div> -->
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -104,7 +141,7 @@ ob_start();
 									<b>
 										<h5 class="mb-0 ml-3 my-3" style="color: <?php echo $textColor ?>"><?php echo $t->name_tag ?></h5>
 									</b>
-									<div class="close-icon" onclick="confirmDeleteTag(<?php echo $t->id_tag ?>, <?php echo $t->total ?>)"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+									<div class="close-icon" onclick="confirmDeleteTag(<?php echo $t->id_tag ?>)"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
 								</div>
 							</div>
 						<?php $i++;
