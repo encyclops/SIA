@@ -60,7 +60,7 @@ function isActive($url)
 
 										<?php foreach ($notif as $e) { ?>
 											<div class="notification-container" data-id="<?= $e->npk ?>">
-												<a href="javascript:void(0)" onclick="removeNotification(<?= $e->npk ?>, <?= $e->id_training_header ?>, $('#totalNotif'));" class="time">
+												<a href="javascript:void(0)" onclick="removeNotification('<?= $e->npk ?>', <?= $e->id_training_header ?>, $('#totalNotif'));" class="time">
 													<div class="notif-icon notif-danger"> <i class="la la-trash"></i> </div>
 													<div class="notif-content">
 														<span class="block">
@@ -279,7 +279,7 @@ function isActive($url)
 			},
 			success: function() {
 				console.log(id + "sf");
-				$('.notification-container[data-id="' + id + '"]').hide();
+				$('.notification-container[data-id="' + npk + '"]').hide();
 
 				// Update totalNotif dynamically
 				totalNotifElement.text(function(i, text) {
