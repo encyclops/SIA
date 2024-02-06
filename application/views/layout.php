@@ -148,12 +148,12 @@ function isActive($url)
 		</div>
 		<div class="sidebar">
 			<div class="scrollbar-inner sidebar-wrapper">
-				<div class="user">
+				<div class="user" style="overflow: hidden;">
 					<div class="info">
 						<a>
 							<span>
-								<span> Hai, <b><span id="username"><?php echo $this->session->userdata('nama'); ?></span></b></span>
-								<span class="user-level" id="user-department"><?php echo $this->session->userdata('departemen'); ?></span>
+								<span><span class="truncate">Hai,&ensp;</span><b><span id="username" class="truncate"><?php echo $this->session->userdata('nama'); ?></span></b></span>
+								<span class="user-level truncate" id="user-department" style="max-width: 100%;"><?php echo $this->session->userdata('departemen'); ?></span>
 							</span>
 						</a>
 					</div>
@@ -376,33 +376,5 @@ function isActive($url)
 			}
 		});
 	}
-
-	// function showDeleteText(element) {
-	// 	const deleteText = element.querySelector('.delete-text');
-	// 	deleteText.style.animation = 'slideIn 0.3s ease-in-out';
-	// }
-
-	// function hideDeleteText(element) {
-	// 	const deleteText = element.querySelector('.delete-text');
-	// 	deleteText.style.animation = 'slideOut 0.3s ease-in-out';
-	// }
-
-	// Get the username and department elements
-	var usernameElement = document.getElementById('username');
-	var departmentElement = document.getElementById('user-department');
-
-	// Set the maximum length for username and department
-	var maxUsernameLength = 15; // Set your desired maximum length
-	var maxDepartmentLength = 25; // Set your desired maximum length
-
-	// Check and append ellipsis if the text is too long
-	if (usernameElement.textContent.length > maxUsernameLength) {
-		usernameElement.textContent = usernameElement.textContent.substring(0, maxUsernameLength) + '...';
-	}
-
-	if (departmentElement.textContent.length > maxDepartmentLength) {
-		departmentElement.textContent = departmentElement.textContent.substring(0, maxDepartmentLength) + '...';
-	}
 </script>
-
 </html>
