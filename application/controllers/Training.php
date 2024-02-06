@@ -81,7 +81,15 @@ class Training extends CI_Controller
 				$count++;
 			}
 		}
-
+		// foreach ($this->input->post() as $key => $value) {
+		// 	if (strpos($key, 'materiTitle') !== false && $this->input->post('materiFile' . substr($key, 10)) !== null) {
+		// 		$count++;
+		// 	} else if(strpos($key, 'materiTitle') !== false){
+		// 		$count++;
+		// 	}else if($this->input->post('materiFile' . substr($key, 10)) !== null){
+		// 		$count++;
+		// 	}
+		// }
 		for ($i = 1; $i <= $count; $i++) {
 			$judulMateri = $this->input->post('materiTitle' . $i);
 
@@ -151,7 +159,7 @@ class Training extends CI_Controller
 				foreach ($tags as $tag) {
 					if (!$this->TrainingM->getDataTag($tag, $id)) $this->TrainingM->saveTagDetail($tag, $id);
 				}
-			} 
+			}
 
 			$idDetail = $this->TrainingM->getSubstanceByTraining($id);
 			$materiIdArray = array();

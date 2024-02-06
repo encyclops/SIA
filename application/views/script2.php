@@ -716,7 +716,12 @@
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
-					isDataTableExist(rowCountMateriForm, 'x', 3, 'emptyData', 'tBodySubstanceTableDetail');
+					if (isAdmin) {
+						isDataTableExist(rowCountMateriForm, 'x', 4, 'emptyData', 'tBodySubstanceTableDetail');
+					} else {
+						isDataTableExist(rowCountMateriForm, 'x', 3, 'emptyData', 'tBodySubstanceTableDetail');
+
+					}
 					if (rowCountMateriForm != 0) {
 						data.substance.forEach(function(substance) {
 							var tableBody = document.getElementById('tBodySubstanceTableDetail');
@@ -1204,85 +1209,32 @@
 	}
 
 	function validateForm() {
+		var inputFields = [
+			'temaTraining'
+		];
 		var errorMessages = document.getElementById('errorMessages');
-		var errorMessageSubstance = document.getElementById('errorMessageSubstance');
-		var errorMessageUpload = document.getElementById('errorMessageUpload'); // New error message element for materiFile
 
 		if (!errorMessages) {
 			console.error("Error: 'errorMessages' element not found.");
 			return;
 		}
-		if (!errorMessageSubstance) {
-			console.error("Error: 'errorMessageSubstance' element not found.");
-			return;
-		}
-		if (!errorMessageUpload) {
-			console.error("Error: 'errorMessageUpload' element not found.");
-			return;
-		}
 
 		var errors = [];
-		var errors2 = [];
-		var errors3 = [];
-
-		// Validation for materiFile field
-		// Validation for materiFile field
-		var materiFileFields = document.querySelectorAll('[id*="materiFile"], [name*="materiFile"]');
-		materiFileFields.forEach(function(fieldElement) {
-			var fieldValue = fieldElement.value.trim();
-			if (fieldValue === '') {
-				fieldElement.style.borderColor = 'red';
-				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
-				var labelText = label ? label.textContent.trim() : "File";
-				errors3.push(labelText);
-				errorMessageUpload.textContent = '* ' + labelText + ' wajib diupload!';
-				errorMessageUpload.style.display = 'block'; // Show the error message
-				fieldElement.classList.remove('mb-3');
-			} else {
-				fieldElement.style.borderColor = '';
-				errorMessageUpload.textContent = ''; // Clear the error message
-				errorMessageUpload.style.display = 'none'; // Hide the error message
-			}
-		});
-
-		// Use attribute selector to select elements whose IDs or names contain 'materiTitle'
-		var materiTitleFields = document.querySelectorAll('[id*="materiTitle"], [name*="materiTitle"]');
-		materiTitleFields.forEach(function(fieldElement) {
-			var fieldValue = fieldElement.value.trim();
-			if (fieldValue === '') {
-				fieldElement.style.borderColor = 'red';
-				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
-				var labelText = label ? label.textContent.trim() : "judul";
-				errors2.push(labelText);
-				errorMessageSubstance.textContent = '* ' + labelText + ' wajib diisi!';
-				fieldElement.classList.remove('mb-3');
-			} else {
-				fieldElement.style.borderColor = '';
-				errorMessageSubstance.textContent = ''; // Clear the error message
-				errorMessageSubstance.style.display = 'none'; // Hide the error message
-			}
-		});
-
-		var inputFields = [
-			'temaTraining'
-			// Add other input field IDs as needed
-		];
 
 		inputFields.forEach(function(fieldId) {
 			var fieldValue = document.getElementById(fieldId).value.trim();
 			var fieldElement = document.getElementById(fieldId);
 
 			if (fieldValue === '') {
+
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldId + '"]');
-				var labelText = label ? label.textContent.trim().replace(/\*/g, '') : fieldId;
+				var labelText = label ? label.textContent.trim() : '' + fieldId;
 				errors.push(labelText);
-				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
-				fieldElement.classList.remove('mb-3');
+				errorMessages.textContent = '* Tema training wajib diisi!';
+				document.getElementById('temaTraining').classList.remove('mb-3');
 			} else {
-				fieldElement.style.borderColor = '';
-				errorMessage.textContent = ''; // Clear the error message
-				errorMessage.style.display = 'none'; // Hide the error message
+				fieldElement.style.borderColor = ''; // Reset border
 			}
 		});
 
@@ -1292,7 +1244,7 @@
 				behavior: 'smooth',
 				block: 'start'
 			});
-		} else if (errors2.length > 0 || errors3.length > 0) {} else {
+		} else {
 			errorMessages.textContent = ''; // Clear error messages
 			submitEdit('training');
 		}

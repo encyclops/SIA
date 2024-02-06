@@ -391,7 +391,9 @@ $combinedDataJSON = json_encode($combinedData);
 										<th scope="col" class="text-center" style="width: 50px;">No.</th>
 										<th scope="col" class="text-center" style="width: 600px;">Judul Materi</th>
 										<th scope="col" class="text-center" style="width: 600px;">File</th>
-										<th scope="col" class="text-center" style="width: 600px;">Aksi</th>
+										<?php if ($this->session->userdata['role'] == 'admin') { ?>
+											<th scope="col" class="text-center" style="width: 600px;">Aksi</th>
+										<?php } ?>
 									</tr>
 								</thead>
 								<tbody id="tBodySubstanceTableDetail">

@@ -245,7 +245,7 @@ ob_start();
 									<input type="text" class="form-control input-pill mb-3" name="nameTag" id="nameTag" placeholder="Masukkan Nama Tag Baru" required="">
 								</div>
 								<div class="col">
-									<label for="tagTraining" class="my-2">Pilih Warna <span style="color: red;">*</span></label>
+									<label for="tagTraining" class="my-2">Pilih Warna </label>
 									<input type="color" id="colorTag" name="colorTag" value="#ffffff" class="form-control mb-3;" style="height: 42%;">
 								</div>
 							</div>
