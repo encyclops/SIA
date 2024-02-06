@@ -120,54 +120,54 @@ ob_start();
     </div>
   </div>
   <div class="col-md-5">
-    <div class="card" style="overflow-y: scroll;">
-      <!-- <div class="card-body" style="overflow-y: scroll;"> -->
+    <div class="card">
+      <div class="card-body" style="overflow-y: scroll;">
 
-      <?php foreach ($getCountMyDonePercent as $e) { ?>
-        <div class="progress-card">
-          <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted"><?php echo $e->judul_training_header; ?></span>
-            <span class="text-muted fw-bold">
-              <?php echo intval($e->percentage); ?>%</span>
-          </div>
-          <?php
-          if (!function_exists('calculateColor')) {
-            function calculateColor($percentage)
-            {
-              $startColor = [216, 19, 37]; // RGB values for #E30000
-              $middleColor = [248, 229, 60]; // RGB values for middle color
-              $endColor = [55, 227, 49]; // RGB values for #59d05d
-
-              if ($percentage <= 50) {
-                $r = $startColor[0] + ($middleColor[0] - $startColor[0]) * (2 * $percentage / 100);
-                $g = $startColor[1] + ($middleColor[1] - $startColor[1]) * (2 * $percentage / 100);
-                $b = $startColor[2] + ($middleColor[2] - $startColor[2]) * (2 * $percentage / 100);
-              } else {
-                $r = $middleColor[0] + ($endColor[0] - $middleColor[0]) * (2 * ($percentage - 50) / 100);
-                $g = $middleColor[1] + ($endColor[1] - $middleColor[1]) * (2 * ($percentage - 50) / 100);
-                $b = $middleColor[2] + ($endColor[2] - $middleColor[2]) * (2 * ($percentage - 50) / 100);
-              }
-
-              return sprintf("#%02x%02x%02x", $r, $g, $b);
-            }
-          }
-
-          // ... (rest of your code)
-
-          $percentage = "10";
-          $color = calculateColor($percentage);
-          ?>
-
-          <div class="progress progress-striped active">
-            <div role="progressbar" class="progress-bar" style="width: 70%; background-color: <?php echo $color; ?>">
-              <!-- Your content goes here -->
+        <?php foreach ($getCountMyDonePercent as $e) { ?>
+          <div class="progress-card">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted"><?php echo $e->judul_training_header; ?></span>
+              <span class="text-muted fw-bold">
+                <?php echo intval($e->percentage); ?>%</span>
             </div>
-            <!-- <span>"tambah disini untuk kasih kata" di progress bar</span> -->
-          </div>
+            <?php
+            if (!function_exists('calculateColor')) {
+              function calculateColor($percentage)
+              {
+                $startColor = [216, 19, 37]; // RGB values for #E30000
+                $middleColor = [248, 229, 60]; // RGB values for middle color
+                $endColor = [55, 227, 49]; // RGB values for #59d05d
 
-        </div>
-        <!-- </div> -->
-      <?php };  ?>
+                if ($percentage <= 50) {
+                  $r = $startColor[0] + ($middleColor[0] - $startColor[0]) * (2 * $percentage / 100);
+                  $g = $startColor[1] + ($middleColor[1] - $startColor[1]) * (2 * $percentage / 100);
+                  $b = $startColor[2] + ($middleColor[2] - $startColor[2]) * (2 * $percentage / 100);
+                } else {
+                  $r = $middleColor[0] + ($endColor[0] - $middleColor[0]) * (2 * ($percentage - 50) / 100);
+                  $g = $middleColor[1] + ($endColor[1] - $middleColor[1]) * (2 * ($percentage - 50) / 100);
+                  $b = $middleColor[2] + ($endColor[2] - $middleColor[2]) * (2 * ($percentage - 50) / 100);
+                }
+
+                return sprintf("#%02x%02x%02x", $r, $g, $b);
+              }
+            }
+
+            // ... (rest of your code)
+
+            $color = calculateColor($e->percentage);
+            ?>
+
+            <div class="progress progress-striped active">
+              <div role="progressbar" class="progress-bar" style="width:<?php echo intval($e->percentage); ?>%; background-color: <?php echo $color; ?>">
+                <!-- Your content goes here -->
+              </div>
+              <!-- <span>"tambah disini untuk kasih kata" di progress bar</span> -->
+            </div>
+
+          </div>
+          <!-- </div> -->
+        <?php };  ?>
+      </div>
     </div>
   </div>
 
