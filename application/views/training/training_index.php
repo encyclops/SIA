@@ -247,7 +247,7 @@ $combinedDataJSON = json_encode($combinedData);
 							<div class="col-md-1 d-flex mb-2 align-items-center">
 								<label for="search_keyword">Departemen:&nbsp;&nbsp;</label>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-3 pr-0">
 								<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" style="width: 100%; text-align: start;" data-toggle="dropdown" aria-expanded="false">
 									ALL
 								</button>

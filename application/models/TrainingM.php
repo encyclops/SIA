@@ -180,7 +180,7 @@ class TrainingM extends CI_Model
                 ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
                 ->set('modified_by', $this->session->userdata('npk'), FALSE);
 
-        if ($access_permission == 0) {
+        if ($access_permission == 0 || $access_permission == 3) {
             $this->db->set('created_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
                     ->set('created_by', $this->session->userdata('npk'), FALSE);
         }
@@ -271,7 +271,7 @@ class TrainingM extends CI_Model
                 FROM $this->t_header h "
                 . $table . "
                 WHERE h.status " . $status . $queryAdd . $searchBy . " 
-                ORDER BY detail_request, participant_request DESC"
+                ORDER BY detail_request, participant_request DESC, h.status DESC, h.judul_training_header"
         );
 
         return $query->result();

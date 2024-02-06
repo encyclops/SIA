@@ -56,6 +56,11 @@
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
 			});
+			const firstToggleElement = document.querySelector('input[onchange="toggleAll(this.checked);"]');
+			if (firstToggleElement) {
+				firstToggleElement.parentNode.classList.remove('btn-info');
+				firstToggleElement.parentNode.classList.add('btn-default', 'off');
+			}
 			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
 			listCardDiv.style.display = 'none';
@@ -71,17 +76,36 @@
 		}
 	}
 
+	function clearTema(judul) {
+		document.getElementById('errorMessages').textContent = '';
+		if (!judul.classList.contains('mb-3')) {
+			judul.classList.add('mb-3');
+		}
+		judul.removeAttribute('style');
+	}
+
 	function clearForm() {
-		document.getElementById('temaTraining').value = '';
+		const judul = document.getElementById('temaTraining');
 		document.getElementById('pemateri').value = '';
 		document.getElementById('search_keyword').value = '';
+		judul.value = '';
+		clearTema(judul);
 		empArrAdmin = [];
 		empArrNon = [];
 		searchKeyword('', '', 'allEmpTable');
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
 		populateTagsSection(<?php echo json_encode($tags) ?>, 'clear');
-		toggleAll(false);
+		var checkboxes = document.querySelectorAll('.form-check-input');
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = false;
+		});
+		toggleTab('all');
+		const firstToggleElement = document.querySelector('input[onchange="toggleMine(this.checked);"]');
+		if (firstToggleElement) {
+			firstToggleElement.parentNode.classList.remove('btn-info');
+			firstToggleElement.parentNode.classList.add('btn-default', 'off');
+		}
 		document.getElementById('dropdownMenu1').textContent = 'ALL';
 	}
 
@@ -94,12 +118,9 @@
 	function changeTitle(title, call, status) {
 		document.getElementById('cardTitle').textContent = title;
 		document.getElementById('cardCategory').textContent = 'Training / ' + title;
-		document.getElementById('temaTraining').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
-		document.getElementById('pemateri').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
-		if (status == 2) {
-			document.getElementById('temaTraining').readOnly = true;
-			document.getElementById('pemateri').readOnly = true;
-		}
+		const isEditable = title.includes('Tambah') || (title.includes('Ubah') && trStat != 2);
+		document.getElementById('temaTraining').readOnly = !isEditable;
+		document.getElementById('pemateri').readOnly = !isEditable;
 		if (call) callLoader();
 	}
 
@@ -216,6 +237,8 @@
 				var newRow = document.createElement('tr');
 				newRow.classList.add('pdf-row');
 
+				var emptyCell = document.createElement('td');
+
 				var newCell = document.createElement('td');
 				newCell.colSpan = 3; // Set the colspan based on the number of columns in your table
 
@@ -225,6 +248,7 @@
 				pdfViewer.height = '500px'; // Set the height based on your preference
 
 				newCell.appendChild(pdfViewer);
+				newRow.appendChild(emptyCell);
 				newRow.appendChild(newCell);
 
 				// Insert the new row below the current row
@@ -252,10 +276,12 @@
 			var spanA = document.createElement("span");
 			spanA.className = "badge badge-success";
 			spanA.textContent = "Approve";
+			spanA.id = "sAcc" + tr.id;
 			spanA.style.cursor = "pointer";
 			spanA.onclick = function() {
 				if (!spanA.disabled) {
 					modifyApproval(idDetail, npk, id, 1);
+					spanA.removeAttribute('id');
 					cell.removeChild(spanR);
 					spanA.disabled = true;
 				}
@@ -265,10 +291,12 @@
 			var spanR = document.createElement("span");
 			spanR.className = "badge badge-danger";
 			spanR.textContent = "Reject";
+			spanR.id = "sRej" + tr.id;
 			spanR.style.cursor = "pointer";
 			spanR.onclick = function() {
 				if (!spanR.disabled) {
 					modifyApproval(idDetail, npk, id, 3);
+					spanR.removeAttribute('id');
 					cell.removeChild(spanA);
 					spanR.disabled = true;
 				}
@@ -324,8 +352,9 @@
 			}
 
 			// A condition when adding new admin
-			else if (stat == 'admin' && admins.includes(value)) {
-				input.checked = input.disabled = true;
+			else if (stat == 'admin') {
+				if (empArrAdmin.includes(value)) input.checked = true;
+				if (admins.includes(value)) input.checked = input.disabled = true;
 			}
 
 			label.appendChild(input);
@@ -405,6 +434,15 @@
 		let value = input.value.replace(/\D/g, '');
 		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		input.value = value;
+	}
+
+	function restrictInput(event) {
+		var pressedKey = event.key;
+		var allowedCharacters = /^[a-zA-Z0-9\b\s\-\;\/\,]*$/;
+		if (!allowedCharacters.test(pressedKey)) {
+			event.preventDefault();
+			return false;
+		}
 	}
 
 	function isDataTableExist(counter, kode, colspan, idname, tbodyName) {
@@ -624,7 +662,7 @@
 				.then(response => {
 					var data = JSON.parse(response);
 					console.log(data);
-					var status = data.header[0].status;
+					trStat = data.header[0].status;
 					console.log(status + "sdf");
 
 					data.employee.forEach(async function(emp) {
@@ -667,7 +705,9 @@
 
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
 					var judul_training_header = data.header[0].id_training_header;
-					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').href = (base_url + judul_training_header) + 0;
+					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').onclick = function() {
+						confirmDeleteTraining(judul_training_header + '0');
+					};
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
@@ -711,6 +751,14 @@
 	}
 
 	async function toggleTab(tabName) {
+		document.getElementById('search_training').value = '';
+		document.getElementById('ddTags').textContent = 'ALL';
+		document.getElementById('ddTags').name = '';
+		const element = document.getElementsByClassName('btn-info')[0];
+		if (element) {
+			element.classList.add('btn-default', 'off');
+			element.classList.remove('btn-info');
+		}
 		activateClassActive(tabName);
 		status = '';
 		if (tabName == 'all') status = '> 0';
@@ -857,9 +905,9 @@
 			if (!checkbox.disabled) {
 				var index = empArrAdmin.indexOf(checkbox.value);
 				checkbox.checked = select;
-				if (index !== -1) {
+				if (!select) {
 					empArrAdmin.splice(index, 1);
-				} else {
+				} else if (!empArrAdmin.includes(checkbox.value)) {
 					empArrAdmin.push(checkbox.value);
 				}
 			}
@@ -1025,11 +1073,12 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
+		console.log(trStat + " tr");
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
-			// 
+			const quer = trStat == 2 ? '' : `onclick="addTags('tags${tag.id_tag}')"`;
 			const cardHTML = `
-				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" onclick="addTags('tags${tag.id_tag}')"
+				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" ` + quer + `
 				onmouseover="mouseIn('tags${tag.id_tag}', '${tag.color}')" onmouseout="mouseOut('tags${tag.id_tag}', '${tag.color}')">${tag.name_tag}</span>
 			`;
 			if (code == 'detail') tags.push(tag.id_tag);
@@ -1054,17 +1103,20 @@
 
 <!-- Training Edit -->
 <script>
-	async function doEdit(id, status) {
-		let npk = <?php echo $this->session->userdata('npk'); ?>;
+	document.getElementById('temaTraining').addEventListener('keyup', function() {
+		if (this.value.trim() != '') clearTema(document.getElementById('temaTraining'));
+	});
 
-		let canEdit = false;
-		if (await checkAccess(npk, id)) canEdit = true;
-		// else if (isAdmin) canEdit = true;
+	async function doEdit(id) {
+		let npk = '<?php echo $this->session->userdata('npk'); ?>';
 
-		if (!canEdit) {
+		const sAccElements = document.querySelectorAll('[id^="sAcc"]');
+		const sRejElements = document.querySelectorAll('[id^="sRej"]');
+
+		if (sAccElements.length > 0 || sRejElements.length > 0) {
 			Swal.fire({
 				title: 'ERROR',
-				text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+				text: 'Masih ada permintaan modifikasi. Mohon cek semua modifikasi!',
 				icon: 'error',
 				confirmButtonColor: '#d33',
 				confirmButtonText: 'OK'
@@ -1072,8 +1124,23 @@
 			return;
 		}
 
-		changeForm('edit', status);
-		// await checkAccess(npk, id);
+		const accessData = getAccessData(npk, id).then(async access => {
+			if (!(access.part == 1 || access.file == 1 || isAdmin)) {
+				Swal.fire({
+					title: 'ERROR',
+					text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+					icon: 'error',
+					confirmButtonColor: '#d33',
+					confirmButtonText: 'OK'
+				});
+				return;
+			}
+			else {
+				await checkAccess(access.part, access.file);
+			}
+		});
+
+		changeForm('edit');
 		rowCountMateriForm = 0;
 		var counterSub = 1;
 		var idHeader = document.getElementById('idTraining').value;
@@ -1114,34 +1181,22 @@
 			}
 		});
 
-		populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
-		tags.forEach(function(tag) {
-			document.getElementById('tags' + tag).style.borderColor = 'blue';
-		});
+		if (trStat != 2) {
+			populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
+			tags.forEach(function(tag) {
+				document.getElementById('tags' + tag).style.borderColor = 'blue';
+			});
+		}
 	}
 
-	async function checkAccess(npk, id) {
-		const accessData = await getAccessData(npk, id);
-		if (!accessData) {
-			return false;
+	async function checkAccess(part, file) {
+		if (isAdmin) return;
+		if (part == 0) {
+			changeDisplayOfElements('none', ['allEmpDiv']);
 		}
-
-		let found = false;
-
-		if (accessData.part == 1) {
-			changeDisplayOfElements('block', ['allEmpDiv']);
-			found = true;
+		if (file == 0) {
+			changeDisplayOfElements('none', ['substanceDiv']);
 		}
-		if (accessData.file == 1) {
-			changeDisplayOfElements('block', ['substanceDiv']);
-			found = true;
-		}
-		if ('<?php echo $this->session->userdata['role']; ?>' == 'admin') {
-			changeDisplayOfElements('block', ['substanceDiv', 'allEmpDiv', 'temaDiv']);
-			found = true;
-		}
-
-		return found;
 	}
 
 	function validateForm() {
@@ -1164,10 +1219,10 @@
 				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
 				var labelText = label ? label.textContent.trim() : fieldElement.id;
 				errors.push(labelText);
-				//	errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
 			} else {
-				fieldElement.style.borderColor = ''; // Reset border
+				fieldElement.style.borderColor = '';
 			}
 		});
 
@@ -1183,7 +1238,7 @@
 			if (fieldValue === '') {
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldId + '"]');
-				var labelText = label ? label.textContent.trim() : fieldId;
+				var labelText = label ? label.textContent.trim().replace(/\*/g, '') : fieldId;
 				errors.push(labelText);
 				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');

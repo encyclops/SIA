@@ -49,15 +49,62 @@ function isActive($url)
 								<span class="notification" id="totalNotif"><?php echo $totalNotif; ?></span>
 
 							</a>
-							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
-								<?php if ($totalNotif == 0) { ?>
-									<li>
-										<div class="dropdown-title" id="totalNotifTitle">Kamu memiliki tidak memiliki notifikasi</div>
-									</li>
-								<?php } ?>
+							<!-- <ul class="dropdown-menu notif-box show" aria-labelledby="navbarDropdown">
+								<li>	
+									<div class="dropdown-title" id="totalNotifTitle">You have <?php echo $totalNotif == 0 ? 'no new' : $totalNotif ?> notifications</div>
+								</li>
 								<li>
 									<div class="notif-center">
-
+										<a href="#">
+											<div class="notif-icon notif-primary"> <i class="la la-user-plus"></i> </div>
+											<div class="notif-content">
+												<span class="block">
+													New user registered
+												</span>
+												<span class="time">5 minutes ago</span> 
+											</div>
+										</a>
+										<a href="#">
+											<div class="notif-icon notif-success"> <i class="la la-comment"></i> </div>
+											<div class="notif-content">
+												<span class="block">
+													Rahmad commented on Admin
+												</span>
+												<span class="time">12 minutes ago</span> 
+											</div>
+										</a>
+										<a href="#">
+											<div class="notif-img"> 
+												<img src="assets/img/profile2.jpg" alt="Img Profile">
+											</div>
+											<div class="notif-content">
+												<span class="block">
+													Reza send messages to you
+												</span>
+												<span class="time">12 minutes ago</span> 
+											</div>
+										</a>
+										<a href="#">
+											<div class="notif-icon notif-danger"> <i class="la la-heart"></i> </div>
+											<div class="notif-content">
+												<span class="block">
+													Farrah liked Admin
+												</span>
+												<span class="time">17 minutes ago</span> 
+											</div>
+										</a>
+									</div>
+								</li>
+								<li>
+									<a class="see-all" href="javascript:void(0);"> <strong>See all notifications</strong> <i class="la la-angle-right"></i> </a>
+								</li>
+							</ul> -->
+							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
+								<li>	
+									<div class="dropdown-title" id="totalNotifTitle">You have <?php echo $totalNotif == 0 ? 'no new' : $totalNotif ?> notifications</div>
+								</li>
+								<li>
+									<div class="notif-center">
 										<?php foreach ($notif as $e) { ?>
 											<div class="notification-container" data-id="<?= $e->npk ?>">
 												<a href="javascript:void(0)" onclick="removeNotification('<?= $e->npk ?>', <?= $e->id_training_header ?>, $('#totalNotif'));" class="time">
@@ -71,7 +118,6 @@ function isActive($url)
 													</div>
 												</a>
 											</div>
-
 										<?php } ?>
 										<?php foreach ($notifMateri as $m) { ?>
 											<div class="notification-container" data-id="<?= $m->id_training_detail ?>">
@@ -331,15 +377,15 @@ function isActive($url)
 		});
 	}
 
-	function showDeleteText(element) {
-		const deleteText = element.querySelector('.delete-text');
-		deleteText.style.animation = 'slideIn 0.3s ease-in-out';
-	}
+	// function showDeleteText(element) {
+	// 	const deleteText = element.querySelector('.delete-text');
+	// 	deleteText.style.animation = 'slideIn 0.3s ease-in-out';
+	// }
 
-	function hideDeleteText(element) {
-		const deleteText = element.querySelector('.delete-text');
-		deleteText.style.animation = 'slideOut 0.3s ease-in-out';
-	}
+	// function hideDeleteText(element) {
+	// 	const deleteText = element.querySelector('.delete-text');
+	// 	deleteText.style.animation = 'slideOut 0.3s ease-in-out';
+	// }
 
 	// Get the username and department elements
 	var usernameElement = document.getElementById('username');
