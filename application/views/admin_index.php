@@ -43,7 +43,7 @@ ob_start();
 					?>
 						<li class="d-flex mb-2	 pb-1  ">
 							<div class="avatar flex-shrink-0 me-3">
-								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="max-width: 40px; max-height: 40px; " />
+								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="width: 40px; height: 40px; " />
 							</div>
 							<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-3">
 								<div class="me-2" style="padding-right: 10px; padding-left: 10px">
@@ -261,6 +261,11 @@ ob_start();
 	function showAdminModal() {
 		new bootstrap.Modal(document.getElementById('addAdminModal')).show();
 		getAdmins();
+		document.getElementById('search_employee').value = '';
+		empArrAdmin = [];
+		searchKeyword('', '', 'allEmpTableAdmin');
+		toggleAll(false);
+		document.getElementById('dropdownMenu1').textContent = 'ALL';
 	};
 
 	function showTagModal() {

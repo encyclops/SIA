@@ -90,19 +90,15 @@ input:checked + .slider:before {
 }
 
 .delete-text {
-  display: none;
-  color: white;
-  background-color: red;
+  /* display: none; */
+  /* color: white; */
+  /* background-color: red;
   text-align: center;
-  padding: 5px;
-}
-
-.notification-container:hover .delete-text {
-  display: block;
+  padding: 5px; */
 }
 
 .notification-container:hover {
-  background-color: red;
+  background-color: rgb(228, 228, 228);
   cursor: pointer;
 }
 

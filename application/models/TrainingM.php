@@ -271,7 +271,7 @@ class TrainingM extends CI_Model
                 FROM $this->t_header h "
                 . $table . "
                 WHERE h.status " . $status . $queryAdd . $searchBy . " 
-                ORDER BY detail_request, participant_request DESC"
+                ORDER BY detail_request, participant_request DESC, h.status DESC, h.judul_training_header"
         );
 
         return $query->result();

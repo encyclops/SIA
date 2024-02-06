@@ -56,6 +56,11 @@
 			badgeElements.forEach(function(element) {
 				element.style.pointerEvents = 'pointer';
 			});
+			const firstToggleElement = document.querySelector('input[onchange="toggleAll(this.checked);"]');
+			if (firstToggleElement) {
+				firstToggleElement.parentNode.classList.remove('btn-info');
+				firstToggleElement.parentNode.classList.add('btn-default', 'off');
+			}
 			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
 			listCardDiv.style.display = 'none';
@@ -71,17 +76,36 @@
 		}
 	}
 
+	function clearTema(judul) {
+		document.getElementById('errorMessages').textContent = '';
+		if (!judul.classList.contains('mb-3')) {
+			judul.classList.add('mb-3');
+		}
+		judul.removeAttribute('style');
+	}
+
 	function clearForm() {
-		document.getElementById('temaTraining').value = '';
+		const judul = document.getElementById('temaTraining');
 		document.getElementById('pemateri').value = '';
 		document.getElementById('search_keyword').value = '';
+		judul.value = '';
+		clearTema(judul);
 		empArrAdmin = [];
 		empArrNon = [];
 		searchKeyword('', '', 'allEmpTable');
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
 		populateTagsSection(<?php echo json_encode($tags) ?>, 'clear');
-		toggleAll(false);
+		var checkboxes = document.querySelectorAll('.form-check-input');
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = false;
+		});
+		toggleTab('all');
+		const firstToggleElement = document.querySelector('input[onchange="toggleMine(this.checked);"]');
+		if (firstToggleElement) {
+			firstToggleElement.parentNode.classList.remove('btn-info');
+			firstToggleElement.parentNode.classList.add('btn-default', 'off');
+		}
 		document.getElementById('dropdownMenu1').textContent = 'ALL';
 	}
 
@@ -94,12 +118,9 @@
 	function changeTitle(title, call, status) {
 		document.getElementById('cardTitle').textContent = title;
 		document.getElementById('cardCategory').textContent = 'Training / ' + title;
-		document.getElementById('temaTraining').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
-		document.getElementById('pemateri').readOnly = title.includes('Tambah') || title.includes('Ubah') ? false : true;
-		if (status == 2) {
-			document.getElementById('temaTraining').readOnly = true;
-			document.getElementById('pemateri').readOnly = true;
-		}
+		const isEditable = title.includes('Tambah') || (title.includes('Ubah') && trStat != 2);
+		document.getElementById('temaTraining').readOnly = !isEditable;
+		document.getElementById('pemateri').readOnly = !isEditable;
 		if (call) callLoader();
 	}
 
@@ -328,8 +349,9 @@
 			}
 
 			// A condition when adding new admin
-			else if (stat == 'admin' && admins.includes(value)) {
-				input.checked = input.disabled = true;
+			else if (stat == 'admin') {
+				if (empArrAdmin.includes(value)) input.checked = true;
+				if (admins.includes(value)) input.checked = input.disabled = true;
 			}
 
 			label.appendChild(input);
@@ -628,7 +650,7 @@
 				.then(response => {
 					var data = JSON.parse(response);
 					console.log(data);
-					var status = data.header[0].status;
+					trStat = data.header[0].status;
 					console.log(status + "sdf");
 
 					data.employee.forEach(async function(emp) {
@@ -715,6 +737,14 @@
 	}
 
 	async function toggleTab(tabName) {
+		document.getElementById('search_training').value = '';
+		document.getElementById('ddTags').textContent = 'ALL';
+		document.getElementById('ddTags').name = '';
+		const element = document.getElementsByClassName('btn-info')[0];
+		if (element) {
+			element.classList.add('btn-default', 'off');
+			element.classList.remove('btn-info');
+		}
 		activateClassActive(tabName);
 		status = '';
 		if (tabName == 'all') status = '> 0';
@@ -861,9 +891,9 @@
 			if (!checkbox.disabled) {
 				var index = empArrAdmin.indexOf(checkbox.value);
 				checkbox.checked = select;
-				if (index !== -1) {
+				if (!select) {
 					empArrAdmin.splice(index, 1);
-				} else {
+				} else if (!empArrAdmin.includes(checkbox.value)) {
 					empArrAdmin.push(checkbox.value);
 				}
 			}
@@ -1029,10 +1059,9 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
+		const quer = trStat == 2 ? '' : onclick="addTags('tags${tag.id_tag}')";
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
-			const quer = trStat == 2 && (code == 'edit' || code == 'detail')? '' : `onclick="addTags('tags${tag.id_tag}')"`;
-			// 
 			const cardHTML = `
 				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" onclick="addTags('tags${tag.id_tag}')"
 				onmouseover="mouseIn('tags${tag.id_tag}', '${tag.color}')" onmouseout="mouseOut('tags${tag.id_tag}', '${tag.color}')">${tag.name_tag}</span>
@@ -1059,6 +1088,10 @@
 
 <!-- Training Edit -->
 <script>
+	document.getElementById('temaTraining').addEventListener('keyup', function() {
+		if (this.value.trim() != '') clearTema(document.getElementById('temaTraining'));
+	});
+
 	async function doEdit(id) {
 		let npk = '<?php echo $this->session->userdata('npk'); ?>';
 
@@ -1133,10 +1166,12 @@
 			}
 		});
 
-		populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
-		tags.forEach(function(tag) {
-			document.getElementById('tags' + tag).style.borderColor = 'blue';
-		});
+		if (trStat != 2) {
+			populateTagsSection(<?php echo json_encode($tags) ?>, 'edit');
+			tags.forEach(function(tag) {
+				document.getElementById('tags' + tag).style.borderColor = 'blue';
+			});
+		}
 	}
 
 	async function checkAccess(npk, id) {
@@ -1202,7 +1237,7 @@
 			if (fieldValue === '') {
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldId + '"]');
-				var labelText = label ? label.textContent.trim() : fieldId;
+				var labelText = label ? label.textContent.trim().replace(/\*/g, '') : fieldId;
 				errors.push(labelText);
 				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
