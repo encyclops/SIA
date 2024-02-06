@@ -273,8 +273,11 @@
 			var cell = document.createElement('td');
 			cell.classList.add('text-center');
 
+			var approvalContainer = document.createElement('div');
+			approvalContainer.classList.add('d-inline-flex', 'align-items-center');
+
 			var spanA = document.createElement("span");
-			spanA.className = "badge badge-success";
+			spanA.className = "badge badge-success mr-1 ml-1";
 			spanA.textContent = "Approve";
 			spanA.id = "sAcc" + tr.id;
 			spanA.style.cursor = "pointer";
@@ -282,14 +285,14 @@
 				if (!spanA.disabled) {
 					modifyApproval(idDetail, npk, id, 1);
 					spanA.removeAttribute('id');
-					cell.removeChild(spanR);
+					approvalContainer.removeChild(spanR);
 					spanA.disabled = true;
 				}
 			};
-			cell.appendChild(spanA);
+			approvalContainer.appendChild(spanA);
 
 			var spanR = document.createElement("span");
-			spanR.className = "badge badge-danger";
+			spanR.className = "badge badge-danger  mr-1 ml-1";
 			spanR.textContent = "Reject";
 			spanR.id = "sRej" + tr.id;
 			spanR.style.cursor = "pointer";
@@ -297,16 +300,18 @@
 				if (!spanR.disabled) {
 					modifyApproval(idDetail, npk, id, 3);
 					spanR.removeAttribute('id');
-					cell.removeChild(spanA);
+					approvalContainer.removeChild(spanA);
 					spanR.disabled = true;
 				}
 			};
-			cell.appendChild(spanR);
+			approvalContainer.appendChild(spanR);
+
+			cell.appendChild(approvalContainer);
 
 			tr.appendChild(cell);
-
 		<?php } ?>
 	}
+
 
 	async function createCheckboxCell(name, value, tr, id, code, stat) {
 		try {
@@ -1134,8 +1139,7 @@
 					confirmButtonText: 'OK'
 				});
 				return;
-			}
-			else {
+			} else {
 				await checkAccess(access.part, access.file);
 			}
 		});
@@ -1201,28 +1205,61 @@
 
 	function validateForm() {
 		var errorMessages = document.getElementById('errorMessages');
+		var errorMessageSubstance = document.getElementById('errorMessageSubstance');
+		var errorMessageUpload = document.getElementById('errorMessageUpload'); // New error message element for materiFile
 
 		if (!errorMessages) {
 			console.error("Error: 'errorMessages' element not found.");
 			return;
 		}
+		if (!errorMessageSubstance) {
+			console.error("Error: 'errorMessageSubstance' element not found.");
+			return;
+		}
+		if (!errorMessageUpload) {
+			console.error("Error: 'errorMessageUpload' element not found.");
+			return;
+		}
 
 		var errors = [];
+		var errors2 = [];
+		var errors3 = [];
+
+		// Validation for materiFile field
+		// Validation for materiFile field
+		var materiFileFields = document.querySelectorAll('[id*="materiFile"], [name*="materiFile"]');
+		materiFileFields.forEach(function(fieldElement) {
+			var fieldValue = fieldElement.value.trim();
+			if (fieldValue === '') {
+				fieldElement.style.borderColor = 'red';
+				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
+				var labelText = label ? label.textContent.trim() : "File";
+				errors3.push(labelText);
+				errorMessageUpload.textContent = '* ' + labelText + ' wajib diupload!';
+				errorMessageUpload.style.display = 'block'; // Show the error message
+				fieldElement.classList.remove('mb-3');
+			} else {
+				fieldElement.style.borderColor = '';
+				errorMessageUpload.textContent = ''; // Clear the error message
+				errorMessageUpload.style.display = 'none'; // Hide the error message
+			}
+		});
 
 		// Use attribute selector to select elements whose IDs or names contain 'materiTitle'
 		var materiTitleFields = document.querySelectorAll('[id*="materiTitle"], [name*="materiTitle"]');
-
 		materiTitleFields.forEach(function(fieldElement) {
 			var fieldValue = fieldElement.value.trim();
 			if (fieldValue === '') {
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
-				var labelText = label ? label.textContent.trim() : fieldElement.id;
-				errors.push(labelText);
-				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				var labelText = label ? label.textContent.trim() : "judul";
+				errors2.push(labelText);
+				errorMessageSubstance.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
 			} else {
 				fieldElement.style.borderColor = '';
+				errorMessageSubstance.textContent = ''; // Clear the error message
+				errorMessageSubstance.style.display = 'none'; // Hide the error message
 			}
 		});
 
@@ -1243,7 +1280,9 @@
 				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
 			} else {
-				fieldElement.style.borderColor = ''; // Reset border
+				fieldElement.style.borderColor = '';
+				errorMessage.textContent = ''; // Clear the error message
+				errorMessage.style.display = 'none'; // Hide the error message
 			}
 		});
 
@@ -1253,7 +1292,7 @@
 				behavior: 'smooth',
 				block: 'start'
 			});
-		} else {
+		} else if (errors2.length > 0 || errors3.length > 0) {} else {
 			errorMessages.textContent = ''; // Clear error messages
 			submitEdit('training');
 		}

@@ -41,22 +41,26 @@ ob_start();
 					} else {
 						foreach ($admin as $t) {
 					?>
-						<li class="d-flex mb-2	 pb-1  ">
+						<li class="d-flex mb-2 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
-								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="width: 40px; height: 40px; " />
+								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="width: 60px; height: 60px; object-fit: cover;" />
 							</div>
-							<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-3">
-								<div class="me-2" style="padding-right: 10px; padding-left: 10px">
-									<span class="user-level" style="font-size:larger;">
-										<h6> <?php echo $t->NAMA ?></h6>
-									</span>
-									<small class="text-muted d-block mb-1">
-										<h8><?php echo $t->DEPARTEMEN ?></h8>
-									</small>
+							<div class="d-flex flex-column flex-md-row w-100 align-items-md-center justify-content-between gap-3">
+								<div class="me-md-2" style="flex: 1;">
+									<div style="padding-right: 10px; padding-left: 10px">
+										<span class="user-level" style="font-size: larger;">
+											<h6> <?php echo $t->NAMA ?></h6>
+										</span>
+										<small class="text-muted d-block mb-1">
+											<h8><?php echo $t->DEPARTEMEN ?></h8>
+										</small>
+									</div>
 								</div>
 
 								<div class="user-progress d-flex align-items-center gap-1">
-									<a onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></a>
+									<?php if (count($admin) > 1) { ?>
+										<a onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></a>
+									<?php } ?>
 								</div>
 							</div>
 						</li>
@@ -237,11 +241,11 @@ ob_start();
 						<div class="card-body p-0">
 							<div class="row">
 								<div class="col">
-									<label for="tagTraining" class="my-2">Tema Training</label>
+									<label for="tagTraining" class="my-2">Nama Taggar <span style="color: red;">*</span></label>
 									<input type="text" class="form-control input-pill mb-3" name="nameTag" id="nameTag" placeholder="Masukkan Nama Tag Baru" required="">
 								</div>
 								<div class="col">
-									<label for="tagTraining" class="my-2">Tema Training</label>
+									<label for="tagTraining" class="my-2">Pilih Warna <span style="color: red;">*</span></label>
 									<input type="color" id="colorTag" name="colorTag" value="#ffffff" class="form-control mb-3;" style="height: 42%;">
 								</div>
 							</div>

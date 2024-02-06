@@ -104,7 +104,7 @@ ob_start();
 </div>
 <div class="row">
   <div class="col-md-4">
-    <div class="card " style="height: 300px;  border-radius: 8px;">
+    <div class="card " style="height: 320px;  border-radius: 8px;">
       <div class="card-header d-flex align-items-center justify-content-between" style="background-color: #1256e2; border-top-left-radius: 8px; border-top-right-radius: 8px;">
         <h5 class="card-title m-0 me-2" style="color: white"> <img src="<?= base_url('assets/img/crown.png') ?>" alt="User" class=" img-fluid" style="max-width: 32px; max-height: 37px; padding-bottom:8px; padding-right:3px; opacity:0.9" /> Materi Terpopuler</h5>
         </li>
@@ -113,9 +113,9 @@ ob_start();
           <span class="slider round"></span>
         </label>
       </div>
-      <div class="card-body" style="overflow-y: scroll; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+      <div class="card-body" style="overflow-y: auto; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
         <div id="materisubstance">
-          <ul class="p-0 m-0" style="max-height: 250px;">
+          <ul class="p-0 m-0" style="max-height: 220px;">
             <?php
             $i = 1;
             if (empty($getFavoriteSubstance)) {
@@ -123,11 +123,11 @@ ob_start();
 
               <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
               </div>
               <hr>
-              <h5 style="text-align: center;">Data Tidak Ada</h5>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
               <?php
             } else {
               foreach ($getFavoriteSubstance as $e) {
@@ -173,27 +173,29 @@ ob_start();
 
         </div>
         <div id="tablesubstance" style="display: none;">
-          <?php
-          if (empty($getFavoriteSubstance)) {
-          ?>
+          <ul class="p-0 m-0" style="max-height: 220px; ">
+            <?php
+            if (empty($getFavoriteSubstance)) {
+            ?>
 
-            <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
+              <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-              <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
-            </div>
-            <hr>
-            <h5 style="text-align: center;">Data Tidak Ada</h5>
-          <?php
-          } else { ?>
-            <div id="barChart" style="height: 150px;"></div>
-          <?php } ?>
+              </div>
+              <hr>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
+            <?php
+            } else { ?>
+              <div id="barChart" style="height: 150px;"></div>
+            <?php } ?>
+          </ul>
         </div>
       </div>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card" style="height: 300px;  border-radius: 8px;">
+    <div class="card" style="height: 320px;  border-radius: 8px;">
       <div class="card-header d-flex align-items-center justify-content-between" style="background-color: #1256e2; border-top-left-radius: 8px; border-top-right-radius: 8px;">
         <h5 class="card-title m-0 me-2" style="color: white"><img src="<?= base_url('assets/img/crown.png') ?>" alt="User" class=" img-fluid" style="max-width: 30px; max-height: 27px; padding-bottom:8px; padding-right:3px; opacity:0.9" /> Karyawan Teratas</h5>
         <label class="switch">
@@ -203,7 +205,7 @@ ob_start();
       </div>
       <div class="card-body" style="overflow-y: auto; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
         <div id="tableEmployee">
-          <ul class="p-0 m-0 " style="max-height: 250px;">
+          <ul class="p-0 m-0 " style="max-height: 220px;">
             <?php
             $i = 1;
             if (empty($getHighestEmployee)) {
@@ -211,11 +213,11 @@ ob_start();
 
               <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
               </div>
               <hr>
-              <h5 style="text-align: center;">Data Tidak Ada</h5>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
               <?php
             } else {
               foreach ($getHighestEmployee as $e) {
@@ -260,28 +262,30 @@ ob_start();
           </ul>
         </div>
         <div id="grafikEmployee" style="display: none;">
-          <?php
-          if (empty($getFavoriteSubstance)) {
-          ?>
+          <ul class="p-0 m-0" style="max-height: 220px; ">
+            <?php
+            if (empty($getFavoriteSubstance)) {
+            ?>
 
-            <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
+              <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-              <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
-            </div>
-            <hr>
-            <h5 style="text-align: center;">Data Tidak Ada</h5>
-          <?php
-          } else { ?>
-            <div id="barChartEmployee" style="height: 150px;"></div>
-            <!-- <canvas id="barChartEmployee" style="max-height: 250px; overflow-y: auto;"></canvas> -->
-          <?php } ?>
+              </div>
+              <hr>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
+            <?php
+            } else { ?>
+              <div id="barChartEmployee" style="height: 150px;"></div>
+              <!-- <canvas id="barChartEmployee" style="max-height: 250px; overflow-y: auto;"></canvas> -->
+            <?php } ?>
+          </ul>
         </div>
       </div>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card" style="height: 300px; border-radius: 8px; ">
+    <div class="card" style="height: 320px; border-radius: 8px; ">
       <div class="card-header d-flex align-items-center justify-content-between" style="background-color: #1256e2; border-top-left-radius: 8px; border-top-right-radius: 9px;">
         <h5 class="card-title m-0 me-2" style="color: white"><img src="<?= base_url('assets/img/crown.png') ?>" alt="User" class=" img-fluid" style="max-width: 30px; max-height: 27px; padding-bottom:8px; padding-right:3px; opacity:0.9" /> Training Terpopuler</h5>
         <label class="switch">
@@ -292,7 +296,7 @@ ob_start();
       <div class="card-body" style="overflow-y: auto; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
 
         <div id="tableTraining">
-          <ul class="p-0 m-0" style="max-height: 250px; ">
+          <ul class="p-0 m-0" style="max-height: 220px; ">
             <?php
             $i = 1;
             if (empty($getFavoriteTraining)) {
@@ -300,11 +304,11 @@ ob_start();
 
               <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
               </div>
               <hr>
-              <h5 style="text-align: center;">Data Tidak Ada</h5>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
               <?php
             } else {
 
@@ -348,22 +352,24 @@ ob_start();
           </ul>
         </div>
         <div id="grafikTraining" style="display: none;">
-          <?php
-          if (empty($getFavoriteSubstance)) {
-          ?>
+          <ul class="p-0 m-0" style="max-height: 220px; ">
+            <?php
+            if (empty($getFavoriteSubstance)) {
+            ?>
 
-            <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
+              <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-              <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
-            </div>
-            <hr>
-            <h5 style="text-align: center;">Data Tidak Ada</h5>
-          <?php
-          } else { ?>
-            <div id="barChartTraining" style="height: 150px;"></div>
-          <?php } ?>
-          <!-- <canvas id="barChartTraining" style="max-height: 250px; overflow-y: auto;"></canvas> -->
+              </div>
+              <hr>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
+            <?php
+            } else { ?>
+              <div id="barChartTraining" style="height: 150px;"></div>
+            <?php } ?>
+            <!-- <canvas id="barChartTraining" style="max-height: 250px; overflow-y: auto;"></canvas> -->
+          </ul>
         </div>
       </div>
     </div>
@@ -371,25 +377,25 @@ ob_start();
 </div>
 <div class="row">
   <div class="col-md-6">
-    <div class="card" style="height: 300px;">
+    <div class="card" style="height: 320px;">
       <div class="card-header d-flex align-items-center justify-content-between bg-success">
         <h5 class="card-title m-0 me-2" style="color: white"> Daftar materi yang belum diakses Partisipan</h5>
 
       </div>
-      <div class="card-body" style="overflow-y: scroll;">
+      <div class="card-body" style="overflow-y: auto;">
         <div id="materiNotDonesubstance">
-          <ul class="p-0 m-0" style="max-height: 250px">
+          <ul class="p-0 m-0" style="max-height: 220px">
             <?php
             if (empty($getFavoriteSubstance)) {
             ?>
 
               <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+                <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
 
               </div>
               <hr>
-              <h5 style="text-align: center;">Data Tidak Ada</h5>
+              <h6 style="text-align: center;">Data Tidak Ada</h6>
               <?php
             } else {
               $i = 1;
@@ -421,28 +427,29 @@ ob_start();
 
           </ul>
         </div>
-        <div id="tableNotDonesubstance" style="display: none;">
+        <!-- <div id="tableNotDonesubstance" style="display: none;">
+
           <canvas id="barChartNotDonesubstance" style="max-height: 250px; overflow-y: auto;"></canvas>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
   <div class="col-md-6">
-    <div class="card" style="height: 300px;">
+    <div class="card" style="height: 320px;">
       <div class="card-header d-flex align-items-center justify-content-between bg-success">
         <h5 class="card-title m-0 me-2" style="color: white"> NPK yang Belum Pernah Akses Materi </h5>
       </div>
-      <div class="card-body" style="overflow-y: scroll;">
-        <ul class="p-0 m-0" style="max-height: 250px">
+      <div class="card-body" style="overflow-y: auto;">
+        <ul class="p-0 m-0" style="max-height: 22 0px">
           <?php
           $i = 1;
           if (empty($getNotOpenTrain)) {
           ?>
             <div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
-              <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+              <img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 170px;" />
             </div>
             <hr>
-            <h5 style="text-align: center;">Data Tidak Ada</h5>
+            <h6 style="text-align: center;">Data Tidak Ada</h6>
             <?php
           } else {
             foreach ($getNotOpenTrain as $e) {
