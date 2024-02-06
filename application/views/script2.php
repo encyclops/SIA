@@ -237,6 +237,8 @@
 				var newRow = document.createElement('tr');
 				newRow.classList.add('pdf-row');
 
+				var emptyCell = document.createElement('td');
+
 				var newCell = document.createElement('td');
 				newCell.colSpan = 3; // Set the colspan based on the number of columns in your table
 
@@ -246,6 +248,7 @@
 				pdfViewer.height = '500px'; // Set the height based on your preference
 
 				newCell.appendChild(pdfViewer);
+				newRow.appendChild(emptyCell);
 				newRow.appendChild(newCell);
 
 				// Insert the new row below the current row
@@ -431,6 +434,15 @@
 		let value = input.value.replace(/\D/g, '');
 		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		input.value = value;
+	}
+
+	function restrictInput(event) {
+		var pressedKey = event.key;
+		var allowedCharacters = /^[a-zA-Z0-9\b\s\-\;\/\,]*$/;
+		if (!allowedCharacters.test(pressedKey)) {
+			event.preventDefault();
+			return false;
+		}
 	}
 
 	function isDataTableExist(counter, kode, colspan, idname, tbodyName) {
@@ -693,7 +705,9 @@
 
 					var base_url = "<?= base_url('Training/modifyTraining/') ?>";
 					var judul_training_header = data.header[0].id_training_header;
-					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').href = (base_url + judul_training_header) + 0;
+					if (document.getElementById('deleteBtn')) document.getElementById('deleteBtn').onclick = function() {
+						confirmDeleteTraining(judul_training_header + '0');
+					};
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
@@ -1059,11 +1073,12 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
-		const quer = trStat == 2 ? '' : onclick="addTags('tags${tag.id_tag}')";
+		console.log(trStat + " tr");
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
+			const quer = trStat == 2 ? '' : `onclick="addTags('tags${tag.id_tag}')"`;
 			const cardHTML = `
-				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" onclick="addTags('tags${tag.id_tag}')"
+				<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" ` + quer + `
 				onmouseover="mouseIn('tags${tag.id_tag}', '${tag.color}')" onmouseout="mouseOut('tags${tag.id_tag}', '${tag.color}')">${tag.name_tag}</span>
 			`;
 			if (code == 'detail') tags.push(tag.id_tag);
@@ -1174,28 +1189,14 @@
 		}
 	}
 
-	async function checkAccess(npk, id) {
-		const accessData = await getAccessData(npk, id);
-		if (!accessData) {
-			return false;
+	async function checkAccess(part, file) {
+		if (isAdmin) return;
+		if (part == 0) {
+			changeDisplayOfElements('none', ['allEmpDiv']);
 		}
-
-		let found = false;
-
-		if (accessData.part == 1) {
-			changeDisplayOfElements('block', ['allEmpDiv']);
-			found = true;
+		if (file == 0) {
+			changeDisplayOfElements('none', ['substanceDiv']);
 		}
-		if (accessData.file == 1) {
-			changeDisplayOfElements('block', ['substanceDiv']);
-			found = true;
-		}
-		if ('<?php echo $this->session->userdata['role']; ?>' == 'admin') {
-			changeDisplayOfElements('block', ['substanceDiv', 'allEmpDiv', 'temaDiv']);
-			found = true;
-		}
-
-		return found;
 	}
 
 	function validateForm() {
