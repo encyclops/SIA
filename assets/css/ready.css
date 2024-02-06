@@ -6911,16 +6911,8 @@ body {
   cursor: pointer;
 }
 
-
-.delete-icon {
-  cursor: pointer;
-  display: none;
-  transition: color 0.3s ease; /* Add transition for smooth hover effect */
-}
-
-.delete-icon:hover {
-  color: red; 
-  display: block;
+.close-icon:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .user:hover .close-icon {
