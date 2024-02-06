@@ -252,10 +252,12 @@
 			var spanA = document.createElement("span");
 			spanA.className = "badge badge-success";
 			spanA.textContent = "Approve";
+			spanA.id = "sAcc" + tr.id;
 			spanA.style.cursor = "pointer";
 			spanA.onclick = function() {
 				if (!spanA.disabled) {
 					modifyApproval(idDetail, npk, id, 1);
+					spanA.removeAttribute('id');
 					cell.removeChild(spanR);
 					spanA.disabled = true;
 				}
@@ -265,10 +267,12 @@
 			var spanR = document.createElement("span");
 			spanR.className = "badge badge-danger";
 			spanR.textContent = "Reject";
+			spanR.id = "sRej" + tr.id;
 			spanR.style.cursor = "pointer";
 			spanR.onclick = function() {
 				if (!spanR.disabled) {
 					modifyApproval(idDetail, npk, id, 3);
+					spanR.removeAttribute('id');
 					cell.removeChild(spanA);
 					spanR.disabled = true;
 				}
@@ -1024,9 +1028,10 @@
 		const container = document.getElementById('tagsContainer');
 		container.innerHTML = '';
 		if (code == 'clear') tags = [];
-		const quer = trStat == 2 ? '' : onclick="addTags('tags${tag.id_tag}')";
+		console.log(trStat + " tr");
 		data.forEach(function(tag) {
 			var col = isColorLight(tag.color);
+			const quer = trStat == 2 && (code == 'edit' || code == 'detail')? '' : `onclick="addTags('tags${tag.id_tag}')"`;
 			// 
 			const cardHTML = `
 			<span class="badge tags" id="tags${tag.id_tag}" style="background-color: ${tag.color}; color: ${col}; border-color: white;" ` + quer + `
@@ -1055,16 +1060,15 @@
 <!-- Training Edit -->
 <script>
 	async function doEdit(id) {
-		let npk = <?php echo $this->session->userdata('npk'); ?>;
+		let npk = '<?php echo $this->session->userdata('npk'); ?>';
 
-		let canEdit = false;
-		if (await checkAccess(npk, id)) canEdit = true;
-		// else if (isAdmin) canEdit = true;
+		const sAccElements = document.querySelectorAll('[id^="sAcc"]');
+		const sRejElements = document.querySelectorAll('[id^="sRej"]');
 
-		if (!canEdit) {
+		if (sAccElements.length > 0 || sRejElements.length > 0) {
 			Swal.fire({
 				title: 'ERROR',
-				text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+				text: 'Masih ada permintaan modifikasi. Mohon cek semua modifikasi!',
 				icon: 'error',
 				confirmButtonColor: '#d33',
 				confirmButtonText: 'OK'
@@ -1072,8 +1076,23 @@
 			return;
 		}
 
+		const accessData = getAccessData(npk, id).then(async access => {
+			if (!(access.part == 1 || access.file == 1 || isAdmin)) {
+				Swal.fire({
+					title: 'ERROR',
+					text: 'Anda mengakses menu terlarang. Silakan refresh halaman!',
+					icon: 'error',
+					confirmButtonColor: '#d33',
+					confirmButtonText: 'OK'
+				});
+				return;
+			}
+			else {
+				await checkAccess(access.part, access.file);
+			}
+		});
+
 		changeForm('edit');
-		// await checkAccess(npk, id);
 		rowCountMateriForm = 0;
 		var counterSub = 1;
 		var idHeader = document.getElementById('idTraining').value;
@@ -1167,10 +1186,10 @@
 				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
 				var labelText = label ? label.textContent.trim() : fieldElement.id;
 				errors.push(labelText);
-				//	errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
+				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
 				fieldElement.classList.remove('mb-3');
 			} else {
-				fieldElement.style.borderColor = ''; // Reset border
+				fieldElement.style.borderColor = '';
 			}
 		});
 

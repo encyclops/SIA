@@ -180,7 +180,7 @@ class TrainingM extends CI_Model
                 ->set('modified_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
                 ->set('modified_by', $this->session->userdata('npk'), FALSE);
 
-        if ($access_permission == 0) {
+        if ($access_permission == 0 || $access_permission == 3) {
             $this->db->set('created_date', "'" . date('Y/m/d H:i:s') . "'", FALSE)
                     ->set('created_by', $this->session->userdata('npk'), FALSE);
         }
