@@ -4,6 +4,7 @@
 	var empArrAdmin = [];
 	var empArrNon = [];
 	var tags = [];
+	var empSelected = [];
 	var admins;
 	var rowCountMateriForm = 0;
 	var isAdmin = '<?php echo $this->session->userdata['role']; ?>' == 'admin';
@@ -781,11 +782,12 @@
 		document.getElementById('search_training').value = '';
 		document.getElementById('ddTags').textContent = 'ALL';
 		document.getElementById('ddTags').name = '';
-		const element = document.getElementsByClassName('btn-info')[0];
-		if (element) {
-			element.classList.add('btn-default', 'off');
-			element.classList.remove('btn-info');
+		const firstToggleElement = document.querySelector('input[onchange="toggleMine(this.checked);"]');
+		if (firstToggleElement) {
+			firstToggleElement.parentNode.classList.remove('btn-info');
+			firstToggleElement.parentNode.classList.add('btn-default', 'off');
 		}
+		document.getElementById('myTraining').checked = false;
 		activateClassActive(tabName);
 		status = '';
 		if (tabName == 'all') status = '> 0';
@@ -854,10 +856,10 @@
 					<div class="row justify-content-center">
 						<div class="col-md-4">
 							<div class="card" style="border-radius: 20px;">
-								<div class="card-header">
+								<div class="card-header d-flex justify-content-center">
 									<img src="assets/img/dataEmpty1.jpg" style="max-height: 163px">
 								</div>
-								<div class="card-body">
+								<div class="card-body d-flex justify-content-center">
 									<div class="row">
 										<div class="col">
 											<h4 class="card-title">Tidak ada data training!</h4>
@@ -1186,7 +1188,7 @@
 		isDataTableExist(rowCountMateriForm, 'x', 4, 'emptyData', 'tBodySubstanceTableEdit');
 		var tableBody = document.getElementById('tBodySubstanceTableEdit2');
 		<?php echo $combinedDataJSON ?>.forEach(function(substance) {
-			if (substance.id_header == idHeader) {
+			if (substance.id_header == idHeader && substance.status == 1) {
 				var materiRow = document.createElement('tr');
 				var idNow = rowCountMateriForm + 1;
 				materiRow.id = 'rowFormMateri' + idNow;

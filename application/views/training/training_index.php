@@ -412,11 +412,16 @@ $combinedDataJSON = json_encode($combinedData);
 	</div>
 </div>
 <script>
-	$(document).ready(function() {
-		$('#detailEmpTable').DataTable();
-	});
-</script>
-<script>
+	function hasBadge(row, badgeId) {
+		var badges = row.getElementsByClassName('badge');
+		for (var j = 0; j < badges.length; j++) {
+			if (badges[j].id.includes(badgeId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function sortDetailEmpTable(column) {
 		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 		table = document.getElementById("detailEmpTable");
@@ -431,8 +436,10 @@ $combinedDataJSON = json_encode($combinedData);
 				shouldSwitch = false;
 				var xNo = rows[i].getElementsByTagName("td")[0].innerHTML.toLowerCase();
 				var yNo = rows[i + 1].getElementsByTagName("td")[0].innerHTML.toLowerCase();
-				x = rows[i].getElementsByTagName("td")[column].innerHTML.toLowerCase();
-				y = rows[i + 1].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+				if (column != 7) {
+					x = rows[i].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+					y = rows[i + 1].getElementsByTagName("td")[column].innerHTML.toLowerCase();
+				}
 
 				// Check if the two rows should switch places based on the sorting direction and column
 				if (dir === "asc") {
@@ -440,14 +447,20 @@ $combinedDataJSON = json_encode($combinedData);
 						shouldSwitch = x.localeCompare(y) > 0;
 					} else if (column === 3 || column === 4) {
 						shouldSwitch = parseFloat(x) > parseFloat(y);
+					} else if (column === 7) {
+						shouldSwitch = hasBadge(rows[i + 1], 'sAcc') || hasBadge(rows[i + 1], 'sRej');
 					}
 				} else if (dir === "desc") {
 					if (column === 1 || column === 2) {
 						shouldSwitch = x.localeCompare(y) < 0;
 					} else if (column === 3 || column === 4) {
 						shouldSwitch = parseFloat(x) < parseFloat(y);
+					} else if (column === 7) {
+						shouldSwitch = hasBadge(rows[i], 'sAcc') || hasBadge(rows[i], 'sRej');
 					}
 				}
+
+				console.log("shouldSwitch: " + shouldSwitch);
 
 				if (shouldSwitch) {
 					rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
@@ -470,8 +483,6 @@ $combinedDataJSON = json_encode($combinedData);
 		// Update the sorting icon in the table header
 		updateSortingIcon(column, dir, "detailEmpTable");
 	}
-
-
 
 	function sortDetailOnlyEmpTable(column) {
 		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;

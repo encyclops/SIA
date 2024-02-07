@@ -24,6 +24,10 @@ class Admin extends CI_Controller
         foreach ($admins as $adm) {
             $detailEmployee[] = $this->OracleDBM->getEmpBy('NPK', $adm->npk);
         }
+        usort($detailEmployee, function($a, $b) {
+            return strcmp($a->NAMA, $b->NAMA);
+        });
+
         $npk = $this->session->userdata('npk');
         $data['admin']      = $detailEmployee;
         $data['tags']       = $this->AdminM->getTags();

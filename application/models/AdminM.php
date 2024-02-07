@@ -86,7 +86,8 @@ class AdminM extends CI_Model
                     WHERE d.id_tag = h.id_tag
                 ) AS total
                 FROM $this->t_tag h
-                WHERE h.status = 1"
+                WHERE h.status = 1
+                ORDER BY h.name_tag"
         );
         return $query->result();
     }

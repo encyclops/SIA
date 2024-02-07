@@ -72,30 +72,24 @@
 
 <script>
 	function updateDateTime() {
-		// Get the current date and time
 		var now = new Date();
-
-		// Format the time as HH:MM:SS
 		var formattedTime = now.toLocaleTimeString();
 
-		// Format the date as DD-MMM-YYYY in Bahasa Indonesia
 		var days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-		var dayName = days[now.getDay()]; // Get day name
+		var dayName = days[now.getDay()];
 		var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-		var monthName = months[now.getMonth()]; // Get month name
+		var monthName = months[now.getMonth()];
 		var formattedDate = now.getDate() + ' ' + monthName + ' ' + now.getFullYear();
 
-		// Update the elements with the formatted time, nameday, and date
-		$("#timestamp").text(formattedTime);
-		$("#nameday").text(dayName);
-		$("#date").text(formattedDate);
+		$("#timestamp").text(dayName + ", " + formattedDate + " " + formattedTime);
+
+		// $("#timestamp").text(formattedTime);
+		// $("#nameday").text(dayName);
+		// $("#date").text(formattedDate);
 	}
 
-	// Call the function when the page has finished loading
 	$(document).ready(function() {
-		updateDateTime(); // Update date, time, and nameday when the page loads
-
-		// Set interval to update the date, time, and nameday every second (1000ms)
+		updateDateTime();
 		setInterval(updateDateTime, 1000);
 	});
 </script>

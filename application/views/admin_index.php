@@ -41,10 +41,23 @@ ob_start();
 					} else {
 						foreach ($admin as $t) {
 					?>
-						<li class="d-flex py-3 card-admin">
+						<li class="d-flex py-1 card-admin">
+					<?php
+						$imageUrl = "https://aas.awi.co.id/ehrd/foto/$t->NPK.jpg";
+						$headers = get_headers($imageUrl);
+
+						if (strpos($headers[0], '200')) { ?>
 							<div class="avatar flex-shrink-0 me-3">
-								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; object-position: top left;" />
+								<img src="<?php echo $imageUrl; ?>" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; object-position: top center;" />
 							</div>
+						<?php } else { ?>
+							<div class="avatar flex-shrink-0 me-3">
+								<img src="<?php echo base_url('assets/img/user2.jpg'); ?>" alt="Default" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; object-position: top center;" />
+							</div>
+						<?php } ?>
+							<!-- <div class="avatar flex-shrink-0 me-3">
+								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; object-position: top left;" />
+							</div> -->
 							<div class="d-flex flex-column flex-md-row w-100 align-items-md-center justify-content-between gap-3">
 								<div class="me-md-2" style="flex: 1;">
 									<div style="padding-right: 10px; padding-left: 10px">
@@ -261,8 +274,6 @@ ob_start();
 	</div>
 </div>
 <script>
-	var empSelected = [];
-
 	function showAdminModal() {
 		new bootstrap.Modal(document.getElementById('addAdminModal')).show();
 		getAdmins();
@@ -282,24 +293,6 @@ ob_start();
 		searchKeyword(keyword, '', 'allEmpTableAdmin');
 	});
 </script>
-
-<script>
-	document.getElementById('searchInput').addEventListener('input', function() {
-		let searchValue = this.value.toLowerCase();
-		let adminList = document.getElementById('adminList');
-		let cards = adminList.getElementsByClassName('card-admin');
-
-		for (let i = 0; i < cards.length; i++) {
-			let name = cards[i].getElementsByClassName('info')[0].getElementsByTagName('p')[0].innerText.toLowerCase();
-			if (name.includes(searchValue)) {
-				cards[i].style.display = '';
-			} else {
-				cards[i].style.display = 'none';
-			}
-		}
-	});
-</script>
-
 <?php
 /* Store the content of the buffer for later use */
 $contentPlaceHolder = ob_get_contents();
