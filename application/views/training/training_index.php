@@ -318,13 +318,13 @@ $combinedDataJSON = json_encode($combinedData);
 								<thead>
 									<tr>
 										<th scope="col" class="text-center" style="width: 60px;">No.</th>
-										<th scope="col" class="text-center" style="width: 350px;" onclick="sortDetailEmpTable(1)">Nama Karyawan</th>
+										<th scope="col" class="text-center" style="width: 300px;" onclick="sortDetailEmpTable(1)">Nama Karyawan</th>
 										<th scope="col" class="text-center" style="width: 300px;" onclick="sortDetailEmpTable(2)">Departemen</th>
 										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(3)">Progres</th>
 										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(4)">Persentase</th>
 										<th scope="col" class="text-center" style="width: 100px;">Tambah Partisipan</th>
 										<th scope="col" class="text-center" style="width: 100px;">Upload Materi</th>
-										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(7)">Permintaan</th>
+										<th scope="col" class="text-center" style="width: 150px;" onclick="sortDetailEmpTable(7)">Permintaan</th>
 									</tr>
 								</thead>
 
@@ -360,9 +360,12 @@ $combinedDataJSON = json_encode($combinedData);
 					</div>
 					<div id="substanceDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
 						<div class="row justify-content-between m-0 p-0">
+
 							<label class="my-2">Materi</label>
 							<a id="addFileBtn" href="javascript:void(0)" onclick="addRow()" class="btn btn-info btn-border float-right mb-3">Tambah Materi</a>
 						</div>
+						<span style="color: red;" class="mb-3" id="errorMessageSubstance"></span>
+						<span style="color: red;" class="mb-3" id="errorMessageUpload"></span>
 						<div style="max-height: 300px; overflow-y: scroll;">
 							<table id="substanceTableEdit" name="table" class="table table-hover table-head-bg-info my-2">
 								<thead>
@@ -388,6 +391,9 @@ $combinedDataJSON = json_encode($combinedData);
 										<th scope="col" class="text-center" style="width: 50px;">No.</th>
 										<th scope="col" class="text-center" style="width: 600px;">Judul Materi</th>
 										<th scope="col" class="text-center" style="width: 600px;">File</th>
+										<?php if ($this->session->userdata['role'] == 'admin') { ?>
+											<th scope="col" class="text-center" style="width: 600px;">Aksi</th>
+										<?php } ?>
 									</tr>
 								</thead>
 								<tbody id="tBodySubstanceTableDetail">

@@ -290,8 +290,11 @@
 			var cell = document.createElement('td');
 			cell.classList.add('text-center');
 
+			var approvalContainer = document.createElement('div');
+			approvalContainer.classList.add('d-inline-flex', 'align-items-center');
+
 			var spanA = document.createElement("span");
-			spanA.className = "badge badge-success";
+			spanA.className = "badge badge-success mr-1 ml-1";
 			spanA.textContent = "Approve";
 			spanA.id = "sAcc" + tr.id;
 			spanA.style.cursor = "pointer";
@@ -299,14 +302,14 @@
 				if (!spanA.disabled) {
 					modifyApproval(idDetail, npk, id, 1);
 					spanA.removeAttribute('id');
-					cell.removeChild(spanR);
+					approvalContainer.removeChild(spanR);
 					spanA.disabled = true;
 				}
 			};
-			cell.appendChild(spanA);
+			approvalContainer.appendChild(spanA);
 
 			var spanR = document.createElement("span");
-			spanR.className = "badge badge-danger";
+			spanR.className = "badge badge-danger  mr-1 ml-1";
 			spanR.textContent = "Reject";
 			spanR.id = "sRej" + tr.id;
 			spanR.style.cursor = "pointer";
@@ -314,16 +317,18 @@
 				if (!spanR.disabled) {
 					modifyApproval(idDetail, npk, id, 3);
 					spanR.removeAttribute('id');
-					cell.removeChild(spanA);
+					approvalContainer.removeChild(spanA);
 					spanR.disabled = true;
 				}
 			};
-			cell.appendChild(spanR);
+			approvalContainer.appendChild(spanR);
+
+			cell.appendChild(approvalContainer);
 
 			tr.appendChild(cell);
-
 		<?php } ?>
 	}
+
 
 	async function createCheckboxCell(name, value, tr, id, code, stat) {
 		try {
@@ -728,7 +733,12 @@
 					if (document.getElementById('publishBtn')) document.getElementById('publishBtn').href = (base_url + judul_training_header) + 2;
 
 					rowCountMateriForm = data.substance.length;
-					isDataTableExist(rowCountMateriForm, 'x', 3, 'emptyData', 'tBodySubstanceTableDetail');
+					if (isAdmin) {
+						isDataTableExist(rowCountMateriForm, 'x', 4, 'emptyData', 'tBodySubstanceTableDetail');
+					} else {
+						isDataTableExist(rowCountMateriForm, 'x', 3, 'emptyData', 'tBodySubstanceTableDetail');
+
+					}
 					if (rowCountMateriForm != 0) {
 						data.substance.forEach(function(substance) {
 							var tableBody = document.getElementById('tBodySubstanceTableDetail');
@@ -1151,8 +1161,7 @@
 					confirmButtonText: 'OK'
 				});
 				return;
-			}
-			else {
+			} else {
 				await checkAccess(access.part, access.file);
 			}
 		});
@@ -1217,6 +1226,9 @@
 	}
 
 	function validateForm() {
+		var inputFields = [
+			'temaTraining'
+		];
 		var errorMessages = document.getElementById('errorMessages');
 
 		if (!errorMessages) {
@@ -1226,39 +1238,18 @@
 
 		var errors = [];
 
-		// Use attribute selector to select elements whose IDs or names contain 'materiTitle'
-		var materiTitleFields = document.querySelectorAll('[id*="materiTitle"], [name*="materiTitle"]');
-
-		materiTitleFields.forEach(function(fieldElement) {
-			var fieldValue = fieldElement.value.trim();
-			if (fieldValue === '') {
-				fieldElement.style.borderColor = 'red';
-				var label = document.querySelector('label[for="' + fieldElement.id + '"]');
-				var labelText = label ? label.textContent.trim() : fieldElement.id;
-				errors.push(labelText);
-				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
-				fieldElement.classList.remove('mb-3');
-			} else {
-				fieldElement.style.borderColor = '';
-			}
-		});
-
-		var inputFields = [
-			'temaTraining'
-			// Add other input field IDs as needed
-		];
-
 		inputFields.forEach(function(fieldId) {
 			var fieldValue = document.getElementById(fieldId).value.trim();
 			var fieldElement = document.getElementById(fieldId);
 
 			if (fieldValue === '') {
+
 				fieldElement.style.borderColor = 'red';
 				var label = document.querySelector('label[for="' + fieldId + '"]');
-				var labelText = label ? label.textContent.trim().replace(/\*/g, '') : fieldId;
+				var labelText = label ? label.textContent.trim() : '' + fieldId;
 				errors.push(labelText);
-				errorMessages.textContent = '* ' + labelText + ' wajib diisi!';
-				fieldElement.classList.remove('mb-3');
+				errorMessages.textContent = '* Tema training wajib diisi!';
+				document.getElementById('temaTraining').classList.remove('mb-3');
 			} else {
 				fieldElement.style.borderColor = ''; // Reset border
 			}
