@@ -6950,6 +6950,14 @@ body {
   color: black !important;
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 84%;
+  display: inline-block;
+}
+
 .tags {
   cursor: pointer;
   border-style: solid;

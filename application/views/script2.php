@@ -9,6 +9,23 @@
 	var isAdmin = '<?php echo $this->session->userdata['role']; ?>' == 'admin';
 	var trStat = 0;
 
+	truncateTextIfNeeded();
+ 	window.addEventListener('resize', truncateTextIfNeeded);
+
+	function truncateTextIfNeeded() {
+		const pElement = document.getElementById('username');
+		const screenWidth = window.innerWidth;
+		const pElementWidth = pElement.clientWidth;
+
+		// Check if the text overflows the p element
+		if (pElementWidth < screenWidth) {
+			pElement.classList.add('truncate');
+		} else {
+			pElement.classList.remove('truncate');
+		}
+		console.log('tr');
+	}
+
 	function confirmDeleteTraining(id) {
 		Swal.fire({
 			title: 'Konfirmasi Hapus Training',
