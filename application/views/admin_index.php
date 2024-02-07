@@ -29,7 +29,7 @@ ob_start();
 					<?php
 					$i = 1;
 					if (empty($admin)) {
-					?>y
+					?>
 					<div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
 						<img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
@@ -41,9 +41,9 @@ ob_start();
 					} else {
 						foreach ($admin as $t) {
 					?>
-						<li class="d-flex mb-2	 pb-1  ">
+						<li class="d-flex py-3 card-admin">
 							<div class="avatar flex-shrink-0 me-3">
-								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle img-fluid" style="width: 40px; height: 40px; " />
+								<img src="https://aas.awi.co.id/ehrd/foto/<?php echo $t->NPK ?>.jpg" alt="User" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; object-position: top left;" />
 							</div>
 							<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-3">
 								<div class="me-2" style="padding-right: 10px; padding-left: 10px">
@@ -55,9 +55,12 @@ ob_start();
 									</small>
 								</div>
 
-								<div class="user-progress d-flex align-items-center gap-1">
-									<a onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></a>
-								</div>
+								<?php if ($countAdmin > 1) { ?>
+								<!-- <div class="user-progress d-flex align-items-center gap-1"> -->
+									<div class="close-icon" onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></div>
+									<!-- <a onclick="confirmDeleteAdmin('<?php echo $t->NPK ?>')"><i style="font-size: 1.8rem;" class="la la-trash"></i></a> -->
+								<!-- </div> -->
+								<?php } ?>
 							</div>
 						</li>
 						<hr>

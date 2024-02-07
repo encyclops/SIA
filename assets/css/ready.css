@@ -6903,12 +6903,12 @@ body {
 
 .close-icon {
   position: absolute;
-  right: 5%;
-  color: red;
-  padding: 10px;
   border-radius: 50%;
   display: none;
   cursor: pointer;
+  top: 13% !important;
+  right: 10% !important;
+  padding: 10px;
 }
 
 .close-icon:hover {
@@ -6943,11 +6943,13 @@ body {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.close-icon, .card-admin:hover .close-icon  {
+.card-admin:hover .close-icon, .card-color:hover .close-icon {
   display: block;
-  top: 13% !important;
-  right: 10% !important;
   color: black !important;
+}
+
+.card-admin .close-icon {
+  position: static;
 }
 
 .truncate {
