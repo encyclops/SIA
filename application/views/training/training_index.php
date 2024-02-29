@@ -410,6 +410,37 @@ $combinedDataJSON = json_encode($combinedData);
 			</div>
 		</form>
 	</div>
+	<!--  -->
+	<div class="row" id="resume" style="display: none;">
+		<div class="col-md-12">
+			<form id="formResume" method="post" enctype="multipart/form-data" role="form">
+				<div class="card p-2">
+					<div class="card-header">
+						<div class="row">
+							<div class="col">
+								<div class="card-title" id="cardTitle">Resume Training</div>
+								<p class="card-category" id="cardCategory">Training / Resume Training</p>
+							</div>
+
+						</div>
+					</div>
+					<div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
+						<div class="row">
+							<div class="col-md-12">
+								<label class="my-2">Tulis catatan</label>
+								<textarea class="form-control" id="textResume" name="textResume" rows="10" maxlength="500" placeholder="Masukkan pendapat Anda"></textarea>
+							</div>
+						</div>
+						<div class="card-body" id="divResume">
+							<button type="button" onclick="saveResume()" class="btn btn-success float-right">Simpan</button>
+							<a href="javascript:void(0)" onclick="changeFormFpet('main')" class="btn btn-danger"></i> Kembali</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!--  -->
 </div>
 <script>
 	function hasBadge(row, badgeId) {

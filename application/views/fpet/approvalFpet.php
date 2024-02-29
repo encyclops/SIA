@@ -104,9 +104,6 @@ $combinedDataJSON = json_encode($combinedData);
         </div>
     </div>
     <div class="row" id="addFpet" style="display: none;">
-
-
-
         <div class="col-md-12">
             <form id="formFpet" method="post" enctype="multipart/form-data" role="form">
 
@@ -120,8 +117,9 @@ $combinedDataJSON = json_encode($combinedData);
                             <div class="col">
                                 <div class="d-flex justify-content-end" id="btnDetailFpet" style="display: none;">
                                     <a id="approveBtnFpet" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Approve</a>
-
-                                    <a id="rejectBtnFpet" class="btn btn-danger " style="display: none;"></i> Reject</a>
+                                    <a id="rejectBtnFpet" class="btn btn-danger " style="margin-right: 9px; display: none;"></i> Reject</a>
+                                    <a id="approveBtnFpetHr" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Approve HR</a>
+                                    <a id="rejectBtnFpetHr" class="btn btn-danger " style="margin-right: 9px; display: none;"></i> Reject HR</a>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +338,6 @@ $combinedDataJSON = json_encode($combinedData);
                 </div>
             </form>
         </div>
-
     </div>
 </div>
 
@@ -608,6 +605,7 @@ $combinedDataJSON = json_encode($combinedData);
                         document.getElementById('target').value = dataFpet.target || '';
                         document.getElementById('notes').value = dataFpet.notes || '';
                         document.getElementById('approvedHR').value = dataFpet.approvedHr || '';
+
                         document.getElementById('approved').value = dataFpet.approved || '';
                         var rActualRadios = document.getElementsByName('rActual');
                         rActualRadios.forEach(radio => {
@@ -638,14 +636,25 @@ $combinedDataJSON = json_encode($combinedData);
                         document.getElementById('btnDetailFpet').style.display = 'block';
                         if (dataFpet.status == '2') {
 
-                            document.getElementById('rejectBtnFpet').style.display = 'inline-block';
-                            document.getElementById('approveBtnFpet').style.display = 'inline-block';
-                        }
-                        var rejectBtnFpet = document.getElementById('rejectBtnFpet');
-                        rejectBtnFpet.setAttribute('href', '<?= base_url('FPET/rejectFpet/') ?>' + id);
-                        var approveBtnFpet = document.getElementById('approveBtnFpet');
-                        approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveFpet/') ?>' + id);
 
+
+                            if (dataFpet.approved == <?php echo $this->session->userdata('npk'); ?>) {
+                                document.getElementById('rejectBtnFpet').style.display = 'inline-block';
+                                document.getElementById('approveBtnFpet').style.display = 'inline-block';
+                                var rejectBtnFpet = document.getElementById('rejectBtnFpet');
+                                rejectBtnFpet.setAttribute('href', '<?= base_url('FPET/rejectFpet/') ?>' + id);
+                                var approveBtnFpet = document.getElementById('approveBtnFpet');
+                                approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveFpet/') ?>' + id);
+                            }
+                            if (dataFpet.approvedHr == <?php echo $this->session->userdata('npk'); ?>) {
+                                document.getElementById('rejectBtnFpetHr').style.display = 'inline-block';
+                                document.getElementById('approveBtnFpetHr').style.display = 'inline-block';
+                                var rejectBtnFpet = document.getElementById('rejectBtnFpetHr');
+                                rejectBtnFpet.setAttribute('href', '<?= base_url('FPET/rejectHrFpet/') ?>' + id);
+                                var approveBtnFpet = document.getElementById('approveBtnFpetHr');
+                                approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveHrFpet/') ?>' + id);
+                            }
+                        }
                         document.getElementById("showListFpet").style.display = 'none';
                         document.getElementById("addFpet").style.display = 'block';
 

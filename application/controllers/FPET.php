@@ -198,6 +198,21 @@
             redirect(site_url('FPET/approvalMenu'));
         }
 
+
+        public function rejectHrFpet($id)
+        {
+            if (!$this->isAllowed()) return redirect(site_url());
+            $this->FPETM->rejectApproveHrFpet($id, 0);
+            redirect(site_url('FPET/approvalMenu'));
+        }
+
+        public function approveHrFpet($id)
+        {
+            if (!$this->isAllowed()) return redirect(site_url());
+            $this->FPETM->rejectApproveHrFpet($id, 1);
+            redirect(site_url('FPET/approvalMenu'));
+        }
+
         public function publishFpet($id)
         {
             if (!$this->isAllowed()) return redirect(site_url());

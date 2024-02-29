@@ -35,7 +35,7 @@ class Chart extends CI_Controller
 			];
 			$getHighest[] = $combine;
 		}
-
+		
 		$data['getHighestEmployee']   = $getHighest;
 		$data['getCountNotDoneEmp']   = $this->ChartM->getCountNotDoneEmp();
 		$data['getFavoriteTraining']   = $this->ChartM->getFavoriteTraining();

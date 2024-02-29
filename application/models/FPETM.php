@@ -83,6 +83,21 @@ class FPETM extends CI_Model
         return $this->db->update('fpet', $data, $where);
     }
 
+    public function rejectApproveHrFpet($id, $kode)
+    {
+        $data = array(
+            'statusApproved'        => $kode,
+
+            'modified_by'   => $this->session->userdata('npk'),
+            'modified_date' => date('Y/m/d H:i:s'),
+        );
+        $where = array(
+            'idFpet'    => $id
+        );
+
+        return $this->db->update('fpet', $data, $where);
+    }
+
     public function approveFpet($id)
     {
         $data = array(
