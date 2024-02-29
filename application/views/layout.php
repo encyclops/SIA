@@ -5,12 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<title>Sistem Informasi Training</title>
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="assets/fonts/fonts.css">
-	<link rel="stylesheet" href="assets/css/ready.css">
-	<link rel="stylesheet" href="assets/css/demo.css">
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css') ?>">
+	<link rel="stylesheet" href="<?php echo base_url('assets/fonts/fonts.css') ?>">
+	<link rel="stylesheet" href="<?php echo base_url('assets/css/ready.css') ?>">
+	<link rel="stylesheet" href="<?php echo base_url('assets/css/demo.css') ?>">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css') ?>">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css') ?>">
 
 </head>
 <?php
@@ -53,7 +53,7 @@ function isActive($url)
 
 							</a>
 							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
-								<li>	
+								<li>
 									<div class="dropdown-title" id="totalNotifTitle">You have <?php echo $totalNotif == 0 ? 'no new' : $totalNotif ?> notifications</div>
 								</li>
 								<li>
@@ -144,11 +144,26 @@ function isActive($url)
 								<!-- <span class="badge badge-count">50</span> -->
 							</a>
 						</li>
+						<li class="nav-item <?php echo isActive('Personal') ?>">
+							<a href="<?php echo base_url('Personal') ?>">
+								<i class="la la-pencil-square"></i>
+								<p>Rangkuman Saya</p>
+								<!-- <span class="badge badge-count">5</span> -->
+							</a>
+						</li>
+						<li class="nav-item <?php echo isActive('FPET/index') ?>">
+							<a href="<?php echo base_url('FPET/index') ?>">
+								<i class="la la-user-secret"></i>
+								<p>Master FPET</p>
+								<!-- <span class="badge badge-count">50</span> -->
+							</a>
+						</li>
 					<?php } ?>
-					<li class="nav-item <?php echo isActive('Personal') ?>">
-						<a href="<?php echo base_url('Personal') ?>">
+
+					<li class="nav-item <?php echo isActive('FPET/approvalMenu') ?>">
+						<a href="<?php echo base_url('FPET/approvalMenu') ?>">
 							<i class="la la-pencil-square"></i>
-							<p>Rangkuman Saya</p>
+							<p>Approval FPET</p>
 							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
@@ -180,24 +195,24 @@ function isActive($url)
 	</div>
 	</div>
 </body>
-<script src="assets/js/core/jquery.3.2.1.min.js"></script>
-<script src="assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-<script src="assets/js/core/popper.min.js"></script>
-<script src="assets/js/core/bootstrap.min.js"></script>
-<script src="assets/js/plugin/chartist/chartist.min.js"></script>
-<script src="assets/js/plugin/chartist/plugin/chartist-plugin-tooltip.min.js"></script>
-<script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script src="assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
-<script src="assets/js/plugin/jquery-mapael/jquery.mapael.min.js"></script>
-<script src="assets/js/plugin/jquery-mapael/maps/world_countries.min.js"></script>
-<script src="assets/js/plugin/chart-circle/circles.min.js"></script>
-<script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-<script src="assets/js/ready.min.js"></script>
-<script src="assets/js/demo.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+<script src="<?php echo base_url('assets/js/core/jquery.3.2.1.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/core/popper.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/core/bootstrap.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/chartist/chartist.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/chartist/plugin/chartist-plugin-tooltip.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/jquery-mapael/jquery.mapael.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/jquery-mapael/maps/world_countries.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/chart-circle/circles.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/ready.min.js') ?>"></script>
+<script src="<?php echo base_url('assets/js/demo.js') ?>"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js') ?>"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js') ?>"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js') ?>"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 	function confirmLogout() {
@@ -348,4 +363,5 @@ function isActive($url)
 		setInterval(updateDateTime, 1000);
 	});
 </script>
+
 </html>
