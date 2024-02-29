@@ -1269,3 +1269,146 @@
 		}
 	}
 </script>
+
+<script>
+	var fields = [
+		{ id: 'levelSelect', label: 'Level Pertanyaan' },
+		{ id: 'answerSelect', label: 'Jawaban Benar' },
+		{ id: 'question', label: 'Pertanyaan' },
+		{ id: 'aOption', label: 'Pilihan A' },
+		{ id: 'bOption', label: 'Pilihan B' },
+		{ id: 'cOption', label: 'Pilihan C' },
+		{ id: 'dOption', label: 'Pilihan D' }
+	];
+
+	function showSoalModal(id) {
+		document.getElementById('formTraining').reset();
+		document.getElementById('modalTitle').textContent = id == 'x' ? 'Tambah Soal' : 'Edit Soal';
+		document.getElementById('modalNav').textContent = 'Soal / ' + (id == 'x' ? 'Tambah Soal' : 'Edit Soal');
+		if (id != 'x') {
+			fetch('<?= base_url('Question/retrieveQuestion/') ?>' + id)
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					fields.forEach(field => {
+						var element = document.getElementById(field.id);
+						element.value = data[field.id];
+					});
+					document.getElementById('question_id').value = data['question_id'];
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+		changeQForm('modify');
+		document.getElementById('scrollableDiv').scrollTop = 0;
+	};
+
+	function changeQForm(code) {
+		document.getElementById('soalPage').style.display = (code == 'main') ? 'block' : 'none';
+		document.getElementById('modifySoalPage').style.display = (code == 'modify') ? 'block' : 'none';
+		callLoader();
+	}
+
+	function validateQForm() {
+		var msg = '';
+		var validity = true;
+
+		for (var i = 0; i < fields.length; i++) {
+			var field = document.getElementById(fields[i].id);
+			if (field.value.trim() === '' || field.value.trim() === 'default') {
+				msg = 'Kolom ' + fields[i].label + ' tidak valid.';
+				validity = false;
+				break;
+			}
+		}
+
+		if (validity) {
+			Swal.fire({
+				title: 'Konfirmasi Data',
+				text: 'Yakin akan menyimpan data?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya',
+				cancelButtonText: 'Tidak',
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					var form = document.getElementById('formTraining');
+					var method = document.getElementById('question_id').value == '' ? 'saveQuestion' : 'editQuestion';
+					var newActionURL = '<?php echo base_url('Question/') ?>' + method;
+					form.setAttribute('action', newActionURL);
+					form.submit();
+				}
+			});
+		} else {
+			Swal.fire({
+				title: 'Kesalahan Input Data',
+				text: msg,
+				icon: 'error',
+				confirmButtonColor: '#3085d6',
+				confirmButtonText: 'OK'
+			});
+		}
+	}
+
+	function deleteQuestion(id) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'You won\'t be able to revert this!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!'
+		})
+		.then((result) => {
+			if (result.isConfirmed) {
+				var url = '<?php echo base_url("Question/deleteQuestion/"); ?>' + id;
+
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						Swal.fire({
+							title: 'Delete Succeed',
+							text: 'The question has been successfully deleted.',
+							icon: 'success',
+							confirmButtonColor: '#3085d6',
+							confirmButtonText: 'OK'
+						})
+						.then((result) => {
+							if (result.isConfirmed) {
+								window.location.reload();
+							}
+						});
+					} else {
+						console.log('Deletion failed:', data.error);
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+			}
+		});
+	}
+
+	function callLoader() {
+		var loader = document.getElementById('loaderDiv');
+		setTimeout(function() {
+			loader.classList.add('fade-out');
+			setTimeout(function() {
+				loader.style.display = 'none';
+			}, 500);
+		}, 500);
+		loader.style.display = '';
+		loader.classList.remove('fade-out');
+	}
+</script>
