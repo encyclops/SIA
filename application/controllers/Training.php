@@ -38,6 +38,7 @@ class Training extends CI_Controller
 
 	public function showDetail($id)
 	{
+		$npk = $this->session->userdata('npk');
 		$data["header"] = $this->TrainingM->getTrainingHeader($id);
 		$emps           = $this->TrainingM->getEmployeeByTraining($id);
 		$detailEmployeeE = [];
@@ -51,6 +52,7 @@ class Training extends CI_Controller
 				'PERCENT'   => $prog->percentage,
 				'PROGRESS'  => $prog->progress,
 				'STATUS'	=> $this->TrainingM->getAccessByNPKID($employee->NPK, $id)->access_permission,
+
 			];
 			$detailEmployeeE[] = $combinedData;
 		}
@@ -58,6 +60,7 @@ class Training extends CI_Controller
 		$data["substance"]  = $this->TrainingM->getSubstanceByTraining($id);
 		$data["employee"]   = $detailEmployeeE;
 		$data["tags"]   	= $this->AdminM->getTagsByID($id);
+		$data["resume"]  = $this->TrainingM->getResumePersonal($npk, $id);
 
 		echo json_encode($data);
 	}
@@ -270,5 +273,24 @@ class Training extends CI_Controller
 		} else {
 			$this->TrainingM->removeNotifMateri($id);
 		}
+	}
+
+
+	public function modifyResume($idHeader)
+	{
+
+		// Retrieve form data from POST request
+		$textResume = $this->input->post('textResume');
+
+
+		$data = array(
+			'resume' => $textResume
+			// 'created_date'              => date('Y/m/d H:i:s'),
+			// 'created_by'                => $this->session->userdata('npk')
+		);
+
+		$saved = $this->TrainingM->modifyResume($data, $idHeader);
+
+		//  redirect(site_url('FPET'));
 	}
 }

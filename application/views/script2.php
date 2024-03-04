@@ -47,12 +47,14 @@
 	function changeForm(kode, status) {
 		var listCardDiv = document.getElementById('listCardDiv');
 		var detailFormDiv = document.getElementById('detailFormDiv');
+		var resumeDiv = document.getElementById('resumeDiv');
 		changeDisplayOfElements('block', ['temaDiv', 'substanceDiv']);
 
 		if (kode.includes('edit')) {
 
 			changeDisplayOfElements('block', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('none', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail', 'editBtn', 'deleteBtn', 'publishBtn']);
+			resumeDiv.style.display = 'none'
 			changeTitle('Ubah Training', true, status);
 			var badgeElements = document.querySelectorAll('.badge tags');
 			badgeElements.forEach(function(element) {
@@ -77,12 +79,13 @@
 			const firstToggleElement = document.querySelector('input[onchange="toggleAll(this.checked);"]');
 			if (firstToggleElement) {
 				firstToggleElement.parentNode.classList.remove('btn-info');
-				firstToggleElement.parentNode.classList.add('btn-default', 'off');
+				firstToggleElement.parentNodshowDetaile.classList.add('btn-default', 'off');
 			}
 			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
 			listCardDiv.style.display = 'none';
 			detailFormDiv.style.display = 'block';
+			resumeDiv.style.display = 'block';
 			changeDisplayOfElements('none', ['allEmpDiv', 'submitBtn', 'substanceTableEdit', 'addFileBtn']);
 			changeDisplayOfElements('block', [isAdmin ? 'detailEmpDiv' : 'detailOnlyDiv', 'substanceTableDetail']);
 			changeTitle('Detail Training', true, '');
@@ -655,7 +658,6 @@
 			}
 		}
 	}
-
 	async function showDetail(id) {
 		rowCountMateriForm = 1;
 		await getAdmins();
@@ -665,13 +667,12 @@
 		for (var i = t.rows.length - 1; i >= 0; i--) {
 			t.deleteRow(i);
 		}
-
+		document.getElementById('readResume').value = '';
 		changeForm('detail', '');
 
 		empArrAdmin = [];
 		const promises = [];
 		const checked = [];
-
 		var counterEmp = 0;
 		var counterSub = 1;
 		if (id != '0') {
@@ -686,15 +687,17 @@
 					var data = JSON.parse(response);
 					console.log(data);
 					trStat = data.header[0].status;
-					console.log(status + "sdf");
+
 
 					data.employee.forEach(async function(emp) {
 
+						console.log(resumeText + "detail");
 						if (emp.STATUS != 3) {
 							empArrAdmin.push(emp.NPK);
 							// Data row
 							var tr = document.createElement('tr');
 							var idRow = document.getElementById('tBodyDetailEmp') ? 'rowForm' : 'rowFormDet';
+
 							tr.id = idRow + emp.NPK;
 
 							createTextCell(counterEmp + 1, tr, 'number', 'center');
@@ -771,6 +774,16 @@
 						}
 					});
 
+					if (data.resume && data.resume.length > 0) {
+						var resumeText = data.resume[0].resume;
+						document.getElementById('readResume').value = resumeText;
+
+						document.getElementById("resumeLink").innerText = "Detail Resume";
+
+					} else {
+
+						document.getElementById("resumeLink").innerText = "Buat Resume";
+					}
 				})
 				.catch(error => {
 					console.error('Error fetching data showdetail:', error);
@@ -986,8 +999,6 @@
 					else td.textContent = row[key];
 					tr.appendChild(td);
 					if (key === 'DEPARTEMEN') {
-						//xyz
-						console.log("hasd");
 						createCheckboxCell('chkBoxemp[]', row['NPK'], tr, isAdmin ? '' : 'non', 'edit', tableName.includes('Admin') ? 'admin' : '');
 					}
 				}
@@ -1435,5 +1446,87 @@
 	function saveResume() {
 		var formElements = document.getElementById("formResume");
 		formElements.submit();
+	}
+
+	function doUpdateResume() {
+		document.getElementById("textResume").readOnly = false;
+		document.getElementById("submitBtnResume").style.display = 'block';
+	}
+
+
+	function makeFormResume() {
+		document.getElementById("secondaryBtn").style.display = 'block';
+		document.getElementById("resume").style.display = 'block';
+
+		document.getElementById("formTraining").style.display = 'none';
+		var formElement = document.getElementById('formResume');
+		var idHeader = document.getElementById('idTraining').value;
+		var resumeValue = document.getElementById('readResume').value;
+		console.log(resumeValue + "isi");
+		// if (resumeValue == null || resumeValue.trim() === '') {
+		// 	console.log("el");
+		// } else {
+
+		console.log("resumeText");
+		document.getElementById("divResumeBtn").style.display = 'block';
+		document.getElementById('textResume').value = resumeValue;
+		// var formElement = document.getElementById('formResume');
+		// formElement.setAttribute('action', '<?php echo base_url('Training/modifyResume/') ?>' + idHeader);
+
+		// }
+		formElement.setAttribute('action', '<?php echo base_url('Training/modifyResume/') ?>' + idHeader);
+	}
+
+	function back2Form() {
+		document.getElementById("resume").style.display = 'none';
+		document.getElementById("formTraining").style.display = 'block';
+		var formElement = document.getElementById('formResume');
+		formElement.removeAttribute('action');
+
+	}
+
+	function delResume() {
+		Swal.fire({
+				title: 'Apakah Anda ingin menghapus Resume?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					document.getElementById('textResume').value = null;
+					var url = '<?php echo base_url("Training/modifyResume/"); ?>' + id;
+
+					fetch(url, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.success) {
+								Swal.fire({
+										title: 'Resume berhasil dihapus',
+										icon: 'success',
+										confirmButtonColor: '#3085d6',
+										confirmButtonText: 'OK'
+									})
+									.then((result) => {
+										if (result.isConfirmed) {
+											window.location.reload();
+										}
+									});
+							} else {
+								console.log('Deletion failed:', data.error);
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+			});
 	}
 </script>

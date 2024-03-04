@@ -346,6 +346,18 @@ class TrainingM extends CI_Model
         return $query->row();
     }
 
+
+    public function getResumePersonal($npk, $id)
+    {
+        $query = $this->db->query(
+            "   SELECT resume
+                FROM $this->t_access
+                WHERE id_training_header = $id
+                AND npk = $npk                  "
+        );
+        return $query->result();
+    }
+
     public function getProgress($id, $npk)
     {
         $query = $this->db->query(
@@ -549,5 +561,17 @@ class TrainingM extends CI_Model
         );
 
         return $query->result();
+    }
+
+
+    public function modifyResume($data, $idHeader)
+    {
+
+        $where = array(
+            'id_training_header'    => $idHeader,
+            'npk'   =>  $this->session->userdata('npk'),
+        );
+
+        return $this->db->update('training_access', $data, $where);
     }
 }

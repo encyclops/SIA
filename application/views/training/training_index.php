@@ -402,10 +402,24 @@ $combinedDataJSON = json_encode($combinedData);
 							</table>
 						</div>
 					</div>
-					<div class="card-body">
+					<div id="resumeDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important;  display: none;">
+						<label class="mb-2">Resume</label>
+						<a href="javascript:void(0)" id="resumeLink" onclick="makeFormResume()" class="btn btn-info btn-border float-right mb-3">
+						</a>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="my-2">Tulis catatan</label>
+								<textarea class="form-control" id="readResume" readonly name="readResume" rows="10" maxlength="1000" placeholder="Masukkan pendapat Anda"></textarea>
+							</div>
+						</div>
+
+					</div>
+					<div class="card-body" id="primaryBtn">
+
 						<button type="button" onclick="validateForm()" class="btn btn-success float-right" id="submitBtn">Simpan</button>
 						<a href="javascript:void(0)" onclick="changeForm('main')" class="btn btn-danger"></i> Kembali</a>
 					</div>
+
 				</div>
 			</div>
 		</form>
@@ -421,19 +435,26 @@ $combinedDataJSON = json_encode($combinedData);
 								<div class="card-title" id="cardTitle">Resume Training</div>
 								<p class="card-category" id="cardCategory">Training / Resume Training</p>
 							</div>
-
+							<div class="col">
+								<div class="d-flex justify-content-end" id="divResumeBtn" style="display: none;">
+									<!-- <a id="publishBtnFpet" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Publish</a> -->
+									<a href="javascript:void(0)" id="editBtnResume" onclick="doUpdateResume()" class="btn btn-warning" style="margin-right: 9px; display: none;"></i> Edit</a>
+									<a id="deleteBtnResume" class="btn btn-danger " style="display: none;"></i> Hapus</a>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
 						<div class="row">
 							<div class="col-md-12">
 								<label class="my-2">Tulis catatan</label>
-								<textarea class="form-control" id="textResume" name="textResume" rows="10" maxlength="500" placeholder="Masukkan pendapat Anda"></textarea>
+								<textarea class="form-control" id="textResume" name="textResume" rows="10" maxlength="1000" placeholder="Masukkan pendapat Anda"></textarea>
 							</div>
 						</div>
-						<div class="card-body" id="divResume">
-							<button type="button" onclick="saveResume()" class="btn btn-success float-right">Simpan</button>
-							<a href="javascript:void(0)" onclick="changeFormFpet('main')" class="btn btn-danger"></i> Kembali</a>
+						<div class="card-body" id="secondaryBtn">
+							<!-- <button type="button" onclick="makeFormResume(idTraining)" class="btn btn-success float-right" id="resumeBtn">Resume</button> -->
+							<button type=" button" onclick="saveResume()" class="btn btn-success float-right" id="submitBtnResume">Simpan</button>
+							<a href="javascript:void(0)" onclick="back2Form()" class="btn btn-danger"></i> Kembali</a>
 						</div>
 					</div>
 				</div>
