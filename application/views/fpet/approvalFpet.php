@@ -106,7 +106,6 @@ $combinedDataJSON = json_encode($combinedData);
     <div class="row" id="addFpet" style="display: none;">
         <div class="col-md-12">
             <form id="formFpet" method="post" enctype="multipart/form-data" role="form">
-
                 <div class="card p-2">
                     <div class="card-header">
                         <div class="row">

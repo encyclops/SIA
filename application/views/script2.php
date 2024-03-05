@@ -1431,6 +1431,93 @@
 			});
 	}
 
+	function showPForm(id) {
+		document.getElementById('formPackage').reset();
+		document.getElementById('titlePackage').textContent = id == 'x' ? 'Tambah Paket' : 'Edit Paket';
+		document.getElementById('navPackage').textContent = 'Soal / ' + (id == 'x' ? 'Tambah Paket Soal' : 'Edit Paket Soal');
+		if (id != 'x') {
+			fetch('<?= base_url('Question/retrievePackage/') ?>' + id)
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					document.getElementById('idUniqPaket').value = data['package_uniqueId'];
+					document.getElementById('namePaket').value = data['package_name'];
+					document.getElementById('chooseTrain').value = data['training_id'];
+					document.getElementById('package_id').value = data['package_id'];
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+		changePForm('modify');
+		document.getElementById('scrollableDiv').scrollTop = 0;
+	};
+
+	function changePForm(code) {
+		document.getElementById('packagePage').style.display = (code == 'main') ? 'block' : 'none';
+		document.getElementById('modifyPackagePage').style.display = (code == 'modify') ? 'block' : 'none';
+		callLoader();
+	}
+
+	function validatePForm() {
+
+		var form = document.getElementById('formPackage');
+		var method = document.getElementById('package_id').value == '' ? 'savePackage' : 'editPackage';
+		var newActionURL = '<?php echo base_url('Question/') ?>' + method;
+		form.setAttribute('action', newActionURL);
+		form.submit();
+
+
+
+	}
+
+	function deletePackage(id) {
+		Swal.fire({
+				title: 'Apakah Anda Yakin?',
+				text: 'Anda akan menghapus data permanen!',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya!'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					var url = '<?php echo base_url("Question/deletePackage/"); ?>' + id;
+
+					fetch(url, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.success) {
+								Swal.fire({
+										title: 'Dihapus',
+										text: 'Paket Soal berhasil dihapus',
+										icon: 'success',
+										confirmButtonColor: '#3085d6',
+										confirmButtonText: 'OK'
+									})
+									.then((result) => {
+										if (result.isConfirmed) {
+											window.location.reload();
+										}
+									});
+							} else {
+								console.log('Deletion failed:', data.error);
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+			});
+	}
+
+
 	function callLoader() {
 		var loader = document.getElementById('loaderDiv');
 		setTimeout(function() {

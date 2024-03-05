@@ -30,13 +30,13 @@ ob_start();
 					$i = 1;
 					if (empty($soal)) {
 					?>
-					<div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
+						<div class="avatar flex-shrink-0 me-3 justify-content-center d-flex">
 
-						<img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
+							<img src="<?= base_url('assets/img/dataEmpty1.jpg') ?>" alt="User" class="img-fluid" style="max-width: 310px; max-height: 190px;" />
 
-					</div>
-					<hr>
-					<h5 style="text-align: center;">Data Tidak Ada</h5>
+						</div>
+						<hr>
+						<h5 style="text-align: center;">Data Tidak Ada</h5>
 					<?php
 					} else { ?>
 						<table id="allSoalTable" name="table" class="table table-hover table-head-bg-info my-2">
@@ -50,7 +50,7 @@ ob_start();
 									<th scope="col" style="width: 150px;">Pilihan B</th>
 									<th scope="col" style="width: 150px;">Pilihan C</th>
 									<th scope="col" style="width: 150px;">Pilihan D</th>
-									<th scope="col" style="width: 135px;"class="text-center">Aksi</th>
+									<th scope="col" style="width: 135px;" class="text-center">Aksi</th>
 								</tr>
 							</thead>
 							<tbody id="tBodyAllSoal">
@@ -100,6 +100,19 @@ ob_start();
 				</div>
 				<form role="form" id="formTraining" method="post" enctype="multipart/form-data">
 					<div class="card-body" style="max-height: 480px; overflow-y: auto;" id="scrollableDiv">
+						<div class="row py-2">
+							<div class="col-md-6">
+								<div class="form-group p-0">
+									<label for="levelSelect">Pilih Paket Soal <span style="color: red;">*</span></label>
+									<select class="form-control form-control" id="levelSelect" name="levelSelect" required>
+										<option value="default" selected disabled>-- Pilih Tingkat Kesulitan --</option>
+										<?php foreach ($package as $t) : ?>
+											<option value="<?php echo $t->package_id; ?>"><?php echo $t->package_name; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+							</div>
+						</div>
 						<div class="row py-2">
 							<div class="col-md-6">
 								<div class="form-group p-0">

@@ -167,6 +167,20 @@ function isActive($url)
 							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
+					<li class="nav-item <?php echo isActive('Question') ?>">
+						<a href="<?php echo base_url('Question') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Master Soal</p>
+							<!-- <span class="badge badge-count">5</span> -->
+						</a>
+					</li>
+					<li class="nav-item <?php echo isActive('Question/getPackage') ?>">
+						<a href="<?php echo base_url('Question/getPackage') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Paket Soal</p>
+							<!-- <span class="badge badge-count">5</span> -->
+						</a>
+					</li>
 				</ul>
 				<ul class="nav" style="margin-top: 5px;">
 					<li class="nav-item">
