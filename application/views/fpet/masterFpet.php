@@ -54,46 +54,51 @@ $combinedDataJSON = json_encode($combinedData);
 							<tbody id="tBodymainTable">
 								<?php
 								$i = 1;
-								foreach ($fpet as $t) {
-									// Define status text based on the value of statusApproved
-									$statusText = '';
-									switch ($t->statusApproved) {
-										case 0:
-											$statusText = 'Ditolak';
-											break;
-										case 1:
-											$statusText = 'Disetujui';
-											break;
-										case 2:
-										default:
-											$statusText = 'Belum disetujui';
-											break;
-									}
+								if (empty($fpet)) {
+									echo '<tr><td colspan="6" class="text-center">Belum ada data</td></tr>';
+								} else {
+									foreach ($fpet as $t) {
+										// Define status text based on the value of statusApproved
+										$statusText = '';
+										switch (isset($t['statusApproved']) ? $t['statusApproved'] : '') {
+											case 0:
+												$statusText = 'Ditolak';
+												break;
+											case 1:
+												$statusText = 'Disetujui';
+												break;
+											case 2:
+											default:
+												$statusText = 'Belum disetujui';
+												break;
+										}
 
-									$statusTextHr = '';
-									switch ($t->statusApproved) {
-										case 0:
-											$statusTextHr = 'Ditolak';
-											break;
-										case 1:
-											$statusTextHr = 'Disetujui';
-											break;
-										case 2:
-										default:
-											$statusTextHr = 'Belum disetujui';
-											break;
-									}
+										$statusTextHr = '';
+										switch (isset($t['statusApprovedHr']) ? $t['statusApprovedHr'] : '') {
+											case 0:
+												$statusTextHr = 'Ditolak';
+												break;
+											case 1:
+												$statusTextHr = 'Disetujui';
+												break;
+											case 2:
+											default:
+												$statusTextHr = 'Belum disetujui';
+												break;
+										}
+
 								?>
-									<tr>
-										<th><?php echo $i ?></th>
-										<th><?php echo $t->trainerNpk ?></th>
-										<th><?php echo $t->target ?></th>
-										<th><?php echo $statusText ?></th>
-										<th><?php echo $statusTextHr ?></th>
-										<th class="text-center"><a href="javascript:void(0)" onclick="showDetailFpet(<?php echo $t->idFpet ?>)" class="btn btn-primary"></i>Detail</a></th>
-									</tr>
+										<tr>
+											<th><?php echo $i ?></th>
+											<th><?php echo isset($t['nama']) ? $t['nama'] : ''; ?></th>
+											<th><?php echo isset($t['target']) ? $t['target'] : ''; ?></th>
+											<th><?php echo $statusText ?></th>
+											<th><?php echo $statusTextHr ?></th>
+											<th class="text-center"><a href="javascript:void(0)" onclick="showDetailFpet(<?php echo isset($t['idFpet']) ? $t['idFpet'] : ''; ?>)" class="btn btn-primary"></i>Detail</a></th>
+										</tr>
 								<?php
-									$i++;
+										$i++;
+									}
 								}
 								?>
 							</tbody>
@@ -127,7 +132,7 @@ $combinedDataJSON = json_encode($combinedData);
 						</div>
 					</div>
 					<div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-						<div class="row">
+						<div class="row" style="display: none;">
 							<div class="col-md-6">
 								<div class="form-check" id="questionTrain">
 									<label>Apakah Anda ingin mengambil usulan training bedasar training yang ada? <span style="color: red;">*</span></label><br />
@@ -192,7 +197,7 @@ $combinedDataJSON = json_encode($combinedData);
 								</div>
 							</div> -->
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" style="display: none;">
 							<div class="form-check">
 								<label>Pilih Jenis Training <span style="color: red;">*</span></label><br />
 								<label class="form-radio-label">
@@ -416,6 +421,9 @@ $combinedDataJSON = json_encode($combinedData);
 
 	function doUpdate() {
 		document.getElementById('btnSub').style.display = 'block';
+		document.getElementById('editBtnFpet').style.display = 'none'; // Adjust as per your requirement
+		document.getElementById('deleteBtnFpet').style.display = 'none';
+		document.getElementById('publishBtnFpet').style.display = 'none';
 		enableFormElements();
 		var formElement = document.getElementById('btnSub');
 		formElement.setAttribute('onclick', 'update()')
@@ -460,6 +468,11 @@ $combinedDataJSON = json_encode($combinedData);
 	}
 
 	function save() {
+		var formElements = document.getElementById("formFpet");
+		formElements.submit();
+	}
+
+	function update() {
 		var formElements = document.getElementById("formFpet");
 		formElements.submit();
 	}
@@ -597,23 +610,7 @@ $combinedDataJSON = json_encode($combinedData);
 
 
 	// Function to toggle visibility of trainSection1 and trainSection2
-	function toggleTrainSections() {
-		var rEstablishedValue = document.querySelector('input[name="rEstablished"]:checked').value;
 
-		// If rEstablished is "Ya", display trainSection1 and hide trainSection2
-		if (rEstablishedValue === "Ya") {
-			document.getElementById('trainSection1').style.display = 'block';
-			document.getElementById('trainSection2').style.display = 'none';
-		}
-		// If rEstablished is "Tidak", display trainSection2 and hide trainSection1
-		else {
-			document.getElementById('trainSection1').style.display = 'none';
-			document.getElementById('trainSection2').style.display = 'block';
-		}
-	}
-
-	// Call toggleTrainSections initially to set the initial visibility state
-	toggleTrainSections();
 
 
 
@@ -637,15 +634,10 @@ $combinedDataJSON = json_encode($combinedData);
 						document.getElementById('actual').value = dataFpet.actual || '';
 						document.getElementById('target').value = dataFpet.target || '';
 						document.getElementById('notes').value = dataFpet.notes || '';
+						document.getElementById('eval').value = dataFpet.eval || '';
 						document.getElementById('approvedHR').value = dataFpet.approvedHr || '';
 						document.getElementById('approved').value = dataFpet.approved || '';
-						var rEstablished = dataFpet.rEstablished || '';
-						if (rEstablished == 1) {
-							document.getElementById('trainSection1').style.display = 'block';
 
-						} else if (rEstablished == 0) {
-							document.getElementById('trainSection2').style.display = 'block';
-						}
 						var rActualRadios = document.getElementsByName('rActual');
 						rActualRadios.forEach(radio => {
 							if (radio.value === dataFpet.ractual.toString()) {
@@ -674,9 +666,9 @@ $combinedDataJSON = json_encode($combinedData);
 						// Show the buttons
 						document.getElementById('btnDetailFpet').style.display = 'block';
 						if (dataFpet.status == '2') {
-							document.getElementById('editBtnFpet').style.display = 'inline-block'; // Adjust as per your requirement
-							document.getElementById('deleteBtnFpet').style.display = 'inline-block';
-							document.getElementById('publishBtnFpet').style.display = 'inline-block';
+							document.getElementById('editBtnFpet').style.display = 'block'; // Adjust as per your requirement
+							document.getElementById('deleteBtnFpet').style.display = 'block';
+							document.getElementById('publishBtnFpet').style.display = 'block';
 						}
 						var deleteBtnFpet = document.getElementById('deleteBtnFpet');
 						deleteBtnFpet.setAttribute('href', '<?= base_url('FPET/removeFpet/') ?>' + id);

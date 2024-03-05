@@ -55,44 +55,50 @@ $combinedDataJSON = json_encode($combinedData);
                                     $i = 1;
                                     foreach ($fpet as $t) {
                                         // Define status text based on the value of statusApproved
-                                        $statusText = '';
-                                        switch ($t->statusApproved) {
-                                            case 0:
-                                                $statusText = 'Ditolak';
-                                                break;
-                                            case 1:
-                                                $statusText = 'Disetujui';
-                                                break;
-                                            case 2:
-                                            default:
-                                                $statusText = 'Belum disetujui';
-                                                break;
-                                        }
+                                        if ($t->approvedHr == $this->session->userdata('npk') && $t->approved != $this->session->userdata('npk') && $t->statusApproved == 2) {
+                                        } else {
+                                            $statusText = '';
+                                            switch ($t->statusApproved) {
+                                                case 0:
+                                                    $statusText = 'Ditolak';
+                                                    break;
+                                                case 1:
+                                                    $statusText = 'Disetujui';
+                                                    break;
+                                                case 2:
+                                                default:
+                                                    $statusText = 'Belum disetujui';
+                                                    break;
+                                            }
 
-                                        $statusTextHr = '';
-                                        switch ($t->statusApprovedHr) {
-                                            case 0:
-                                                $statusTextHr = 'Ditolak';
-                                                break;
-                                            case 1:
-                                                $statusTextHr = 'Disetujui';
-                                                break;
-                                            case 2:
-                                            default:
-                                                $statusTextHr = 'Belum disetujui';
-                                                break;
-                                        }
+                                            $statusTextHr = '';
+                                            switch ($t->statusApprovedHr) {
+                                                case 0:
+                                                    $statusTextHr = 'Ditolak';
+                                                    break;
+                                                case 1:
+                                                    $statusTextHr = 'Disetujui';
+                                                    break;
+                                                case 2:
+                                                default:
+                                                    $statusTextHr = 'Belum disetujui';
+                                                    break;
+                                            }
                                 ?>
-                                        <tr>
-                                            <th><?php echo $i ?></th>
-                                            <th><?php echo $t->trainerNpk ?></th>
-                                            <th><?php echo $t->target ?></th>
-                                            <th><?php echo $statusText ?></th>
-                                            <th><?php echo $statusTextHr ?></th>
-                                            <th class="text-center"><a href="javascript:void(0)" onclick="showDetailApprovalFpet(<?php echo $t->idFpet ?>)" class="btn btn-primary"></i>Detail</a></th>
-                                        </tr>
+                                            <tr>
+                                                <th><?php echo $i ?></th>
+                                                <th><?php echo $t->trainerNpk ?></th>
+                                                <th><?php echo $t->target ?></th>
+                                                <th><?php echo $statusText ?></th>
+                                                <th><?php echo $statusTextHr ?></th>
+                                                <th class="text-center"><a href="javascript:void(0)" onclick="showDetailApprovalFpet(<?php echo $t->idFpet ?>)" class="btn btn-primary"></i>Detail</a></th>
+                                            </tr>
                                 <?php
-                                        $i++;
+                                            $i++;
+                                        }
+                                    }
+                                    if ($i == 1) {
+                                        echo '<tr><td colspan="6" class="text-center">Belum ada data</td></tr>';
                                     }
                                 }
                                 ?>
@@ -124,7 +130,7 @@ $combinedDataJSON = json_encode($combinedData);
                         </div>
                     </div>
                     <div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-                        <div class="row">
+                        <div class="row" style=" display: none;">
                             <div class="col-md-6">
                                 <div class="form-check">
                                     <label>Apakah Anda ingin mengambil usulan training bedasar training yang ada? <span style="color: red;">*</span></label><br />
@@ -177,19 +183,6 @@ $combinedDataJSON = json_encode($combinedData);
                                     <input type="text" class="form-control input-pill mb-3" name="cost" id="cost" placeholder="Masukkan Biaya ">
                                 </div>
                             </div>
-                            <div class="row">
-
-                                <div class="form-group">
-                                    <label for="approved">Pilih Calon Trainer <span style="color: red;">*</span></label>
-                                    <select class="form-control input-pill mb-3" id="trainer" name="trainer">
-                                        <option disabled selected>Pilih </option>
-                                        <?php foreach ($employee as $e) : ?>
-                                            <option value="<?php echo $e->NPK; ?>"><?php echo $e->NAMA; ?> (<?php echo $e->DEPARTEMEN; ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -203,7 +196,6 @@ $combinedDataJSON = json_encode($combinedData);
                                     </select>
                                 </div>
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -330,7 +322,7 @@ $combinedDataJSON = json_encode($combinedData);
                             </div>
                         </div>
                         <div class="card-body" id="divBackSub">
-                            <button type="button" id="btnSub" class="btn btn-success float-right">Simpan</button>
+                            <button type="button" id="btnSubApprove" class="btn btn-success float-right">Simpan</button>
                             <a href="javascript:void(0)" onclick="changeFormFpet('main')" class="btn btn-danger"></i> Kembali</a>
                         </div>
                     </div>
@@ -395,7 +387,7 @@ $combinedDataJSON = json_encode($combinedData);
     });
 
     function doUpdate() {
-        document.getElementById('btnSub').style.display = 'block';
+        document.getElementById('btnSubApprove').style.display = 'block';
         enableFormElements();
     }
 
@@ -473,6 +465,10 @@ $combinedDataJSON = json_encode($combinedData);
         formElement.removeAttribute('action');
         document.getElementById("showListFpet").style.display = 'block';
         document.getElementById("addFpet").style.display = 'none';
+        document.getElementById("approveBtnFpetHr").style.display = 'none';
+        document.getElementById("rejectBtnFpetHr").style.display = 'none';
+        document.getElementById("rejectBtnFpet").style.display = 'none';
+        document.getElementById("approveBtnFpet").style.display = 'none';
 
     }
 
@@ -630,14 +626,11 @@ $combinedDataJSON = json_encode($combinedData);
 
                         document.getElementById('rTarget' + (dataFpet.rTarget || '')).checked = true;
                         document.getElementById('rEval' + (dataFpet.rEval || '')).checked = true;
-                        document.getElementById('btnSub').style.display = 'none';
+                        document.getElementById('btnSubApprove').style.display = 'none';
                         // Show the buttons
                         document.getElementById('btnDetailFpet').style.display = 'block';
-                        if (dataFpet.status == '2') {
-
-
-
-                            if (dataFpet.approved == <?php echo $this->session->userdata('npk'); ?>) {
+                        if (dataFpet.status == '1') {
+                            if (dataFpet.approved == <?php echo $this->session->userdata('npk'); ?> && dataFpet.statusApproved === 2) {
                                 document.getElementById('rejectBtnFpet').style.display = 'inline-block';
                                 document.getElementById('approveBtnFpet').style.display = 'inline-block';
                                 var rejectBtnFpet = document.getElementById('rejectBtnFpet');
@@ -645,7 +638,7 @@ $combinedDataJSON = json_encode($combinedData);
                                 var approveBtnFpet = document.getElementById('approveBtnFpet');
                                 approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveFpet/') ?>' + id);
                             }
-                            if (dataFpet.approvedHr == <?php echo $this->session->userdata('npk'); ?>) {
+                            if (dataFpet.approvedHr == <?php echo $this->session->userdata('npk'); ?> && (dataFpet.statusApproved === 1 || dataFpet.statusApproved === 0) && dataFpet.statusApprovedHr == 2) {
                                 document.getElementById('rejectBtnFpetHr').style.display = 'inline-block';
                                 document.getElementById('approveBtnFpetHr').style.display = 'inline-block';
                                 var rejectBtnFpet = document.getElementById('rejectBtnFpetHr');

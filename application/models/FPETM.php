@@ -26,7 +26,7 @@ class FPETM extends CI_Model
         $query = $this->db->query(
             "   SELECT * 
                 FROM fpet
-                WHERE approvedHr = $npk or approved = $npk"
+                WHERE  status = 1 and (approvedHr = $npk or approved = $npk) "
         );
         return $query->result();
     }
@@ -35,7 +35,7 @@ class FPETM extends CI_Model
         $query = $this->db->query(
             "   SELECT * 
                 FROM fpet
-                WHERE status = 1 or status = 2   and idFpet = $id"
+                WHERE idFpet = $id"
         );
         return $query->row();
     }
@@ -86,7 +86,7 @@ class FPETM extends CI_Model
     public function rejectApproveHrFpet($id, $kode)
     {
         $data = array(
-            'statusApproved'        => $kode,
+            'statusApprovedHr'        => $kode,
 
             'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
@@ -98,22 +98,13 @@ class FPETM extends CI_Model
         return $this->db->update('fpet', $data, $where);
     }
 
-    public function approveFpet($id)
+
+
+    public function modifyFpet($data, $id)
     {
-        $data = array(
-            'statusApprovedHr'        => 1,
-            'modified_date' => date('Y/m/d H:i:s'),
-        );
         $where = array(
             'idFpet'    => $id
         );
-
-        return $this->db->update('fpet', $data, $where);
-    }
-
-    public function modifyFpet($data)
-    {
-
         return $this->db->update('fpet', $data, $where);
     }
 }

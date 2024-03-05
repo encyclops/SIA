@@ -29,6 +29,23 @@
             $data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
             $data['fpet']          = $this->FPETM->getFpet();
+            $getFpetDataEmployee2    = $this->FPETM->getFpet();
+            $getFpetData = [];
+            foreach ($getFpetDataEmployee2 as $a) {
+                $employee   = $this->OracleDBM->getEmpBy('NPK', $a->trainerNpk);
+                $combine = [
+                    'npk'       => $employee->NPK,
+                    'nama'      => $employee->NAMA,
+                    'target'      => $a->target,
+                    'idFpet'      => $a->idFpet,
+                    'statusApproved'  => $a->statusApproved,  // Corrected key
+                    'statusApprovedHr' => $a->statusApprovedHr,  // Corrected key
+
+                ];
+                $getFpetData[] = $combine;
+            }
+            $data['fpet']   = $getFpetData;
+
             $this->load->view('fpet/masterFpet', $data);
         }
 
@@ -63,35 +80,6 @@
             $approved = $this->input->post('approved');
             $trainer = $this->input->post('trainer');
             $approvedHr = $this->input->post('approvedHr');
-
-            // Retrieve other form data
-
-
-            $rEstablished = $this->input->post('rEstablished');
-            $lastInsertedTrain = null;
-            if ($rEstablished == "Ya") {
-                $lastInsertedTrain = $this->input->post('chooseTrain');
-                $rEstablished = 1;
-            } else if ($rEstablished == "Tidak") {
-                $categoryTrain = $this->input->post('categoryTrain');
-
-                $title = $this->input->post('title');
-                $educator = $this->input->post('educator');
-                $schedule = $this->input->post('schedule');
-                $cost = $this->input->post('cost');
-                $dataTrain = array(
-                    'categoryTrain' => $categoryTrain, // Add categoryTrain to the data array
-                    'title' => $title, // Add title to the data array
-                    'educator' => $educator, // Add educator to the data array
-                    'schedule' => $schedule, // Add schedule to the data array
-                    'cost' => $cost
-                );
-
-                $this->FPETM->saveTrain($dataTrain);
-                $lastInsertedTrain = $this->db->insert_id();
-                $rEstablished = 0;
-            }
-
             $actual = $this->input->post('actual');
             $target = $this->input->post('target');
             $eval = $this->input->post('eval');
@@ -108,9 +96,6 @@
                 'approved' => $approved,
                 'trainerNpk' => $trainer,
                 'approvedHr' => $approvedHr,
-                'idTrain' => $lastInsertedTrain,
-                'rEstablished' => $rEstablished,
-                'evaluator' => $this->input->post('evaluator'),
                 'actual' => $actual,
                 'target' => $target,
                 'eval' => $eval,
@@ -124,68 +109,37 @@
                 'created_date'              => date('Y/m/d H:i:s'),
                 'created_by'                => $this->session->userdata('npk')
             );
-            // $data2 = array(
-            //     'title' => $title,
-            //     'educator' => $educator,
-            //     'schedule' => $schedule,
-            //     'cost' => $cost,
-            //     'categoryTrain' => $categoryTrain
-            // );
-            // Call the model function to save the data
+
             $saved = $this->FPETM->saveFPET($data);
 
-            //  redirect(site_url('FPET'));
+            redirect(site_url('FPET'));
         }
 
         public function showDetail($id)
         {
             $data["dataFpet"] = $this->FPETM->detailFpet($id);
-            // $detailEmployeeE = [];
-            // foreach ($emps as $emp) {
-            // 	$employee   = $this->OracleDBM->getEmpBy('NPK', $emp->npk);
-            // 	$prog       = $this->TrainingM->getProgress($id, $emp->npk);
-            // 	$combinedData = [
-            // 		'NPK'       => $employee->NPK,
-            // 		'NAMA'      => $employee->NAMA,
-            // 		'DEPARTEMEN' => $employee->DEPARTEMEN,
-            // 		'PERCENT'   => $prog->percentage,
-            // 		'PROGRESS'  => $prog->progress,
-            // 		'STATUS'	=> $this->TrainingM->getAccessByNPKID($employee->NPK, $id)->access_permission,
-            // 	];
-            // 	$detailEmployeeE[] = $combinedData;
-            // }
-
-            //	$data["employee"]   = $detailEmployeeE;
-
             echo json_encode($data);
         }
         public function removeNotif()
         {
-            // Check if the request is an AJAX request
-            // Get the 'id' and 'npk' parameters from POST data
             $id = $this->input->post('id');
             $npk = $this->input->post('npk');
             echo "<script>console.log('aa + $id' + $npk);</script>";
-            // Call the removeNotif method from your model
             $this->TrainingM->removeNotif($id, $npk);
-
-            // Return a success message to the client
             echo json_encode(['status' => 'success', 'message' => 'Notification removed successfully.']);
         }
 
         public function removeFpet($id)
         {
+
             if (!$this->isAllowed()) return redirect(site_url());
-
             $this->FPETM->removeFpet($id);
-
-
-
             redirect(site_url('FPET'));
         }
 
         public function rejectFpet($id)
         {
+
             if (!$this->isAllowed()) return redirect(site_url());
             $this->FPETM->rejectApproveFpet($id, 0);
             redirect(site_url('FPET/approvalMenu'));
@@ -197,7 +151,6 @@
             $this->FPETM->rejectApproveFpet($id, 1);
             redirect(site_url('FPET/approvalMenu'));
         }
-
 
         public function rejectHrFpet($id)
         {
@@ -220,20 +173,14 @@
             redirect(site_url('FPET'));
         }
 
-        public function modifyFpet($id)
+        public function modifyFpet()
         {
             // Retrieve form data from POST request
             $approved = $this->input->post('approved');
             $trainer = $this->input->post('trainer');
             $approvedHr = $this->input->post('approvedHr');
-            $approvedHr = $this->input->post('approvedHr');
+
             // Retrieve other form data
-            $categoryTrain = $this->input->post('categoryTrain');
-            $chooseTrain = $this->input->post('chooseTrain');
-            $title = $this->input->post('title');
-            $educator = $this->input->post('educator');
-            $schedule = $this->input->post('schedule');
-            $cost = $this->input->post('cost');
             $actual = $this->input->post('actual');
             $target = $this->input->post('target');
             $eval = $this->input->post('eval');
@@ -241,17 +188,12 @@
             $rActual = $this->input->post('rActual');
             $rTarget = $this->input->post('rTarget');
             $rEval = $this->input->post('rEval');
-            // Assuming you want to save this data to the database
-            // Load the model if not already loaded
+            $idFpet = $this->input->post('idFpet');
             $this->load->model('FPETM');
-
-            // Prepare data to be saved
             $data = array(
                 'approved' => $approved,
                 'trainerNpk' => $trainer,
                 'approvedHr' => $approvedHr,
-                'chooseTrain' => $chooseTrain,
-                'evaluator' => $this->input->post('evaluator'),
                 'actual' => $actual,
                 'target' => $target,
                 'eval' => $eval,
@@ -263,17 +205,11 @@
                 'statusApproved' => 2,
                 'statusApprovedHr' => 2,
                 'modified_date'             => date('Y/m/d H:i:s'),
-                'modified_by'               => $this->session->userdata('npk'),
+                'modified_by'               => $this->session->userdata('npk')
             );
-            $data2 = array(
-                'title' => $title,
-                'educator' => $educator,
-                'schedule' => $schedule,
-                'cost' => $cost,
-                'categoryTrain' => $categoryTrain
-            );
+
             // Call the model function to save the data
-            $saved = $this->FPETM->modifyFpet($data);
+            $saved = $this->FPETM->modifyFpet($data, $idFpet);
 
             redirect(site_url('FPET'));
         }
