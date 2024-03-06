@@ -82,6 +82,34 @@ class Question extends CI_Controller
     {
         if (!$this->isAllowed()) return redirect(site_url());
         $this->QuestionM->savePackage();
+        $lastInsertedId = $this->db->insert_id();
+
+        $count = 0;
+		foreach ($this->input->post() as $key => $value) {
+			if (strpos($key, 'answer') !== false) {
+				$count++;
+			}
+		}
+		for ($i = 1; $i <= $count; $i++) {
+			$data = array(
+                'question'      => $this->input->post('question' . $i),
+                'answer'        => $this->input->post('answerSelect' . $i),
+                'a'             => $this->input->post('aOption' . $i),
+                'b'             => $this->input->post('bOption' . $i),
+                'c'             => $this->input->post('cOption' . $i),
+                'd'             => $this->input->post('dOption' . $i),
+                'q_level'       => $this->input->post('levelSelect' . $i),
+                'created_date'  => date('Y/m/d H:i:s'),
+                'modified_date' => date('Y/m/d H:i:s'),
+                'created_by'    => $this->session->userdata('npk'),
+                'modified_by'   => $this->session->userdata('npk'),
+                'status'        => 1,
+                'package_id'    => $lastInsertedId,
+            );
+
+            $this->QuestionM->saveQuestion($data);
+		}
+
         redirect('Question/getPackage');
     }
 
@@ -89,13 +117,64 @@ class Question extends CI_Controller
     public function retrievePackage($id)
     {
         if (!$this->isAllowed()) return redirect(site_url());
-        $data = $this->QuestionM->getPackage($id);
+        $data['package'] = $this->QuestionM->getPackage($id);
+        $data['questions'] = $this->QuestionM->getQuestions($id);
         echo json_encode($data);
     }
+
     public function editPackage()
     {
         if (!$this->isAllowed()) return redirect(site_url());
         $this->QuestionM->editPackage();
+        $oldCount = $this->QuestionM->getQuestions($this->input->post('package_id'));
+        
+        $arrNew = array();
+        $count = 0;
+		foreach ($this->input->post() as $key => $value) {
+			if (strpos($key, 'answer') !== false) {
+				$arrNew[$count] = $this->input->post('questionId' . ($count + 1));
+                $count++;
+			}
+		}
+
+        if (!empty($oldCount)) {
+            $questionIds = array_column($oldCount, 'question_id');
+        }
+
+        $difference = array_diff($questionIds, $arrNew);
+        foreach ($difference as $value) {
+            $this->QuestionM->deleteQuestion($value);
+        }
+
+		for ($i = 1; $i <= $count; $i++) {
+            $data = array(
+                'question'      => $this->input->post('question' . $i),
+                'answer'        => $this->input->post('answerSelect' . $i),
+                'a'             => $this->input->post('aOption' . $i),
+                'b'             => $this->input->post('bOption' . $i),
+                'c'             => $this->input->post('cOption' . $i),
+                'd'             => $this->input->post('dOption' . $i),
+                'q_level'       => $this->input->post('levelSelect' . $i),
+                'modified_date' => date('Y/m/d H:i:s'),
+                'modified_by'   => $this->session->userdata('npk'),
+                'status'        => 1,
+            );
+
+            if ($i <= count($oldCount)) {
+                $where = array(
+                    'question_id'    => $this->input->post('questionId' . $i),
+                );
+    
+                $this->QuestionM->editQuestion($data, $where);
+            } else {
+                $data['created_by'] = $this->session->userdata('npk');
+                $data['created_date'] = date('Y/m/d H:i:s');
+                $data['package_id'] = $this->input->post('package_id');
+
+                $this->QuestionM->saveQuestion($data);
+            }
+		}
+        
         redirect('Question/getPackage');
     }
 

@@ -4,12 +4,15 @@ class QuestionM extends CI_Model
 {
     private $t_question = "training_question";
 
-    public function getQuestions()
+    public function getQuestions($id)
     {
         $query = $this->db->query(
-            "   SELECT *
+            "   SELECT question_id, question, answer AS answerSelect,
+                q_level AS levelSelect, a AS aOption, b AS bOption,
+                c AS cOption, d AS dOption, package_id
                 FROM $this->t_question
-                WHERE status = 1        "
+                WHERE status = 1        
+                AND package_id = $id    "
         );
         return $query->result();
     }
@@ -30,46 +33,18 @@ class QuestionM extends CI_Model
                         q_level AS levelSelect, a AS aOption, b AS bOption,
                         c AS cOption, d AS dOption
                 FROM $this->t_question
-                WHERE question_id = $id "
+                WHERE question_id = $id AND status = 1"
         );
         return $query->row();
     }
 
-    public function saveQuestion()
+    public function saveQuestion($data)
     {
-        $data = array(
-            'status'        => 1,
-            'question'      => $this->input->post('question'),
-            'answer'        => $this->input->post('answerSelect'),
-            'a'             => $this->input->post('aOption'),
-            'b'             => $this->input->post('bOption'),
-            'c'             => $this->input->post('cOption'),
-            'd'             => $this->input->post('dOption'),
-            'q_level'       => $this->input->post('levelSelect'),
-            'created_date'  => date('Y/m/d H:i:s'),
-            'modified_date' => date('Y/m/d H:i:s'),
-            'created_by'    => $this->session->userdata('npk'),
-            'modified_by'   => $this->session->userdata('npk'),
-        );
         return $this->db->insert($this->t_question, $data);
     }
 
-    public function editQuestion()
+    public function editQuestion($data, $where)
     {
-        $data = array(
-            'question'      => $this->input->post('question'),
-            'answer'        => $this->input->post('answerSelect'),
-            'a'             => $this->input->post('aOption'),
-            'b'             => $this->input->post('bOption'),
-            'c'             => $this->input->post('cOption'),
-            'd'             => $this->input->post('dOption'),
-            'q_level'       => $this->input->post('levelSelect'),
-            'modified_date' => date('Y/m/d H:i:s'),
-            'modified_by'   => $this->session->userdata('npk'),
-        );
-        $where = array(
-            'question_id'    => $this->input->post('question_id')
-        );
         return $this->db->update($this->t_question, $data, $where);
     }
 
@@ -108,13 +83,14 @@ class QuestionM extends CI_Model
     public function savePackage()
     {
         $data = array(
-            'status'        => 1,
-            'package_uniqueId'      => $this->input->post('idUniqPaket'),
-            'package_name'        => $this->input->post('namePaket'),
-            'training_id'             => $this->input->post('chooseTrain'),
-
-            'created_date'  => date('Y/m/d H:i:s'),
-            'created_by'    => $this->session->userdata('npk'),
+            'status'            => 1,
+            'package_uniqueId'  => $this->input->post('idUniqPaket'),
+            'package_name'      => $this->input->post('namePaket'),
+            'training_id'       => $this->input->post('chooseTrain'),
+            'created_date'      => date('Y/m/d H:i:s'),
+            'modified_date'     => date('Y/m/d H:i:s'),
+            'created_by'        => $this->session->userdata('npk'),
+            'modified_by'       => $this->session->userdata('npk'),
         );
         return $this->db->insert('training_question_package', $data);
     }
@@ -122,13 +98,11 @@ class QuestionM extends CI_Model
     public function editPackage()
     {
         $data = array(
-            'package_name'        => $this->input->post('namePaket'),
-            'package_uniqueId'      => $this->input->post('idUniqPaket'),
-            'training_id'             => $this->input->post('chooseTrain'),
-            'training_id'             => $this->input->post('chooseTrain'),
-
-            'modified_date' => date('Y/m/d H:i:s'),
-            'modified_by'   => $this->session->userdata('npk'),
+            'package_name'      => $this->input->post('namePaket'),
+            'package_uniqueId'  => $this->input->post('idUniqPaket'),
+            'training_id'       => $this->input->post('chooseTrain'),
+            'modified_date'     => date('Y/m/d H:i:s'),
+            'modified_by'       => $this->session->userdata('npk'),
         );
         $where = array(
             'package_id'    => $this->input->post('package_id')
@@ -146,6 +120,6 @@ class QuestionM extends CI_Model
         $where = array(
             'package_id'    => $id
         );
-        return $this->db->update(training_question_package, $data, $where);
+        return $this->db->update('training_question_package', $data, $where);
     }
 }

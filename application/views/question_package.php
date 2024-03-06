@@ -96,8 +96,8 @@ ob_start();
 						<div class="row py-2">
 							<div class="col-md-6">
 								<div class="form-group p-0">
-									<label for="aOption">Id Paket<span style="color: red;">*</span></label>
-									<input class="form-control" id="idUniqPaket" name="idUniqPaket" rows="3" spellcheck="false" style="resize: none;" placeholder="Masukkan id paket" required></input>
+									<label for="aOption">ID Paket <span style="color: red;">*</span></label>
+									<input class="form-control" id="idUniqPaket" name="idUniqPaket" rows="3" spellcheck="false" style="resize: none;" placeholder="Masukkan ID Paket" required></input>
 								</div>
 							</div>
 							<div class="col-md-6">
@@ -119,16 +119,38 @@ ob_start();
 									</select>
 								</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-5">
 								<div class="form-group p-0">
-									<label for="chooseTrain">Jumlah Soal <span style="color: red;">*</span></label>
-									<select class="form-control form-control" id="chooseTrain" name="chooseTrain" required>
-										<option value="default" selected disabled>-- Pilih Training --</option>
-										<?php foreach ($train as $t) : ?>
-											<option value="<?php echo $t->id_training_header; ?>"><?php echo $t->judul_training_header; ?></option>
-										<?php endforeach; ?>
-									</select>
+									<label for="decider">Jumlah Soal <span style="color: red;">*</span></label>
+									<input class="form-control" type="number" id="decider" name="decider" placeholder="Masukkan Jumlah Pertanyaan" max="50"></input>
+									<small id="deciderHelp" class="form-text text-muted">Value must be between 1 and 50.</small>
 								</div>
+							</div>
+							<div class="col-md-1">
+								<div class="form-group p-0">
+									<label for="chooseTrain"><span style="color: white;">*</span></label>
+									<button type="button" class="btn btn-primary float-right" onclick="generateQuestionRows()">Generate</button>
+								</div>
+							</div>
+						</div>
+						<div class="row py-2">
+							<div class="col-md-12">
+								<table id="allSoalTable" name="table" class="table table-hover table-head-bg-info my-2">
+									<thead>
+										<tr>
+											<th scope="col" style="width: 50px;">No.</th>
+											<th scope="col">Pertanyaan</th>
+											<th scope="col" style="width: 130px;">Kesulitan</th>
+											<th scope="col" style="width: 85px;">Jawaban</th>
+											<th scope="col" style="width: 150px;">Pilihan A</th>
+											<th scope="col" style="width: 150px;">Pilihan B</th>
+											<th scope="col" style="width: 150px;">Pilihan C</th>
+											<th scope="col" style="width: 150px;">Pilihan D</th>
+										</tr>
+									</thead>
+									<tbody id="tBodyAllSoal">
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -149,5 +171,5 @@ $contentPlaceHolder = ob_get_contents();
 ob_end_clean();
 /* Call the master page. It will echo the content of the placeholders in the designated locations */
 include __DIR__ . "/layout.php";
-include __DIR__ . '/script2.php';
+include __DIR__ . "/script2.php";
 ?>
