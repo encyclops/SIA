@@ -20,7 +20,7 @@ class Question extends CI_Controller
         $npk = $this->session->userdata('npk');
         $data['soal']        = $this->QuestionM->getQuestions();
         $data['notif']        = $this->TrainingM->getNotif($npk);
-        $data['package']        = $this->TrainingM->getPackages();
+        $data['package']        = $this->QuestionM->getPackages();
         $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
         $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
         $this->load->view('question_index', $data);
@@ -112,5 +112,24 @@ class Question extends CI_Controller
         }
 
         redirect('Question/getPackage');
+    }
+
+    public function savePreExam()
+    {
+        if (!$this->isAllowed()) return redirect(site_url());
+        $this->QuestionM->savePreExam();
+        redirect('Question');
+    }
+
+    public function getPreExam()
+    {
+        if (!$this->isAllowed()) return redirect(site_url());
+        $npk = $this->session->userdata('npk');
+        $data['notif']        = $this->TrainingM->getNotif($npk);
+        $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+        $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+
+        $data['preExam']        = $this->QuestionM->getPreExam();
+        $this->load->view('exam', $data);
     }
 }

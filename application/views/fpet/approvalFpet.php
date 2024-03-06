@@ -55,10 +55,10 @@ $combinedDataJSON = json_encode($combinedData);
                                     $i = 1;
                                     foreach ($fpet as $t) {
                                         // Define status text based on the value of statusApproved
-                                        if ($t->approvedHr == $this->session->userdata('npk') && $t->approved != $this->session->userdata('npk') && $t->statusApproved == 2) {
+                                        if (isset($t['approvedHr']) == $this->session->userdata('npk') && isset($t['approved']) != $this->session->userdata('npk') && isset($t['statusApproved == 2)'])) {
                                         } else {
                                             $statusText = '';
-                                            switch ($t->statusApproved) {
+                                            switch (isset($t['statusApproved']) ? $t['statusApproved'] : '') {
                                                 case 0:
                                                     $statusText = 'Ditolak';
                                                     break;
@@ -72,7 +72,7 @@ $combinedDataJSON = json_encode($combinedData);
                                             }
 
                                             $statusTextHr = '';
-                                            switch ($t->statusApprovedHr) {
+                                            switch (isset($t['statusApprovedHr']) ? $t['statusApprovedHr'] : '') {
                                                 case 0:
                                                     $statusTextHr = 'Ditolak';
                                                     break;
@@ -86,12 +86,13 @@ $combinedDataJSON = json_encode($combinedData);
                                             }
                                 ?>
                                             <tr>
-                                                <th><?php echo $i ?></th>
-                                                <th><?php echo $t->trainerNpk ?></th>
-                                                <th><?php echo $t->target ?></th>
-                                                <th><?php echo $statusText ?></th>
-                                                <th><?php echo $statusTextHr ?></th>
-                                                <th class="text-center"><a href="javascript:void(0)" onclick="showDetailApprovalFpet(<?php echo $t->idFpet ?>)" class="btn btn-primary"></i>Detail</a></th>
+                                                <td><?php echo $i ?></td>
+                                                <td><?php echo isset($t['nama']) ? $t['nama'] : ''; ?></td>
+                                                <td><?php echo isset($t['target']) ? $t['target'] : ''; ?></td>
+                                                <td><?php echo $statusText ?></td>
+                                                <td><?php echo $statusTextHr ?></td>
+                                                <td class="text-center"><a href="javascript:void(0)" onclick="showDetailApprovalFpet(<?php echo isset($t['idFpet']) ? $t['idFpet'] : ''; ?>)" class="btn btn-primary"></i>Detail</a></th>
+
                                             </tr>
                                 <?php
                                             $i++;
@@ -110,6 +111,12 @@ $combinedDataJSON = json_encode($combinedData);
         </div>
     </div>
     <div class="row" id="addFpet" style="display: none;">
+        <div class="loader-container" id="loaderDiv">
+            <div class="loader">
+                <div class="loader-reverse"></div>
+            </div>
+            <p class="m-0">&emsp;Loading data...</p>
+        </div>
         <div class="col-md-12">
             <form id="formFpet" method="post" enctype="multipart/form-data" role="form">
                 <div class="card p-2">
@@ -649,7 +656,7 @@ $combinedDataJSON = json_encode($combinedData);
                         }
                         document.getElementById("showListFpet").style.display = 'none';
                         document.getElementById("addFpet").style.display = 'block';
-
+                        callLoader();
                         disableFormElements();
                     } else {
                         console.error('Error: No data found for id ' + id);

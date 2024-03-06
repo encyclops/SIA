@@ -28,7 +28,7 @@
             $data['tags']          = $this->AdminM->getTags();
             $data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
-            $data['fpet']          = $this->FPETM->getFpet();
+            //       $data['fpet']          = $this->FPETM->getFpet();
             $getFpetDataEmployee2    = $this->FPETM->getFpet();
             $getFpetData = [];
             foreach ($getFpetDataEmployee2 as $a) {
@@ -40,7 +40,6 @@
                     'idFpet'      => $a->idFpet,
                     'statusApproved'  => $a->statusApproved,  // Corrected key
                     'statusApprovedHr' => $a->statusApprovedHr,  // Corrected key
-
                 ];
                 $getFpetData[] = $combine;
             }
@@ -62,7 +61,22 @@
             $data['tags']          = $this->AdminM->getTags();
             $data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
-            $data['fpet']          = $this->FPETM->getApprovedFpet($npk);
+
+            $getFpetDataEmployee2    = $this->FPETM->getApprovedFpet($npk);
+            $getFpetData = [];
+            foreach ($getFpetDataEmployee2 as $a) {
+                $employee   = $this->OracleDBM->getEmpBy('NPK', $a->trainerNpk);
+                $combine = [
+                    'npk'       => $employee->NPK,
+                    'nama'      => $employee->NAMA,
+                    'target'      => $a->target,
+                    'idFpet'      => $a->idFpet,
+                    'statusApproved'  => $a->statusApproved,
+                    'statusApprovedHr' => $a->statusApprovedHr,
+                ];
+                $getFpetData[] = $combine;
+            }
+            $data['fpet']   = $getFpetData;
             $this->load->view('fpet/approvalFpet', $data);
         }
 

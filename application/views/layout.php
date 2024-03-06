@@ -112,13 +112,6 @@ function isActive($url)
 					</div>
 				</div>
 				<ul class="nav" style="border-bottom: 1px solid #eee;">
-					<!-- <li class="nav-item <?php echo isActive('Chart') ?>">
-							<a href="<?php echo base_url('Chart') ?>">
-								<i class="la la-dashboard"></i>
-								<p>Dashboard</p>
-								<span class="badge badge-count">5</span>
-							</a>
-						</li> -->
 					<?php if ($this->session->userdata('role') == 'admin') { ?>
 						<li class="nav-item <?php echo isActive('Chart') ?>">
 							<a href="<?php echo base_url('Chart') ?>">
@@ -128,7 +121,6 @@ function isActive($url)
 							</a>
 						</li>
 					<?php } ?>
-
 					<li class="nav-item <?php echo isActive('Training') ?>">
 						<a href="<?php echo base_url('Training') ?>">
 							<i class="la la-pencil-square"></i>
@@ -159,7 +151,6 @@ function isActive($url)
 							</a>
 						</li>
 					<?php } ?>
-
 					<li class="nav-item <?php echo isActive('FPET/approvalMenu') ?>">
 						<a href="<?php echo base_url('FPET/approvalMenu') ?>">
 							<i class="la la-pencil-square"></i>
@@ -171,13 +162,19 @@ function isActive($url)
 						<a href="<?php echo base_url('Question') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Master Soal</p>
-							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
 					<li class="nav-item <?php echo isActive('Question/getPackage') ?>">
 						<a href="<?php echo base_url('Question/getPackage') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Paket Soal</p>
+							<!-- <span class="badge badge-count">5</span> -->
+						</a>
+					</li>
+					<li class="nav-item <?php echo isActive('Question/getPreExam') ?>">
+						<a href="<?php echo base_url('Question/getPreExam') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>P Ujian</p>
 							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>

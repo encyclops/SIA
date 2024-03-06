@@ -148,4 +148,14 @@ class QuestionM extends CI_Model
         );
         return $this->db->update(training_question_package, $data, $where);
     }
+
+    public function getPreExam()
+    {
+        $query = $this->db->query(
+            "   SELECT *
+                FROM training_question
+                WHERE status = 1        "
+        );
+        return $query->result();
+    }
 }
