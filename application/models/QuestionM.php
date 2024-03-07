@@ -132,4 +132,37 @@ class QuestionM extends CI_Model
         );
         return $query->result();
     }
+
+
+    public function getTotalQuestion($idPackage)
+    {
+        $query = $this->db->query(
+            "SELECT COUNT(*) as totalQ
+                 FROM training_question
+                 WHERE status = 1 and package_id = $idPackage  "
+        );
+
+        // Assuming $this->t_header is the table name, you can modify it accordingly
+        return $query->row()->totalQ;
+    }
+
+    public function getAnswerKey($id)
+    {
+        $query = $this->db->query(
+            "   SELECT  answer
+                FROM $this->t_question
+                WHERE question_id = $id AND status = 1"
+        );
+        return $query->row();
+    }
+
+    public function saveAnswerUser($data)
+    {
+        return $this->db->insert('training_userAnswer', $data);
+    }
+
+    public function saveScore($data)
+    {
+        return $this->db->insert('training_score', $data);
+    }
 }

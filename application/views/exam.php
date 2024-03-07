@@ -118,9 +118,11 @@ function isActive($url)
                     foreach ($preExam as $t) {
                         if (($i - 1) % 2 == 0) {
                             if ($i != 0) {
-                                echo '</div>'; // Close the previous section
+                                echo '</div>';
+                                // Close the previous section
                             }
-                            echo '<div id="sectionNumber-' . $sectionNumber . '">'; // Start a new section
+                            echo '<div class="row" style="padding-left:30px; id="sectionNumber-' . $sectionNumber . '">';
+
                             $sectionNumber++;
                         }
                         if ($i == 1 || $i == 2) {
@@ -150,7 +152,7 @@ function isActive($url)
                     <li class="nav-item <?php echo isActive('Question/getPackage') ?>">
                         <a href="javascript:void(0)" onclick="backExam()">
                             <i class="la la-pencil-square"></i>
-                            <p>P Ujian</p>
+                            <p>Keluar Ujian</p>
                             <!-- <span class="badge badge-count">5</span> -->
                         </a>
                     </li>
@@ -160,153 +162,182 @@ function isActive($url)
         <div class="main-panel">
             <div class="content">
                 <div class="container-fluid">
-                    <div class="row">
+
+                    <div id="showQuestion">
                         <div class="col-md-12">
-                            <form id="formExam" method="post" enctype="multipart/form-data" role="form">
+                            <form id="formExam" method="post" action="<?php echo base_url('Question/saveExam') ?>" ; enctype="multipart/form-data" role="form">
+                                <input type="text" name="idPackage" id="idPackage" value="4" hidden>
                                 <div class="card p-2">
 
-                                    <div class="row">
-                                        <!-- <?php
-                                                $i = 1;
-                                                foreach ($preExam as $t) {
-                                                ?>
-                                                <div class="col-1">
-                                                    <div class="card bg-primary text-white text-center p-2">
-                                                        <?php echo $i; ?>
-                                                    </div>
-                                                </div>
-                                            <?php
-                                                    $i++;
-                                                }
-                                            ?> -->
-                                        <?php
-                                        $i = 0;
-                                        $section = 1;
-                                        foreach ($preExam as $t) {
-                                            if ($i % 2 == 0) {
-                                                if ($i != 0) {
-                                                    echo '</div>'; // Close the previous section
-                                                }
-                                                echo '<div class="question-section" id="section-' . $section . '">'; // Start a new section
-                                                $section++;
+
+                                    <?php
+                                    $i = 0;
+                                    $section = 1;
+                                    foreach ($preExam as $t) {
+                                        if ($i % 2 == 0) {
+                                            if ($i != 0) {
+                                                echo '</div>'; // Close the previous section
                                             }
-                                        ?>
-                                            <div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-check">
-                                                            <label><?php echo ($i + 1) . '. ' . $t->question ?> <span style="color: red;">*</span></label><br />
-                                                            <div class="row">
-                                                                <label class="form-radio-label ml-3">
-                                                                    <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->a ?>">
-                                                                    <span class="form-radio-sign">A. <?php echo $t->a ?></span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="row">
-                                                                <label class="form-radio-label ml-3">
-                                                                    <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->b ?>">
-                                                                    <span class="form-radio-sign">B. <?php echo $t->b ?></span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="row">
-                                                                <label class="form-radio-label ml-3">
-                                                                    <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->c ?>">
-                                                                    <span class="form-radio-sign">C. <?php echo $t->c ?> </span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="row">
-                                                                <label class="form-radio-label ml-3">
-                                                                    <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->d ?>">
-                                                                    <span class="form-radio-sign">D. <?php echo $t->d ?></span>
-                                                                </label>
-                                                            </div>
+                                            echo '<div class="question-section" id="section-' . $section . '">'; // Start a new section
+                                            $section++;
+                                        }
+                                    ?>
+                                        <div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input type="text" name="idQuestion<?php echo $i ?>" id="idQuestion" value="<?php echo $t->question_id ?>" hidden>
+                                                        <label><?php echo ($i + 1) . '. ' . $t->question ?> <span style="color: red;">*</span></label><br />
+                                                        <div class="row">
+                                                            <label class="form-radio-label ml-3">
+                                                                <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->a ?>">
+                                                                <span class="form-radio-sign">A. <?php echo $t->a ?></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="form-radio-label ml-3">
+                                                                <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->b ?>">
+                                                                <span class="form-radio-sign">B. <?php echo $t->b ?></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="form-radio-label ml-3">
+                                                                <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->c ?>">
+                                                                <span class="form-radio-sign">C. <?php echo $t->c ?> </span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="form-radio-label ml-3">
+                                                                <input class="form-radio-input" type="radio" name="answer<?php echo $i ?>" id="answer<?php echo $i ?>" value="<?php echo $t->d ?>">
+                                                                <span class="form-radio-sign">D. <?php echo $t->d ?></span>
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <?php if (($i + 1) % 2 == 0) { ?>
-                                                <div class="card-body" id="divBackSub">
-                                                    <button type="button" id="nextBtn" class="btn btn-success float-right" onclick="handleCardClick((<?php echo $section; ?>)-1, <?php echo $section ?>)">Selanjutnya</button>
-                                                    <button type="button" id="submitExam" class="btn btn-success float-right" style="display: none;">Kirim</button>
-                                                    <button type="button" id="backBtn" class="btn btn-danger" onclick="handleCardClick2((<?php echo $section; ?>)-2, <?php echo $section ?>)">Kembali</button>
-                                                </div>
-                                        <?php
-                                            }
-                                            $i++;
+                                        </div>
+                                        <?php if (($i + 1) % 2 == 0) { ?>
+                                            <div class="card-body" id="divBackSub">
+                                                <script>
+                                                    console.log(<?php echo $section - 1; ?> + "secBtn")
+                                                </script>
+
+                                                <button type="button" id="nextBtn<?php echo $section - 1; ?>" class="btn btn-success float-right" onclick="handleCardClick((<?php echo $section; ?>)-1, <?php echo $section ?>)">Selanjutnya</button>
+                                                <button type="button" id="submitExam<?php echo $section - 1; ?>" class="btn btn-success float-right" onclick="saveAnswer()" style="display: none;">Kirim</button>
+                                                <button type="button" id="backBtn<?php echo $section - 1; ?>" class="btn btn-danger" onclick="handleCardClick2((<?php echo $section; ?>)-2, <?php echo $section ?>)">Kembali</button>
+                                            </div>
+                                    <?php
                                         }
-                                        ?>
-                                    </div>
+                                        $i++;
+                                    }
+                                    ?>
+
 
                                 </div>
                             </form>
                         </div>
                     </div>
+                    <div id="showScore" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card p-2 mb-3">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="card-title">Nilai </h4>
+                                                <p class="card-category">Nilai Ujian</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <table name="table" class="table table-hover table-head-bg-info my-2">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="text-center" style="width: 500px;">Jumlah Jawaban Benar</th>
+                                                    <th scope="col" class="text-center" style="width: 700px;">Skor Akhir</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tBodymainTable">
+
+                                                <tr>
+                                                    <th id="trueAns"></th>
+                                                    <th id="score"></th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <script>
-                    function submitExam() {
-                        var formElements = document.getElementById(" formExam");
-                        formElements.submit();
+            </div>
+            <script>
+                // function submitExam() {
+                //     var formElements = document.getElementById(" formExam");
+                //     formElements.submit();
+                // }
+                document.addEventListener("DOMContentLoaded", function() {
+                    var sections = document.querySelectorAll('.question-section');
+                    var currentSectionIndex = 0;
+                    var pageNumb = 0;
+                    var pageNumb2 = 0;
+                    var backButton = document.getElementById('backBtn1');
+                    if (backButton) {
+                        backButton.style.display = 'none';
                     }
-                    document.addEventListener("DOMContentLoaded", function() {
-                                var sections = document.querySelectorAll('.question-section');
-                                var currentSectionIndex = 0;
-                                var pageNumb = 0;
-                                var pageNumb2 = 0;
-                                var backButton = document.getElementById('backBtn');
-                                if (backButton) {
-                                    backButton.style.display = 'none';
-                                }
-                                hideSections();
-                                document.getElementById('next').addEventListener('click', function() { // if (currentSectionIndex <=sections.length - 2) { // currentSectionIndex++; // if (currentSectionIndex==0) { // document.getElementById('numberPage1').classList.add('bg-secondary'); // document.getElementById('numberPage2' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage1' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage2' + pageNumb).classList.remove('bg-primary'); // } else { // pageNumb=(currentSectionIndex + 1) * 2; // pageNumb2=(currentSectionIndex + 1) * 2 - 1; // pageNumb3=(currentSectionIndex) * 2; // pageNumb4=(currentSectionIndex) * 2 - 1; // document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary'); // document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary'); // document.getElementById('back').style.display='block' ; // document.getElementById('numberPage' + pageNumb3).classList.remove('bg-secondary'); // document.getElementById('numberPage' + pageNumb4).classList.remove('bg-secondary'); // document.getElementById('numberPage' + pageNumb3).classList.add('bg-primary'); // document.getElementById('numberPage' + pageNumb4).classList.add('bg-primary'); // if (currentSectionIndex==sections.length - 1) { // document.getElementById('submitExam').style.display='block' ; // document.getElementById('next').style.display='none' ; // } // hideSections(); // } // } // }); // document.getElementById('back').addEventListener('click', function() { // if (currentSectionIndex==0) { // document.getElementById('numberPage1').classList.add('bg-secondary'); // document.getElementById('numberPage2' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage1' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage2' + pageNumb).classList.remove('bg-primary'); // document.getElementById('back').style.display='none' ; // } else { // if (currentSectionIndex> 0) {
-                                    // currentSectionIndex--;
-                                    // console.log("as" + currentSectionIndex);
+                    hideSections();
+                    // document.getElementById('next').addEventListener('click', function() { // if (currentSectionIndex <=sections.length - 2) { // currentSectionIndex++; // if (currentSectionIndex==0) { // document.getElementById('numberPage1').classList.add('bg-secondary'); // document.getElementById('numberPage2' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage1' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage2' + pageNumb).classList.remove('bg-primary'); // } else { // pageNumb=(currentSectionIndex + 1) * 2; // pageNumb2=(currentSectionIndex + 1) * 2 - 1; // pageNumb3=(currentSectionIndex) * 2; // pageNumb4=(currentSectionIndex) * 2 - 1; // document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary'); // document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary'); // document.getElementById('back').style.display='block' ; // document.getElementById('numberPage' + pageNumb3).classList.remove('bg-secondary'); // document.getElementById('numberPage' + pageNumb4).classList.remove('bg-secondary'); // document.getElementById('numberPage' + pageNumb3).classList.add('bg-primary'); // document.getElementById('numberPage' + pageNumb4).classList.add('bg-primary'); // if (currentSectionIndex==sections.length - 1) { // document.getElementById('submitExam').style.display='block' ; // document.getElementById('next').style.display='none' ; // } // hideSections(); // } // } // }); // document.getElementById('back').addEventListener('click', function() { // if (currentSectionIndex==0) { // document.getElementById('numberPage1').classList.add('bg-secondary'); // document.getElementById('numberPage2' + pageNumb).classList.add('bg-secondary'); // document.getElementById('numberPage1' + pageNumb2).classList.remove('bg-primary'); // document.getElementById('numberPage2' + pageNumb).classList.remove('bg-primary'); // document.getElementById('back').style.display='none' ; // } else { // if (currentSectionIndex> 0) {
+                    // currentSectionIndex--;
+                    // console.log("as" + currentSectionIndex);
 
-                                    // pageNumb = (currentSectionIndex + 1) * 2;
-                                    // pageNumb2 = (currentSectionIndex + 1) * 2 - 1;
-                                    // pageNumb3 = (currentSectionIndex + 2) * 2;
-                                    // pageNumb4 = (currentSectionIndex + 2) * 2 - 1;
-                                    // document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary');
-                                    // document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary');
-                                    // document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary');
-                                    // document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary');
+                    // pageNumb = (currentSectionIndex + 1) * 2;
+                    // pageNumb2 = (currentSectionIndex + 1) * 2 - 1;
+                    // pageNumb3 = (currentSectionIndex + 2) * 2;
+                    // pageNumb4 = (currentSectionIndex + 2) * 2 - 1;
+                    // document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary');
+                    // document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary');
+                    // document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary');
+                    // document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary');
 
-                                    // document.getElementById('numberPage' + pageNumb3).classList.remove('bg-secondary');
-                                    // document.getElementById('numberPage' + pageNumb4).classList.remove('bg-secondary');
-                                    // document.getElementById('numberPage' + pageNumb3).classList.add('bg-primary');
-                                    // document.getElementById('numberPage' + pageNumb4).classList.add('bg-primary');
-                                    // if (currentSectionIndex == 0) {
-                                    // document.getElementById('back').style.display = 'none';
-                                    // }
-                                    // }
-                                    // hideSections();
-                                    // }
-                                    // });
+                    // document.getElementById('numberPage' + pageNumb3).classList.remove('bg-secondary');
+                    // document.getElementById('numberPage' + pageNumb4).classList.remove('bg-secondary');
+                    // document.getElementById('numberPage' + pageNumb3).classList.add('bg-primary');
+                    // document.getElementById('numberPage' + pageNumb4).classList.add('bg-primary');
+                    // if (currentSectionIndex == 0) {
+                    // document.getElementById('back').style.display = 'none';
+                    // }
+                    // }
+                    // hideSections();
+                    // }
+                    // });
 
-                                    function hideSections() {
-                                        sections.forEach(function(section, index) {
-                                            if (index !== currentSectionIndex) {
-                                                section.style.display = 'none';
-                                            } else {
-                                                section.style.display = 'block';
-                                            }
-                                        });
-                                    }
-                                });
-                </script>
-                <?php include __DIR__ . '/script2.php'; ?>
-                <?php
+                    function hideSections() {
+                        sections.forEach(function(section, index) {
+                            if (index !== currentSectionIndex) {
+                                section.style.display = 'none';
+                            } else {
+                                section.style.display = 'block';
+                            }
+                        });
+                    }
 
-                ?>
-            </div>
+                });
+            </script>
+            <?php include __DIR__ . '/script2.php'; ?>
+            <?php
 
+            ?>
         </div>
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="copyright ml-auto ">
-                    <i class="la la-copyright"></i> 2023 - IT <i class="la la-heart heart text-danger"></i> - PT. Akashi Wahana Indonesia. All Rights Reserved.
-                </div>
+
+    </div>
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="copyright ml-auto ">
+                <i class="la la-copyright"></i> 2023 - IT <i class="la la-heart heart text-danger"></i> - PT. Akashi Wahana Indonesia. All Rights Reserved.
             </div>
-        </footer>
+        </div>
+    </footer>
     </div>
     </div>
 </body>
@@ -484,27 +515,36 @@ function isActive($url)
             page.classList.remove('bg-secondary');
             page.classList.add('bg-primary');
         });
+
+        var questionSections = document.getElementsByClassName('question-section');
+        var lastSectionId = questionSections[questionSections.length - 1].id;
+        var lastSectionNumber = lastSectionId.split('-')[1];
+        console.log("lastSectionNumber" + lastSectionNumber);
+        console.log("cardNumb" + (cardNumber + 1));
+        if (lastSectionNumber == (cardNumber + 1)) {
+            document.getElementById('submitExam' + lastSectionNumber).style.display = 'block';
+            document.getElementById('nextBtn' + lastSectionNumber).style.display = 'none';
+        }
         var sections = document.querySelectorAll('.question-section');
-        console.log("card" + cardNumber);
+
         pageNumb = (cardNumber + 1) * 2;
         pageNumb2 = (cardNumber + 1) * 2 - 1;
         document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary');
         document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary');
         document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary');
         document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary');
-        console.log("muncul" + cardBegin);
+
 
         // if (cardBegin < 1) {
 
         //     document.getElementById('backBtn').style.display = 'none';
         // } else {
 
-        document.getElementById('backBtn').style.display = 'block';
+
         // }
 
         sections.forEach(function(section, index) {
             if (index !== cardNumber) {
-                console.log("s" + cardNumber);
                 section.style.display = 'none';
             } else {
                 section.style.display = 'block';
@@ -519,28 +559,25 @@ function isActive($url)
             page.classList.add('bg-primary');
         });
         var sections = document.querySelectorAll('.question-section');
-        console.log("card" + cardNumber);
+
         pageNumb = (cardNumber) * 2;
         pageNumb2 = (cardNumber) * 2 - 1;
         document.getElementById('numberPage' + pageNumb2).classList.add('bg-secondary');
         document.getElementById('numberPage' + pageNumb).classList.add('bg-secondary');
         document.getElementById('numberPage' + pageNumb2).classList.remove('bg-primary');
         document.getElementById('numberPage' + pageNumb).classList.remove('bg-primary');
-        console.log("muncul" + pageNumb2);
+
 
         // if (cardBegin <script 1) {
 
         //     document.getElementById('backBtn').style.display = 'none';
 
-        document.getElementById('backBtn').style.display = 'block';
 
         if (pageNumb2 == 1) {
 
-            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('backBtn1').style.display = 'none';
 
         }
-        console.log("s" + sections.length);
-        console.log("muncul2" + pageNumb2);
         sections.forEach(function(section, index) {
             if (index !== (cardNumber - 1)) {
                 section.style.display = 'none';
@@ -562,9 +599,39 @@ function isActive($url)
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '<?php echo base_url("Question"); ?>';
+                window.location.href = '<?php echo base_url("Training"); ?>';
             }
         });
+    }
+
+    async function saveAnswer() {
+        var formElements = document.getElementById("formExam");
+        formElements.submit();
+        fetch('<?= base_url('Question/getScore/') ?>')
+            .then(response => {
+                return response.json(); // Parse response as JSON
+            })
+            .then(data => {
+                console.log(data);
+                const score = data.score;
+                document.getElementById('showScore').style.display = 'block';
+                document.getElementById('showQuestion').style.display = 'none';
+
+                document.getElementById('score').value = score;
+            })
+            .catch(error => {
+                console.error('Error fetching data showdetail:', error);
+            });
+        // const score = data.score;
+        // const totalQuestion = data.totalQuestion;
+        // const trueAnswer = data.trueAnswer;
+
+        // document.getElementById('showScore').style.display = 'block';
+        // document.getElementById('showQuestion').style.display = 'none';
+        // document.getElementById('trueAns').value = score;
+        // document.getElementById('score').value = score;
+        // document.getElementById('xx').value = trueAnswer + "/" + totalQuestion;
+
     }
 </script>
 

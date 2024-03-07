@@ -19,6 +19,7 @@ foreach ($substance as $s) {
 		$uniqueIds[] = $id_header;
 	}
 }
+
 $combinedDataJSON = json_encode($combinedData);
 ?>
 <div class="container-fluid">

@@ -13,7 +13,7 @@
 	truncateTextIfNeeded();
 	window.addEventListener('resize', truncateTextIfNeeded);
 
-	
+
 
 	function truncateTextIfNeeded() {
 		const pElement = document.getElementById('username');
@@ -119,11 +119,11 @@
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
 		<?php
-			if (isset($tags)) {
-				echo '<script>';
-				echo 'populateTagsSection(' . json_encode($tags) . ', "clear");';
-				echo '</script>';
-			}
+		if (isset($tags)) {
+			echo '<script>';
+			echo 'populateTagsSection(' . json_encode($tags) . ', "clear");';
+			echo '</script>';
+		}
 		?>
 		var checkboxes = document.querySelectorAll('.form-check-input');
 		checkboxes.forEach(checkbox => {
@@ -289,7 +289,7 @@
 
 	function createSelectCell(optionsArray, tr, idName, def) {
 		var cell = document.createElement('td');
-		
+
 		var select = document.createElement('select');
 		select.classList.add('form-control');
 		select.id = select.name = idName;
@@ -1263,8 +1263,8 @@
 			changeDisplayOfElements('none', ['substanceDiv']);
 		}
 	}
-    
-    function validateForm() {
+
+	function validateForm() {
 		var inputFields = [
 			'temaTraining'
 		];
@@ -1308,7 +1308,7 @@
 </script>
 
 <script>
-    function showPForm(id) {
+	function showPForm(id) {
 		document.getElementById('formPackage').reset();
 		createTableQuestion(0);
 		document.getElementById('titlePackage').textContent = id == 'x' ? 'Tambah Paket' : 'Edit Paket';
@@ -1346,7 +1346,7 @@
 							}
 						});
 
-						header.forEach(function (field) {
+						header.forEach(function(field) {
 							var element = document.getElementById(field);
 							element.oninput = function() {
 								removeStyle(element);
@@ -1360,7 +1360,7 @@
 					console.error('Error:', error);
 				});
 		}
-		
+
 		changePForm('modify');
 		document.getElementById('scrollableDiv').scrollTop = 0;
 	}
@@ -1408,8 +1408,8 @@
 	}
 
 	function removeStyle(inputElement) {
-        inputElement.removeAttribute("style");
-    }
+		inputElement.removeAttribute("style");
+	}
 
 	function validatePForm() {
 		var max = document.getElementById('decider').value;
@@ -1426,7 +1426,7 @@
 			}
 		});
 
-		header.forEach(function (field) {
+		header.forEach(function(field) {
 			var element = document.getElementById(field);
 			if (element.value == '' || element.value == 'default') {
 				element.style.borderColor = 'red';
@@ -1596,7 +1596,7 @@
 				}
 			});
 	}
-	
+
 	var valuesArray = [];
 
 	function createTableQuestion(max) {

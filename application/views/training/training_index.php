@@ -406,13 +406,19 @@ $combinedDataJSON = json_encode($combinedData);
 						<label class="mb-2">Resume</label>
 						<a href="javascript:void(0)" id="resumeLink" onclick="makeFormResume()" class="btn btn-info btn-border float-right mb-3">
 						</a>
-						<div class="row">
-							<div class="col-md-12">
-								<label class="my-2">Tulis catatan</label>
-								<textarea class="form-control" id="readResume" readonly name="readResume" rows="10" maxlength="1000" placeholder="Masukkan pendapat Anda"></textarea>
-							</div>
+
+						<div class="col-md-12">
+							<label class="my-2">Tulis catatan</label>
+							<textarea class="form-control" id="readResume" readonly name="readResume" rows="10" maxlength="1000" placeholder="Masukkan pendapat Anda"></textarea>
 						</div>
 
+
+					</div>
+					<div id="examDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important; ">
+						<label class="mb-2">Kerjakan Soal</label>
+						<a href="<?php echo base_url('Question/getPreExam') ?>" id="examPrePost" class="btn btn-info btn-border float-right mb-3">
+							Mulai!
+						</a>
 					</div>
 					<div class="card-body" id="primaryBtn">
 

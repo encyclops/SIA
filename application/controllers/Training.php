@@ -27,7 +27,6 @@ class Training extends CI_Controller
 		$data['tags']  		= $this->AdminM->getTags();
 		$data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
 		$data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
-
 		$this->load->view('training/training_index', $data);
 	}
 
