@@ -13,6 +13,8 @@
 	truncateTextIfNeeded();
 	window.addEventListener('resize', truncateTextIfNeeded);
 
+	
+
 	function truncateTextIfNeeded() {
 		const pElement = document.getElementById('username');
 		const screenWidth = window.innerWidth;
@@ -116,7 +118,13 @@
 		searchKeyword('', '', 'allEmpTable');
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
-		populateTagsSection(<?php echo json_encode($tags) ?>, 'clear');
+		<?php
+			if (isset($tags)) {
+				echo '<script>';
+				echo 'populateTagsSection(' . json_encode($tags) . ', "clear");';
+				echo '</script>';
+			}
+		?>
 		var checkboxes = document.querySelectorAll('.form-check-input');
 		checkboxes.forEach(checkbox => {
 			checkbox.checked = false;
@@ -174,9 +182,7 @@
 		input.id = idname;
 		input.name = idname;
 		input.classList.add('form-control', 'form-control-sm');
-		console.log("dsfsd" + idname);
 		if (idname.includes('materiTitle')) {
-			console.log("dsd" + idname);
 			input.required = true;
 		}
 
@@ -281,6 +287,29 @@
 		tr.appendChild(cell);
 	}
 
+	function createSelectCell(optionsArray, tr, idName, def) {
+		var cell = document.createElement('td');
+		
+		var select = document.createElement('select');
+		select.classList.add('form-control');
+		select.id = select.name = idName;
+
+		var defOption = document.createElement('option');
+		defOption.value = "default";
+		defOption.textContent = def;
+		defOption.selected = defOption.disabled = true;
+		select.appendChild(defOption);
+
+		optionsArray.forEach(function(optionText, index) {
+			var option = document.createElement('option');
+			option.value = optionText;
+			option.textContent = optionText;
+			select.appendChild(option);
+		});
+
+		cell.appendChild(select);
+		tr.appendChild(cell);
+	}
 
 	function createTextCell(text, tr, code, align) {
 		var cell = document.createElement('td');
@@ -290,7 +319,7 @@
 	}
 
 	function createBadgeApproval(idDetail, npk, id, tr) {
-		<?php if ($this->session->userdata('role') == 'admin') { ?>
+		if (isAdmin) {
 			var cell = document.createElement('td');
 			cell.classList.add('text-center');
 
@@ -330,7 +359,7 @@
 			cell.appendChild(approvalContainer);
 
 			tr.appendChild(cell);
-		<?php } ?>
+		}
 	}
 
 
@@ -815,9 +844,6 @@
 		const paging = document.getElementById('pagingContainer');
 		container.innerHTML = '';
 		paging.innerHTML = '';
-		<?php if ($this->session->userdata('role') == 'admin') { ?>
-			$abc = 1;
-		<?php } ?>
 		var counter = 1;
 		console.log(trainings);
 		console.log(isAdmin + "tes");
@@ -1237,8 +1263,8 @@
 			changeDisplayOfElements('none', ['substanceDiv']);
 		}
 	}
-
-	function validateForm() {
+    
+    function validateForm() {
 		var inputFields = [
 			'temaTraining'
 		];
@@ -1282,7 +1308,68 @@
 </script>
 
 <script>
+    function showPForm(id) {
+		document.getElementById('formPackage').reset();
+		createTableQuestion(0);
+		document.getElementById('titlePackage').textContent = id == 'x' ? 'Tambah Paket' : 'Edit Paket';
+		document.getElementById('navPackage').textContent = 'Soal / ' + (id == 'x' ? 'Tambah Paket Soal' : 'Edit Paket Soal');
+		if (id != 'x') {
+			fetch('<?= base_url('Question/retrievePackage/') ?>' + id)
+				.then(response => response.json())
+				.then(data => {
+					var package = data['package'];
+					var questions = data['questions'];
+					console.log(questions);
+					document.getElementById('idUniqPaket').value = package['package_uniqueId'];
+					document.getElementById('namePaket').value = package['package_name'];
+					document.getElementById('chooseTrain').value = package['training_id'];
+					document.getElementById('package_id').value = package['package_id'];
+					document.getElementById('decider').value = questions.length;
+					createTableQuestion(questions.length);
+
+					for (var i = 0; i < questions.length; i++) {
+						fields.forEach(function(field) {
+							var elementId = field.id + (i + 1);
+							var element = document.getElementById(elementId);
+
+							if (element && questions.length > 0) {
+								var propertyName = Object.keys(questions[0]).find(function(key) {
+									return key === field.id;
+								});
+
+								if (propertyName) {
+									element.value = questions[i][propertyName];
+									element.oninput = function() {
+										removeStyle(element);
+									};
+								}
+							}
+						});
+
+						header.forEach(function (field) {
+							var element = document.getElementById(field);
+							element.oninput = function() {
+								removeStyle(element);
+							};
+						});
+
+						document.getElementById('questionId' + (i + 1)).value = questions[i]['question_id'];
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+		
+		changePForm('modify');
+		document.getElementById('scrollableDiv').scrollTop = 0;
+	}
+
 	var fields = [{
+			id: 'questionId',
+			label: 'ID Pertanyaan'
+		},
+		{
 			id: 'levelSelect',
 			label: 'Level Pertanyaan'
 		},
@@ -1312,146 +1399,7 @@
 		}
 	];
 
-	function showSoalModal(id) {
-		document.getElementById('formTraining').reset();
-		document.getElementById('modalTitle').textContent = id == 'x' ? 'Tambah Soal' : 'Edit Soal';
-		document.getElementById('modalNav').textContent = 'Soal / ' + (id == 'x' ? 'Tambah Soal' : 'Edit Soal');
-		if (id != 'x') {
-			fetch('<?= base_url('Question/retrieveQuestion/') ?>' + id)
-				.then(response => response.json())
-				.then(data => {
-					console.log(data);
-					fields.forEach(field => {
-						var element = document.getElementById(field.id);
-						element.value = data[field.id];
-					});
-					document.getElementById('question_id').value = data['question_id'];
-				})
-				.catch(error => {
-					console.error('Error:', error);
-				});
-		}
-		changeQForm('modify');
-		document.getElementById('scrollableDiv').scrollTop = 0;
-	};
-
-	function changeQForm(code) {
-		document.getElementById('soalPage').style.display = (code == 'main') ? 'block' : 'none';
-		document.getElementById('modifySoalPage').style.display = (code == 'modify') ? 'block' : 'none';
-		callLoader();
-	}
-
-	function validateQForm() {
-		var msg = '';
-		var validity = true;
-
-		for (var i = 0; i < fields.length; i++) {
-			var field = document.getElementById(fields[i].id);
-			if (field.value.trim() === '' || field.value.trim() === 'default') {
-				msg = 'Kolom ' + fields[i].label + ' tidak valid.';
-				validity = false;
-				break;
-			}
-		}
-
-		if (validity) {
-			Swal.fire({
-					title: 'Konfirmasi Data',
-					text: 'Yakin akan menyimpan data?',
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Ya',
-					cancelButtonText: 'Tidak',
-				})
-				.then((result) => {
-					if (result.isConfirmed) {
-						var form = document.getElementById('formTraining');
-						var method = document.getElementById('question_id').value == '' ? 'saveQuestion' : 'editQuestion';
-						var newActionURL = '<?php echo base_url('Question/') ?>' + method;
-						form.setAttribute('action', newActionURL);
-						form.submit();
-					}
-				});
-		} else {
-			Swal.fire({
-				title: 'Kesalahan Input Data',
-				text: msg,
-				icon: 'error',
-				confirmButtonColor: '#3085d6',
-				confirmButtonText: 'OK'
-			});
-		}
-	}
-
-	function deleteQuestion(id) {
-		Swal.fire({
-				title: 'Are you sure?',
-				text: 'You won\'t be able to revert this!',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#d33',
-				confirmButtonText: 'Yes, delete it!'
-			})
-			.then((result) => {
-				if (result.isConfirmed) {
-					var url = '<?php echo base_url("Question/deleteQuestion/"); ?>' + id;
-
-					fetch(url, {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-						})
-						.then(response => response.json())
-						.then(data => {
-							if (data.success) {
-								Swal.fire({
-										title: 'Delete Succeed',
-										text: 'The question has been successfully deleted.',
-										icon: 'success',
-										confirmButtonColor: '#3085d6',
-										confirmButtonText: 'OK'
-									})
-									.then((result) => {
-										if (result.isConfirmed) {
-											window.location.reload();
-										}
-									});
-							} else {
-								console.log('Deletion failed:', data.error);
-							}
-						})
-						.catch(error => {
-							console.error('Error:', error);
-						});
-				}
-			});
-	}
-
-	function showPForm(id) {
-		document.getElementById('formPackage').reset();
-		document.getElementById('titlePackage').textContent = id == 'x' ? 'Tambah Paket' : 'Edit Paket';
-		document.getElementById('navPackage').textContent = 'Soal / ' + (id == 'x' ? 'Tambah Paket Soal' : 'Edit Paket Soal');
-		if (id != 'x') {
-			fetch('<?= base_url('Question/retrievePackage/') ?>' + id)
-				.then(response => response.json())
-				.then(data => {
-					console.log(data);
-					document.getElementById('idUniqPaket').value = data['package_uniqueId'];
-					document.getElementById('namePaket').value = data['package_name'];
-					document.getElementById('chooseTrain').value = data['training_id'];
-					document.getElementById('package_id').value = data['package_id'];
-				})
-				.catch(error => {
-					console.error('Error:', error);
-				});
-		}
-		changePForm('modify');
-		document.getElementById('scrollableDiv').scrollTop = 0;
-	};
+	var header = ['idUniqPaket', 'namePaket', 'chooseTrain', 'decider'];
 
 	function changePForm(code) {
 		document.getElementById('packagePage').style.display = (code == 'main') ? 'block' : 'none';
@@ -1459,16 +1407,48 @@
 		callLoader();
 	}
 
+	function removeStyle(inputElement) {
+        inputElement.removeAttribute("style");
+    }
+
 	function validatePForm() {
+		var max = document.getElementById('decider').value;
+		var next = true;
+		fields.forEach(function(field) {
+			for (var i = 1; i <= max; i++) {
+				var elementId = field.id + i;
+				var element = document.getElementById(elementId);
 
-		var form = document.getElementById('formPackage');
-		var method = document.getElementById('package_id').value == '' ? 'savePackage' : 'editPackage';
-		var newActionURL = '<?php echo base_url('Question/') ?>' + method;
-		form.setAttribute('action', newActionURL);
-		form.submit();
+				if (!elementId.includes('questionId') && (element.value == '' || element.value == 'default')) {
+					element.style.borderColor = 'red';
+					next = false;
+				}
+			}
+		});
 
+		header.forEach(function (field) {
+			var element = document.getElementById(field);
+			if (element.value == '' || element.value == 'default') {
+				element.style.borderColor = 'red';
+				next = false;
+			}
+		});
 
-
+		if (next) {
+			var form = document.getElementById('formPackage');
+			var method = document.getElementById('package_id').value == '' ? 'savePackage' : 'editPackage';
+			var newActionURL = '<?php echo base_url('Question/') ?>' + method;
+			form.setAttribute('action', newActionURL);
+			form.submit();
+		} else {
+			Swal.fire({
+				title: 'Error',
+				text: 'Silakan lengkapi data!',
+				icon: 'error',
+				confirmButtonColor: '#3085d6',
+				confirmButtonText: 'OK'
+			});
+		}
 	}
 
 	function deletePackage(id) {
@@ -1616,4 +1596,80 @@
 				}
 			});
 	}
+	
+	var valuesArray = [];
+
+	function createTableQuestion(max) {
+		var tableBody = document.getElementById('tBodyAllSoal');
+		tableBody.innerHTML = '';
+		for (var i = 1; i <= max; i++) {
+			var tr = document.createElement('tr');
+			tr.id = 'rowSoal' + i;
+
+			createTextCell(i, tr, 'number', 'center');
+			createInputCell('question' + i, 'textarea', '', tr);
+			createInputCell('questionId' + i, 'hidden', '', tr);
+			createSelectCell(['Low', 'Medium', 'High'], tr, "levelSelect" + i, "--");
+			createSelectCell(['A', 'B', 'C', 'D'], tr, "answerSelect" + i, "--");
+			createInputCell('aOption' + i, 'textarea', '', tr);
+			createInputCell('bOption' + i, 'textarea', '', tr);
+			createInputCell('cOption' + i, 'textarea', '', tr);
+			createInputCell('dOption' + i, 'textarea', '', tr);
+			tableBody.appendChild(tr);
+		}
+
+		isDataTableExist(max, 1, 8, 'emptyData', 'tBodyAllSoal');
+	}
+
+	function generateQuestionRows() {
+		var max = document.getElementById('decider').value;
+
+		fields.forEach(function(field) {
+			for (var i = 1; i <= max; i++) {
+				var elementId = field.id + i;
+				var element = document.getElementById(elementId);
+
+				if (element && !valuesArray.some(entry => entry.id === elementId)) {
+					valuesArray.push({
+						id: elementId,
+						value: element.value
+					});
+				}
+			}
+		});
+
+		createTableQuestion(max);
+
+		fields.forEach(function(field) {
+			for (var i = 1; i <= max; i++) {
+				var elementId = field.id + i;
+				var element = document.getElementById(elementId);
+
+				if (element) {
+					console.log(element);
+					element.oninput = function() {
+						removeStyle(element);
+					};
+				}
+			}
+		});
+
+		valuesArray.forEach(function(entry) {
+			var element = document.getElementById(entry.id);
+			if (element) {
+				element.value = entry.value;
+			}
+		});
+	}
+
+	document.getElementById('decider').addEventListener('input', function(event) {
+		var value = parseInt(this.value);
+		if (value < 0) {
+			this.value = 0;
+		} else if (value > 50) {
+			this.value = 50;
+		} else if (isNaN(value)) {
+			this.value = '';
+		}
+	});
 </script>
