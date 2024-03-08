@@ -123,16 +123,38 @@ class QuestionM extends CI_Model
         return $this->db->update('training_question_package', $data, $where);
     }
 
-    public function getPreExam()
+
+    public function getGlobalScore()
     {
         $query = $this->db->query(
-            "   SELECT *
-                FROM training_question
-                WHERE status = 1        "
+            "  SELECT *, tp.training_id, tp.package_name 
+            FROM training_score as ts inner join training_question_package as tp  on ts.package_id = tp.package_id
+           "
         );
         return $query->result();
     }
 
+    public function getPreExam($id)
+    {
+        $query = $this->db->query(
+            "  SELECT * 
+            FROM training_question 
+            WHERE package_id IN (SELECT package_id 
+                                 FROM training_question_package 
+                                 WHERE status = 1 AND training_id = '2070') "
+        );
+        return $query->result();
+    }
+
+    public function getpackageQuest($id)
+    {
+        $query = $this->db->query(
+            "  SELECT * 
+            FROM training_question_package
+            where training_id = $id "
+        );
+        return $query->result();
+    }
 
     public function getTotalQuestion($idPackage)
     {
@@ -156,12 +178,17 @@ class QuestionM extends CI_Model
         return $query->row();
     }
 
-    public function saveAnswerUser($data)
+    // public function saveAnswerUser($data)
+    // {
+    //     return $this->db->insert('training_userAnswer', $data);
+    // }
+
+    public function savePreExam($data)
     {
-        return $this->db->insert('training_userAnswer', $data);
+        return $this->db->insert('training_score', $data);
     }
 
-    public function saveScore($data)
+    public function savePostExam($data)
     {
         return $this->db->insert('training_score', $data);
     }

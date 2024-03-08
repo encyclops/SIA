@@ -146,7 +146,7 @@ function isActive($url)
 						<li class="nav-item <?php echo isActive('FPET/index') ?>">
 							<a href="<?php echo base_url('FPET/index') ?>">
 								<i class="la la-user-secret"></i>
-								<p>Master FPET</p>
+								<p>FPET</p>
 								<!-- <span class="badge badge-count">50</span> -->
 							</a>
 						</li>
@@ -166,11 +166,30 @@ function isActive($url)
 							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
+					<!-- <li class="nav-item <?php echo isActive('TrainingOther') ?>">
+						<a href="<?php echo base_url('TrainingOther') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Training</p>
+						</a>
+					</li> -->
+
+					<!-- <li class="nav-item <?php echo isActive('Question/getPreExam') ?>">
+						<a href="<?php echo base_url('Question/getPreExam') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Pre/Post Test</p>
+						</a>
+					</li>
 					<li class="nav-item <?php echo isActive('Question/getPreExam') ?>">
 						<a href="<?php echo base_url('Question/getPreExam') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>P Ujian</p>
-							<!-- <span class="badge badge-count">5</span> -->
+						</a>
+					</li> -->
+					<li class="nav-item <?php echo isActive('Question/getGlobalScore') ?>">
+						<a href="<?php echo base_url('Question/getGlobalScore') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Hasil Tes</p>
+
 						</a>
 					</li>
 				</ul>

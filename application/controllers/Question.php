@@ -7,6 +7,8 @@
         public function __construct()
         {
             parent::__construct();
+
+            $this->load->model("OracleDBM");
             $this->load->model("QuestionM");
             $this->load->model("TrainingM");
             $this->load->helper(array('form', 'url'));
@@ -201,7 +203,7 @@
             redirect('Question');
         }
 
-        public function getPreExam()
+        public function getPreExam($id)
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $npk = $this->session->userdata('npk');
@@ -209,9 +211,12 @@
             $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
             $data['score'] = 'x';
-            $data['preExam']        = $this->QuestionM->getPreExam();
+            $data['preExam']        = $this->QuestionM->getPreExam($id);
             $this->load->view('exam', $data);
         }
+
+
+
 
         public function saveExam()
         {
@@ -250,12 +255,19 @@
             }
             print_r($totalQuestion) + "true1";
             $score = round(($trueAnswer / $totalQuestion) * 100, 2);
+            $data = array(
+                'score' => $answerUser,
+                'npk' =>    $this->session->userdata('npk'),
+                'package_id' => $idPackage,
+            );
             $this->score2 = $score;
             $data['trueAnswer'] = $trueAnswer;
             $data['totalQuestion'] = $totalQuestion;
             print_r($this->score2);
+            $this->QuestionM->savePreExam();
             redirect('Question/getScore/' . $this->score2);
         }
+
         public function getScore($score3)
         {
             if (!$this->isAllowed()) return redirect(site_url());
@@ -264,8 +276,59 @@
             $data['package'] = $this->QuestionM->getPackages();
             $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+
             $score = $score3; // Remove the $ symbol
             $data['score'] = $score;
             $this->load->view('examResult', $data);
+        }
+
+        // public function getScoreTest($score3)
+        // {
+        //     if (!$this->isAllowed()) return redirect(site_url());
+        //     $npk = $this->session->userdata('npk');
+        //     $data['notif'] = $this->TrainingM->getNotif($npk);
+        //     $data['package'] = $this->QuestionM->getPackages();
+        //     $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+        //     $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+        //     $data['score'] = $this->QuestionM->getPackages();
+        //     $score = $score3; // Remove the $ symbol
+        //     $data['score'] = $score;
+        //     $this->load->view('examResult', $data);
+        // }
+
+
+        public function getGlobalScore()
+        {
+            if (!$this->isAllowed()) return redirect(site_url());
+            $npk = $this->session->userdata('npk');
+            //    $data['score'] = $this->QuestionM->getGlobalScore();
+            $data['notif'] = $this->TrainingM->getNotif($npk);
+
+            $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+            $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+
+            $getScoreExam2    = $this->QuestionM->getGlobalScore();
+
+            $getData = [];
+            foreach ($getScoreExam2 as $a) {
+                $employee = $this->OracleDBM->getEmpBy('NPK', $a->npk);
+                if ($employee !== null && is_object($employee)) {
+                    $combine = [
+                        'npk' => $employee->NPK,
+                        'nama' => $employee->NAMA,
+                        'training_id' => $a->training_id,
+                        'package_name' => $a->package_name,
+                        'scorePre' => $a->scorePre,
+                        'scorePost' => $a->scorePost,
+                        'package_id' => $a->package_id
+                    ];
+                    $getData[] = $combine;
+                } else {
+                }
+            }
+
+            $data['score']   = $getData;
+
+            $this->load->view('exam/score', $data);
         }
     }

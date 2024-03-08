@@ -46,7 +46,6 @@ class Chart extends CI_Controller
 		$data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
 		$data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
 		$data['getTrendAccess']   = $this->ChartM->getTrendAccess();
-
 		$this->load->view('training/training_chart', $data);
 	}
 

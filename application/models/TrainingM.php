@@ -323,6 +323,17 @@ class TrainingM extends CI_Model
         return $query->result();
     }
 
+    public function getPackageByTraining($id)
+    {
+        $status = $this->isAdmin() ? '> 0 AND status < 3' : '= 1';
+        $query = $this->db->query(
+            "   SELECT *
+                FROM training_question_package
+                WHERE training_id = $id
+                AND status " . $status
+        );
+        return $query->result();
+    }
     public function getEmployeeByTraining($id)
     {
         $status = $this->isAdmin() ? '> 0 AND access_permission < 3' : '= 1';

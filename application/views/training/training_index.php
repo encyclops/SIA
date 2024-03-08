@@ -416,7 +416,7 @@ $combinedDataJSON = json_encode($combinedData);
 					</div>
 					<div id="examDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important; ">
 						<label class="mb-2">Kerjakan Soal</label>
-						<a href="<?php echo base_url('Question/getPreExam') ?>" id="examPrePost" class="btn btn-info btn-border float-right mb-3">
+						<a id="examPrePost" class="btn btn-info btn-border float-right mb-3">
 							Mulai!
 						</a>
 					</div>

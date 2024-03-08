@@ -118,13 +118,7 @@
 		searchKeyword('', '', 'allEmpTable');
 		rowCountMateriForm = 0;
 		document.getElementById('allEmpTableDiv').scrollTop = 0;
-		<?php
-		if (isset($tags)) {
-			echo '<script>';
-			echo 'populateTagsSection(' . json_encode($tags) . ', "clear");';
-			echo '</script>';
-		}
-		?>
+		populateTagsSection(<?php echo json_encode($tags) ?>, 'clear');
 		var checkboxes = document.querySelectorAll('.form-check-input');
 		checkboxes.forEach(checkbox => {
 			checkbox.checked = false;
@@ -287,7 +281,7 @@
 		tr.appendChild(cell);
 	}
 
-	function createSelectCell(optionsArray, tr, idName, def) {
+	function createSelectCell(optionsValue, optionsArray, tr, idName, def) {
 		var cell = document.createElement('td');
 
 		var select = document.createElement('select');
@@ -300,16 +294,29 @@
 		defOption.selected = defOption.disabled = true;
 		select.appendChild(defOption);
 
-		optionsArray.forEach(function(optionText, index) {
+		// Check if optionsValue and optionsArray are arrays
+		if (Array.isArray(optionsValue) && Array.isArray(optionsArray)) {
+			// Iterate through the optionsValue and optionsArray simultaneously
+			optionsValue.forEach(function(optionValue, index) {
+				var optionName = optionsArray[index];
+
+				var option = document.createElement('option');
+				option.value = optionValue;
+				option.textContent = optionName;
+				select.appendChild(option);
+			});
+		} else {
+			// If optionsValue and optionsArray are not arrays, create a single option
 			var option = document.createElement('option');
-			option.value = optionText;
-			option.textContent = optionText;
+			option.value = optionsValue;
+			option.textContent = optionsArray;
 			select.appendChild(option);
-		});
+		}
 
 		cell.appendChild(select);
 		tr.appendChild(cell);
 	}
+
 
 	function createTextCell(text, tr, code, align) {
 		var cell = document.createElement('td');
@@ -714,8 +721,18 @@
 				})
 				.then(response => {
 					var data = JSON.parse(response);
-					console.log(data);
+					console.log('zzz' + data);
 					trStat = data.header[0].status;
+					var packageArray = Object.values(data.package);
+
+					// Use map() to extract the package_id attribute from each package object
+					var packageIds = packageArray.map(function(package) {
+						return package.package_id;
+					});
+
+					var packageNames = packageArray.map(function(package) {
+						return package.package_name;
+					});
 
 
 					data.employee.forEach(async function(emp) {
@@ -733,12 +750,14 @@
 							createTextCell(emp.NAMA, tr, 'text', 'left');
 							createTextCell(emp.DEPARTEMEN, tr, 'text', 'left');
 							createTextCell(emp.PROGRESS, tr, 'text', 'center');
-							createTextCell(Math.round(emp.PERCENT) + '%', tr, 'text', 'center');
+							// createTextCell(Math.round(emp.PERCENT) + '%', tr, 'text', 'center');
 							const accessPromise = getAccessData(emp.NPK, id).then(acc => {
 								if (isAdmin) {
 									createMultipleCells(emp.NPK, tr, id, acc.file, acc.part, emp.STATUS)
 								}
 							});
+
+							createSelectCell(packageIds, packageNames, tr, 'soalSelect' + emp.NPK, '-- Pilih Paket --');
 
 							t.appendChild(tr);
 							counterEmp++;
@@ -750,8 +769,10 @@
 						if (tableBodyDetOnly) isDataTableExist(counterEmp, 1, 5, 'emptyParticipantDet', 'tBodyDetailOnlyEmp');
 						if (tableBody) isDataTableExist(counterEmp, 1, 8, 'emptyParticipant', 'tBodyDetailEmp');
 					});
-
 					document.getElementById('idTraining').value = data.header[0].id_training_header;
+					// Set the value of the id_training_header as the href attribute of the anchor element
+					document.getElementById('examPrePost').setAttribute('href', "<?php echo base_url('Question/getPreExam/') ?>" + data.header[0].id_training_header);
+
 					document.getElementById('temaTraining').value = data.header[0].judul_training_header;
 					document.getElementById('pemateri').value = data.header[0].pemateri;
 					document.getElementById('editBtn').onclick = function() {
@@ -1609,8 +1630,8 @@
 			createTextCell(i, tr, 'number', 'center');
 			createInputCell('question' + i, 'textarea', '', tr);
 			createInputCell('questionId' + i, 'hidden', '', tr);
-			createSelectCell(['Low', 'Medium', 'High'], tr, "levelSelect" + i, "--");
-			createSelectCell(['A', 'B', 'C', 'D'], tr, "answerSelect" + i, "--");
+			createSelectCell(['Low', 'Medium', 'High'], ['Low', 'Medium', 'High'], tr, "levelSelect" + i, "--");
+			createSelectCell(['A', 'B', 'C', 'D'], ['A', 'B', 'C', 'D'], tr, "answerSelect" + i, "--");
 			createInputCell('aOption' + i, 'textarea', '', tr);
 			createInputCell('bOption' + i, 'textarea', '', tr);
 			createInputCell('cOption' + i, 'textarea', '', tr);

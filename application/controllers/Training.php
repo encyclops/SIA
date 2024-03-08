@@ -9,6 +9,7 @@ class Training extends CI_Controller
 		parent::__construct();
 		$this->load->model("OracleDBM");
 		$this->load->model("TrainingM");
+		$this->load->model("QuestionM");
 		$this->load->model("AdminM");
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('session');
@@ -40,6 +41,7 @@ class Training extends CI_Controller
 		$npk = $this->session->userdata('npk');
 		$data["header"] = $this->TrainingM->getTrainingHeader($id);
 		$emps           = $this->TrainingM->getEmployeeByTraining($id);
+		$data["package"]  = $this->QuestionM->getpackageQuest($id);
 		$detailEmployeeE = [];
 		foreach ($emps as $emp) {
 			$employee   = $this->OracleDBM->getEmpBy('NPK', $emp->npk);
@@ -57,6 +59,7 @@ class Training extends CI_Controller
 		}
 
 		$data["substance"]  = $this->TrainingM->getSubstanceByTraining($id);
+		$data["packageQuest"]  = $this->TrainingM->getPackageByTraining($id);
 		$data["employee"]   = $detailEmployeeE;
 		$data["tags"]   	= $this->AdminM->getTagsByID($id);
 		$data["resume"]  = $this->TrainingM->getResumePersonal($npk, $id);

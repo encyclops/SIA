@@ -7,9 +7,9 @@ class FPETM extends CI_Model
         $this->db->insert('fpet', $data);
     }
 
-    public function saveTrain($data)
+    public function makeTrain($data)
     {
-        $this->db->insert('training_other', $data);
+        $this->db->insert('training_header', $data);
     }
     public function getFpet()
     {
@@ -68,6 +68,13 @@ class FPETM extends CI_Model
         return $this->db->update('fpet', $data, $where);
     }
 
+    public function updateEstablished($data, $id)
+    {
+        $where = array(
+            'idFpet'    => $id
+        );
+        return $this->db->update('fpet', $data, $where);
+    }
     public function rejectApproveFpet($id, $kode)
     {
         $data = array(
@@ -79,18 +86,19 @@ class FPETM extends CI_Model
         $where = array(
             'idFpet'    => $id
         );
-
         return $this->db->update('fpet', $data, $where);
     }
 
-    public function rejectApproveHrFpet($id, $kode)
+    public function rejectApproveHrFpet($id, $kode, $idTrain, $rEstablished)
     {
         $data = array(
             'statusApprovedHr'        => $kode,
-
+            'rEstablished'        => $rEstablished,
+            'idTrain'        => $idTrain,
             'modified_by'   => $this->session->userdata('npk'),
             'modified_date' => date('Y/m/d H:i:s'),
         );
+
         $where = array(
             'idFpet'    => $id
         );
@@ -99,6 +107,22 @@ class FPETM extends CI_Model
     }
 
 
+
+    public function addParticipantTraining($data, $id)
+    {
+        $where = array(
+            'id_training_header'    => $id
+        );
+        return $this->db->update('training_access', $data, $where);
+    }
+
+    public function addParticipantTraining2($data, $id)
+    {
+        $where = array(
+            'id_training_header'    => $id
+        );
+        return $this->db->update('training_access', $data, $where);
+    }
 
     public function modifyFpet($data, $id)
     {

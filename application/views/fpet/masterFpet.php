@@ -227,8 +227,14 @@ $combinedDataJSON = json_encode($combinedData);
 										<?php endforeach; ?>
 									</select>
 								</div>
-							</div>
 
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="trainer">Saran training <span style="color: red;">*</span></label>
+									<input type="text" maxlength="40" class="form-control input-pill mb-3" name="trainSuggest" id="trainSuggest" placeholder="Masukkan Saran Training">
+								</div>
+							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-6">
@@ -292,7 +298,7 @@ $combinedDataJSON = json_encode($combinedData);
 								</div>
 							</div>
 						</div>
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-md-6">
 								<label class="my-2">Evaluasi Hasil</label>
 								<textarea class="form-control" id="eval" name="eval" rows="2" maxlength="200" placeholder="Masukkan pendapat Anda"></textarea>
@@ -322,7 +328,7 @@ $combinedDataJSON = json_encode($combinedData);
 									</label>
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<div class="row">
 							<div class="col-md-12">
 								<label class="my-2">Keterangan dan Saran</label>
@@ -631,6 +637,7 @@ $combinedDataJSON = json_encode($combinedData);
 					if (dataFpet) {
 						// Update input values
 						document.getElementById('idFpet').value = dataFpet.idFpet || '';
+						document.getElementById('trainSuggest').value = dataFpet.trainSuggest || '';
 						document.getElementById('trainer').value = dataFpet.trainerNpk || '';
 						document.getElementById('actual').value = dataFpet.actual || '';
 						document.getElementById('target').value = dataFpet.target || '';
