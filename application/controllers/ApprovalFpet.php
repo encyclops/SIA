@@ -33,14 +33,10 @@ class ApprovalFpet extends CI_Controller
     }
 
 
-
-
     public function isAllowed()
     {
         return $this->session->userdata('isLogin');
     }
-
-
 
     public function showDetail($id)
     {
@@ -83,12 +79,6 @@ class ApprovalFpet extends CI_Controller
         // Return a success message to the client
         echo json_encode(['status' => 'success', 'message' => 'Notification removed successfully.']);
     }
-
-
-
-
-
-
 
     public function removeNotifMateri($id)
     {

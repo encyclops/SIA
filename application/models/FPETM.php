@@ -7,7 +7,7 @@ class FPETM extends CI_Model
         $this->db->insert('fpet', $data);
     }
 
-    public function saveTrain($data)
+    public function makeTrain($data)
     {
         $this->db->insert('training_other', $data);
     }
@@ -67,6 +67,8 @@ class FPETM extends CI_Model
 
         return $this->db->update('fpet', $data, $where);
     }
+
+
 
     public function rejectApproveFpet($id, $kode)
     {

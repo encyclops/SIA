@@ -130,67 +130,14 @@ $combinedDataJSON = json_encode($combinedData);
                                 <div class="d-flex justify-content-end" id="btnDetailFpet" style="display: none;">
                                     <a id="approveBtnFpet" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Approve</a>
                                     <a id="rejectBtnFpet" class="btn btn-danger " style="margin-right: 9px; display: none;"></i> Reject</a>
-                                    <a id="approveBtnFpetHr" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Approve HR</a>
+                                    <a id="approveBtnFpetHr" href="javascript:void(0)" onclick="showFormTrainModal()" class="btn btn-info" style="margin-right: 9px; display: none;"></i> Approve HR</a>
                                     <a id="rejectBtnFpetHr" class="btn btn-danger " style="margin-right: 9px; display: none;"></i> Reject HR</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-                        <div class="row" style=" display: none;">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <label>Apakah Anda ingin mengambil usulan training bedasar training yang ada? <span style="color: red;">*</span></label><br />
-                                    <label class="form-radio-label">
-                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedY" value="Ya" required onchange="toggleTrainSections()">
-                                        <span class="form-radio-sign">Ya</span>
-                                    </label>
-                                    <label class="form-radio-label ml-3">
-                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedN" value="Tidak" onchange="toggleTrainSections()">
-                                        <span class="form-radio-sign">Tidak</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="trainSection1" style="display: none;">
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="text" hidden class="form-control input-pill mb-3" name="idFpet" id="idFpet">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="chooseTrain">Pilih Training <span style="color: red;">*</span></label>
-                                    <select class="form-control" id="chooseTrain" name="chooseTrain">
-                                        <option disabled selected>Pilih </option>
-                                        <?php foreach ($training as $t) : ?>
-                                            <option value="<?php echo $t->id_training_header; ?>"><?php echo $t->judul_training_header; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="trainSection2" style="display: none;">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="my-2">Judul Training</label>
-                                    <input type="text" class="form-control input-pill mb-3" name="title" id="title" placeholder="Masukkan Judul Training">
-                                </div>
-                                <div class="col">
-                                    <label class="my-2">Lembaga Pelaksana</label><br />
-
-                                    <input type="text" class="form-control input-pill mb-3" name="educator" id="educator" placeholder="Masukkan Lembaga Pelaksana">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <label class="my-2">Jadwal training</label>
-                                    <input type="date" min="<?php echo date('Y-m-d') ?>" class="form-control input-pill mb-3" name="schedule" id="schedule" placeholder="Pilih Jadwal">
-                                </div>
-                                <div class="col">
-                                    <label class="my-2">Biaya Pelaksanaan</label><br />
-                                    <input type="text" class="form-control input-pill mb-3" name="cost" id="cost" placeholder="Masukkan Biaya ">
-                                </div>
-                            </div>
-                        </div>
+                
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -303,7 +250,6 @@ $combinedDataJSON = json_encode($combinedData);
                                 <textarea class="form-control" id="notes" name="notes" rows="1" maxlength="200" placeholder="Masukkan pendapat Anda"></textarea>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -328,6 +274,60 @@ $combinedDataJSON = json_encode($combinedData);
                                 </div>
                             </div>
                         </div>
+                        <!-- <div class="row" id="makeTrain" style=" display: none;">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <label>Apakah Anda ingin mengambil usulan training bedasar training yang ada? <span style="color: red;">*</span></label><br />
+                                    <label class="form-radio-label">
+                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedY" value="Ya" required onchange="toggleTrainSections()">
+                                        <span class="form-radio-sign">Ya</span>
+                                    </label>
+                                    <label class="form-radio-label ml-3">
+                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedN" value="Tidak" onchange="toggleTrainSections()">
+                                        <span class="form-radio-sign">Tidak</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="trainSection1" style="display: none;">
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="text" hidden class="form-control input-pill mb-3" name="idFpet" id="idFpet">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="chooseTrain">Pilih Training <span style="color: red;">*</span></label>
+                                    <select class="form-control" id="chooseTrain" name="chooseTrain">
+                                        <option disabled selected>Pilih </option>
+                                        <?php foreach ($training as $t) : ?>
+                                            <option value="<?php echo $t->id_training_header; ?>"><?php echo $t->judul_training_header; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="trainSection2" style="display: none;">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="my-2">Judul Training</label>
+                                    <input type="text" class="form-control input-pill mb-3" name="title" id="title" placeholder="Masukkan Judul Training">
+                                </div>
+                                <div class="col">
+                                    <label class="my-2">Lembaga Pelaksana</label><br />
+
+                                    <input type="text" class="form-control input-pill mb-3" name="educator" id="educator" placeholder="Masukkan Lembaga Pelaksana">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="my-2">Jadwal training</label>
+                                    <input type="date" min="<?php echo date('Y-m-d') ?>" class="form-control input-pill mb-3" name="schedule" id="schedule" placeholder="Pilih Jadwal">
+                                </div>
+                                <div class="col">
+                                    <label class="my-2">Biaya Pelaksanaan</label><br />
+                                    <input type="text" class="form-control input-pill mb-3" name="cost" id="cost" placeholder="Masukkan Biaya ">
+                                </div>
+                            </div>
+                        </div> -->
                         <div class="card-body" id="divBackSub">
                             <button type="button" id="btnSubApprove" class="btn btn-success float-right">Simpan</button>
                             <a href="javascript:void(0)" onclick="changeFormFpet('main')" class="btn btn-danger"></i> Kembali</a>
@@ -339,14 +339,88 @@ $combinedDataJSON = json_encode($combinedData);
     </div>
 </div>
 
-<div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true" style="overflow: visible;">
-    <div class="modal-dialog" style="max-width: 950px">
-        <div class="modal-content" style="width: 950px;">
+<div class="modal fade" id="trainModal" tabindex="-1" role="dialog" aria-labelledby="trainModalLabel" aria-hidden="true">
+<div class="modal-dialog" style="max-width: 950px">
+		<div class="modal-content" style="width: 950px;">
+			<div class="card p-2 mb-0">
+				<div class="card-header">
+					<div class="row">
+						<div class="col">
+							<h4 class="card-title" id="trainModalLabel">Tambah Train</h4>
+							<p class="card-category">Approval FPET / Tambah Training</p>
+						</div>
+						<div class="col d-flex justify-content-end">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-body">
+					<form role="form" action="<?php echo base_url('FPET/approveHrFpet/') ?>" method="post" enctype="multipart/form-data">
+						<div class="card-body p-0">
+                        <div class="row" id="makeTrain" style=" display: none;">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <label>Apakah Anda ingin mengambil usulan training bedasar training yang ada? <span style="color: red;">*</span></label><br />
+                                    <label class="form-radio-label">
+                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedY" value="Ya" required onchange="toggleTrainSections()">
+                                        <span class="form-radio-sign">Ya</span>
+                                    </label>
+                                    <label class="form-radio-label ml-3">
+                                        <input class="form-radio-input" type="radio" name="rEstablished" id="rEstablishedN" value="Tidak" onchange="toggleTrainSections()">
+                                        <span class="form-radio-sign">Tidak</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="trainSection1" style="display: none;">
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="text" hidden class="form-control input-pill mb-3" name="idFpet" id="idFpet">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="chooseTrain">Pilih Training <span style="color: red;">*</span></label>
+                                    <select class="form-control" id="chooseTrain" name="chooseTrain">
+                                        <option disabled selected>Pilih </option>
+                                        <?php foreach ($training as $t) : ?>
+                                            <option value="<?php echo $t->id_training_header; ?>"><?php echo $t->judul_training_header; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="trainSection2" style="display: none;">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="my-2">Judul Training</label>
+                                    <input type="text" class="form-control input-pill mb-3" name="title" id="title" placeholder="Masukkan Judul Training">
+                                </div>
+                                <div class="col">
+                                    <label class="my-2">Lembaga Pelaksana</label><br />
 
-        </div>
-    </div>
+                                    <input type="text" class="form-control input-pill mb-3" name="educator" id="educator" placeholder="Masukkan Lembaga Pelaksana">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="my-2">Jadwal training</label>
+                                    <input type="date" min="<?php echo date('Y-m-d') ?>" class="form-control input-pill mb-3" name="schedule" id="schedule" placeholder="Pilih Jadwal">
+                                </div>
+                                <div class="col">
+                                    <label class="my-2">Biaya Pelaksanaan</label><br />
+                                    <input type="text" class="form-control input-pill mb-3" name="cost" id="cost" placeholder="Masukkan Biaya ">
+                                </div>
+                            </div>
+                        </div>
+						</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
-
 
 <script>
     // Function to disable options in rTarget greater than selected rActual
@@ -476,7 +550,6 @@ $combinedDataJSON = json_encode($combinedData);
         document.getElementById("rejectBtnFpetHr").style.display = 'none';
         document.getElementById("rejectBtnFpet").style.display = 'none';
         document.getElementById("approveBtnFpet").style.display = 'none';
-
     }
 
     function showAdd(kode) {
@@ -600,6 +673,7 @@ $combinedDataJSON = json_encode($combinedData);
                     var dataFpet = data.dataFpet; // Extract dataFpet object from response
 
                     if (dataFpet) {
+                        disableFormElements();
                         // Update input values
                         document.getElementById('idFpet').value = dataFpet.idFpet || '';
                         document.getElementById('trainer').value = dataFpet.trainerNpk || '';
@@ -650,14 +724,21 @@ $combinedDataJSON = json_encode($combinedData);
                                 document.getElementById('approveBtnFpetHr').style.display = 'inline-block';
                                 var rejectBtnFpet = document.getElementById('rejectBtnFpetHr');
                                 rejectBtnFpet.setAttribute('href', '<?= base_url('FPET/rejectHrFpet/') ?>' + id);
-                                var approveBtnFpet = document.getElementById('approveBtnFpetHr');
-                                approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveHrFpet/') ?>' + id);
+                                // var approveBtnFpet = document.getElementById('approveBtnFpetHr');
+                                // approveBtnFpet.setAttribute('href', '<?= base_url('FPET/approveHrFpet/') ?>' + id);
+                                document.getElementById('makeTrain').style.display = 'block';
+                               // var makeTrainElements = document.getElementById("makeTrain").getElementsByTagName("input");
+
+                                // Enable form elements in makeTrain, trainSection1, and trainSection2
+                                // enableFormElements(document.getElementById("makeTrain"));
+                                // enableFormElements(document.getElementById("trainSection1"));
+                                // enableFormElements(document.getElementById("trainSection2"));
                             }
                         }
                         document.getElementById("showListFpet").style.display = 'none';
                         document.getElementById("addFpet").style.display = 'block';
                         callLoader();
-                        disableFormElements();
+                       
                     } else {
                         console.error('Error: No data found for id ' + id);
                     }
@@ -667,6 +748,21 @@ $combinedDataJSON = json_encode($combinedData);
                 });
         }
     }
+    
+    function enableFormElements(container) {
+    // Get all form elements within the container 
+    var elements = container.querySelectorAll('input, select');
+    // Iterate through each form element
+    for (var i = 0; i < elements.length; i++) {
+        // Remove the disabled attribute
+        elements[i].disabled = false;
+    }
+
+    function showFormTrainModal() {
+		new bootstrap.Modal(document.getElementById('makeTrain')).show();
+	};
+}
+
 </script>
 
 <?php include __DIR__ . '/../script2.php'; ?>

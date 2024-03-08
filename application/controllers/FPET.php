@@ -170,6 +170,7 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $this->FPETM->rejectApproveHrFpet($id, 0);
+
             redirect(site_url('FPET/approvalMenu'));
         }
 
@@ -177,6 +178,32 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $this->FPETM->rejectApproveHrFpet($id, 1);
+            $rEstablished = $this->input->post('rEstablished');
+$chooseTrain = $this->input->post('chooseTrain');
+$title = $this->input->post('title');
+$educator = $this->input->post('educator');
+$schedule = $this->input->post('schedule');
+$cost = $this->input->post('cost');
+$idFpet = $this->input->post('idFpet');
+
+$this->load->model('FPETM');
+
+$data = array(
+    // Add data from the form fields
+    'rEstablished' => $rEstablished,
+    'chooseTrain' => $chooseTrain,
+    'title' => $title,
+    'educator' => $educator,
+    'schedule' => $schedule,
+    'cost' => $cost,
+    'idFpet' => $idFpet,
+    'categoryTrain' => $this->input->post('categoryTrain'),
+    'modified_date' => date('Y/m/d H:i:s'),
+    'modified_by' => $this->session->userdata('npk'),
+);
+
+
+$this->FPETM->makeTrain($data);
             redirect(site_url('FPET/approvalMenu'));
         }
 
