@@ -74,6 +74,7 @@ ob_start();
 			</div>
 		</div>
 	</div>
+
 	<div class="row" id="modifyPackagePage" style="display: none;">
 		<div class="loader-container" id="loaderDiv">
 			<div class="loader">

@@ -186,6 +186,25 @@ $combinedDataJSON = json_encode($combinedData);
 									<input type="text" class="form-control input-pill mb-3" name="cost" id="cost" placeholder="Masukkan Biaya ">
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-check">
+										<label>Pilih Jenis Training <span style="color: red;">*</span></label><br />
+										<label class="form-radio-label">
+											<input class="form-radio-input" type="radio" name="categoryTrain" id="categoryTrainInhouse" value="Inhouse" required>
+											<span class="form-radio-sign">In-House</span>
+										</label>
+										<label class="form-radio-label ml-3">
+											<input class="form-radio-input" type="radio" name="categoryTrain" id="categoryTrainOuthouse" value="Outhouse">
+											<span class="form-radio-sign">Out-House</span>
+										</label>
+										<label class="form-radio-label ml-3">
+											<input class="form-radio-input" type="radio" name="categoryTrain" id="categoryTrainElearning" value="Elearning">
+											<span class="form-radio-sign">E-learning</span>
+										</label>
+									</div>
+								</div>
+							</div>
 							<!-- <div class="row">
 								<div class="form-group">
 									<label for="approved">Pilih Calon Trainer <span style="color: red;">*</span></label>
@@ -535,7 +554,7 @@ $combinedDataJSON = json_encode($combinedData);
 		document.getElementById("showListFpet").style.display = 'none';
 		document.getElementById("addFpet").style.display = 'block';
 		document.getElementById("btnSub").style.display = 'block';
-		document.getElementById('questionTrain').style.display = 'b;ock';
+		document.getElementById('questionTrain').style.display = 'block';
 		var formElement = document.getElementById('btnSub');
 		formElement.setAttribute('onclick', 'save()')
 	}

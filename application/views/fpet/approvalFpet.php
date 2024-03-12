@@ -137,7 +137,6 @@ $combinedDataJSON = json_encode($combinedData);
                         </div>
                     </div>
                     <div class="card-body" style="border-bottom: 1px solid #ebedf2 !important;">
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -343,7 +342,6 @@ $combinedDataJSON = json_encode($combinedData);
             </form>
         </div>
     </div>
-
 
     <div class="modal fade" id="trainModal" tabindex="-1" role="dialog" aria-labelledby="trainModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="max-width: 950px">
@@ -783,7 +781,6 @@ $combinedDataJSON = json_encode($combinedData);
                         document.getElementById("showListFpet").style.display = 'none';
                         document.getElementById("addFpet").style.display = 'block';
                         callLoader();
-
                     } else {
                         console.error('Error: No data found for id ' + id);
                     }

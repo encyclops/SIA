@@ -68,13 +68,8 @@ class FPETM extends CI_Model
         return $this->db->update('fpet', $data, $where);
     }
 
-    public function updateEstablished($data, $id)
-    {
-        $where = array(
-            'idFpet'    => $id
-        );
-        return $this->db->update('fpet', $data, $where);
-    }
+
+
     public function rejectApproveFpet($id, $kode)
     {
         $data = array(

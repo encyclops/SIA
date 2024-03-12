@@ -171,6 +171,7 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $this->FPETM->rejectApproveHrFpet($id, 0);
+
             redirect(site_url('FPET/approvalMenu'));
         }
 
