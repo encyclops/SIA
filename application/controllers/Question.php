@@ -11,6 +11,7 @@
             $this->load->model("OracleDBM");
             $this->load->model("QuestionM");
             $this->load->model("TrainingM");
+            $this->load->model("AdminM");
             $this->load->helper(array('form', 'url'));
             $this->load->library('session');
             $this->load->library('form_validation');
@@ -76,6 +77,7 @@
             $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
 
+            $data['tags']          = $this->AdminM->getTags();
             $data['train']        = $this->QuestionM->getTrains();
             $this->load->view('question_package', $data);
         }

@@ -178,51 +178,36 @@
         public function approveHrFpet($id)
         {
             if (!$this->isAllowed()) return redirect(site_url());
-
+            
             $trainer = $this->input->post('npk');
 
             $rEstablished = $this->input->post('rEstablished');
-            $chooseTrain = $this->input->post('chooseTrain');
-            $title = $this->input->post('title');
-            $educator = $this->input->post('educator');
-            $schedule = $this->input->post('schedule');
-            $cost = $this->input->post('cost');
-            $idFpet = $this->input->post('idFpet');
+$chooseTrain = $this->input->post('chooseTrain');
+$title = $this->input->post('title');
+$educator = $this->input->post('educator');
+$schedule = $this->input->post('schedule');
+$cost = $this->input->post('cost');
+$idFpet = $this->input->post('idFpet');
 
-            $data = array(
-                // Add data from the form fields
+$this->load->model('FPETM');
 
-                'judul_training_header' => $title,
-                'pemateri' => $educator,
-                'schedule' => $schedule,
-                'cost' => $cost,
-                // 'idFpet' => $idFpet,
-                'categoryTrain' => $this->input->post('categoryTrain'),
-                'modified_date' => date('Y/m/d H:i:s'),
-                'modified_by' => $this->session->userdata('npk'),
-                'status' => 1
-            );
+$data = array(
+    // Add data from the form fields
+    'rEstablished' => $rEstablished,
+    'chooseTrain' => $chooseTrain,
+    'title' => $title,
+    'educator' => $educator,
+    'schedule' => $schedule,
+    'cost' => $cost,
+    'idFpet' => $idFpet,
+    'categoryTrain' => $this->input->post('categoryTrain'),
+    'modified_date' => date('Y/m/d H:i:s'),
+    'modified_by' => $this->session->userdata('npk'),
+);
 
-            // $data2 = array(
-            //     'rEstablished' => $rEstablished
-            // );
 
-            if ($rEstablished == 1) {
-                $this->FPETM->addParticipantTraining($data3, $chooseTrain);
-                $lastInsertedId = $chooseTrain;
-            } else {
-                $this->FPETM->makeTrain($data);
-                $lastInsertedId = $this->db->insert_id();
-                $data3 = array(
-                    'npk' => $trainer,
-                    'id_training_header' => $trainer,
-                );
-                $this->FPETM->addParticipantTraining2($data3, $chooseTrain);
-            }
-            print_r($lastInsertedId);
-
-            $this->FPETM->rejectApproveHrFpet($id, 1, $lastInsertedId, $rEstablished);
-            //     redirect(site_url('FPET/approvalMenu'));
+$this->FPETM->makeTrain($data);
+            redirect(site_url('FPET/approvalMenu'));
         }
 
         public function publishFpet($id)
@@ -250,7 +235,6 @@
             $idFpet = $this->input->post('idFpet');
             $this->load->model('FPETM');
             $data = array(
-                'trainSuggest' =>  $this->input->post('trainSuggest'),
                 'approved' => $approved,
                 'trainerNpk' => $trainer,
                 'approvedHr' => $approvedHr,

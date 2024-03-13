@@ -81,7 +81,7 @@
 			const firstToggleElement = document.querySelector('input[onchange="toggleAll(this.checked);"]');
 			if (firstToggleElement) {
 				firstToggleElement.parentNode.classList.remove('btn-info');
-				firstToggleElement.parentNodshowDetaile.classList.add('btn-default', 'off');
+				firstToggleElement.parentNode.classList.add('btn-default', 'off');
 			}
 			changeTitle('Tambah Training', true, '');
 		} else if (kode === 'detail') {
