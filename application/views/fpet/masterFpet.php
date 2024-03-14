@@ -661,21 +661,20 @@ $combinedDataJSON = json_encode($combinedData);
 						document.getElementById('actual').value = dataFpet.actual || '';
 						document.getElementById('target').value = dataFpet.target || '';
 						document.getElementById('notes').value = dataFpet.notes || '';
-						document.getElementById('eval').value = dataFpet.eval || '';
 						document.getElementById('approvedHR').value = dataFpet.approvedHr || '';
 						document.getElementById('approved').value = dataFpet.approved || '';
 
 						var rActualRadios = document.getElementsByName('rActual');
-						rActualRadios.forEach(radio => {
-							if (radio.value === dataFpet.ractual.toString()) {
-								radio.checked = true;
+						rActualRadios.forEach(radioA => {
+							if (radioA.value === dataFpet.ractual.toString()) {
+								radioA.checked = true;
 							}
 						});
 						// Set the radio button for rTarget based on the value received
 						var rTargetRadios = document.getElementsByName('rTarget');
-						rTargetRadios.forEach(radio => {
-							if (radio.value === dataFpet.rtarget.toString()) {
-								radio.checked = true;
+						rTargetRadios.forEach(radioT => {
+							if (radioT.value === dataFpet.rtarget.toString()) {
+								radioT.checked = true;
 							}
 						});
 						// Set the radio button for rEval based on the value received
@@ -685,8 +684,7 @@ $combinedDataJSON = json_encode($combinedData);
 								radio.checked = true;
 							}
 						});
-						document.getElementById('rTarget' + (dataFpet.rTarget || '')).checked = true;
-						document.getElementById('rEval' + (dataFpet.rEval || '')).checked = true;
+						// document.getElementById('rTarget' + (dataFpet.rTarget || '')).checked = true;
 						document.getElementById('btnSub').style.display = 'none';
 						document.getElementById('questionTrain').style.display = 'none';
 

@@ -530,10 +530,10 @@ $combinedDataJSON = json_encode($combinedData);
         });
 
         // Reset radio buttons for rEval
-        var rEvalRadios = document.getElementsByName('rEval');
-        rEvalRadios.forEach(radio => {
-            radio.checked = false;
-        });
+        // var rEvalRadios = document.getElementsByName('rEval');
+        // rEvalRadios.forEach(radio => {
+        //     radio.checked = false;
+        // });
 
         // Reset select elements
         document.getElementById('chooseTrain').selectedIndex = 0;
@@ -739,17 +739,17 @@ $combinedDataJSON = json_encode($combinedData);
                         });
 
                         // Set the radio button for rEval based on the value received
-                        var rEvalRadios = document.getElementsByName('rEval');
-                        rEvalRadios.forEach(radio => {
-                            if (radio.value === dataFpet.reval.toString()) {
-                                radio.checked = true;
-                            }
-                        });
+                        // var rEvalRadios = document.getElementsByName('rEval');
+                        // rEvalRadios.forEach(radio => {
+                        //     if (radio.value === dataFpet.reval.toString()) {
+                        //         radio.checked = true;
+                        //     }
+                        // });
                         var formElement = document.getElementById('formMakeTrain');
                         formElement.setAttribute('action', '<?php echo base_url('FPET/approveHrFpet/') ?>' + id);
 
-                        document.getElementById('rTarget' + (dataFpet.rTarget || '')).checked = true;
-                        document.getElementById('rEval' + (dataFpet.rEval || '')).checked = true;
+                        // document.getElementById('rTarget' + (dataFpet.rTarget || '')).checked = true;
+                        // document.getElementById('rEval' + (dataFpet.rEval || '')).checked = true;
                         document.getElementById('btnSubApprove').style.display = 'none';
                         // Show the buttons
                         document.getElementById('btnDetailFpet').style.display = 'block';

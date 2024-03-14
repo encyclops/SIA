@@ -113,7 +113,7 @@ function isActive($url)
 
                 <ul class=" nav" style="margin-top: 5px;" id="examMenu">
 
-                    <li class="nav-item <?php echo isActive('Question/getPackage') ?>">
+                    <li class="nav-item <?php echo isActive('Question') ?>">
                         <a href="javascript:void(0)" onclick="backExam()">
                             <i class="la la-pencil-square"></i>
                             <p>Keluar Ujian</p>

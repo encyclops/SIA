@@ -159,8 +159,8 @@ function isActive($url)
 						</a>
 					</li>
 
-					<li class="nav-item <?php echo isActive('Question/getPackage') ?>">
-						<a href="<?php echo base_url('Question/getPackage') ?>">
+					<li class="nav-item <?php echo isActive('Question') ?>">
+						<a href="<?php echo base_url('Question') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Paket Soal</p>
 							<!-- <span class="badge badge-count">5</span> -->
@@ -294,7 +294,7 @@ function isActive($url)
 			}
 		}).then((result) => {
 			if (result.isConfirmed && total < 1) {
-				window.location.href = '<?= base_url('Admin/deleteTag/') ?>' + id;
+				window.location.href = '<?= base_url('Label/deleteTag/') ?>' + id;
 			}
 		});
 	}

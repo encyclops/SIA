@@ -21,12 +21,14 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $npk = $this->session->userdata('npk');
-            $data['soal']        = $this->QuestionM->getQuestion();
-            $data['notif']        = $this->TrainingM->getNotif($npk);
             $data['package']        = $this->QuestionM->getPackages();
-            $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
-            $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
-            $this->load->view('question_index', $data);
+            // $data['notif']        = $this->TrainingM->getNotif($npk);
+            // $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+            // $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+
+            $data['tags']          = $this->AdminM->getTags();
+            // $data['train']        = $this->TrainingM->getTrainingByStatus('> 0');
+            $this->load->view('question_package', $data);
         }
 
         public function isAllowed()
@@ -34,59 +36,30 @@
             return $this->session->userdata('isLogin') && $this->session->userdata('role') == 'admin';
         }
 
-        public function saveQuestion()
+        public function getPackage($id)
         {
             if (!$this->isAllowed()) return redirect(site_url());
-            $this->QuestionM->saveQuestion();
-            redirect('Question');
-        }
-
-        public function editQuestion()
-        {
-            if (!$this->isAllowed()) return redirect(site_url());
-            $this->QuestionM->editQuestion();
-            redirect('Question');
-        }
-
-        public function retrieveQuestion($id)
-        {
-            if (!$this->isAllowed()) return redirect(site_url());
-            $data = $this->QuestionM->getQuestion($id);
+            $data['package'] = $this->QuestionM->getPackage($id);
+            $data['questions'] = $this->QuestionM->getQuestions($id);
             echo json_encode($data);
         }
-
-        public function deleteQuestion($id)
-        {
-            if (!$this->isAllowed()) return redirect(site_url());
-            $result = $this->QuestionM->deleteQuestion($id);
-
-            if ($result) {
-                echo json_encode(array('success' => true));
-            } else {
-                echo json_encode(array('success' => false, 'error' => 'Deletion failed.'));
-            }
-        }
-
-
-        public function getPackage()
-        {
-            if (!$this->isAllowed()) return redirect(site_url());
-            $npk = $this->session->userdata('npk');
-            $data['package']        = $this->QuestionM->getPackages();
-            $data['notif']        = $this->TrainingM->getNotif($npk);
-            $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
-            $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
-
-            $data['tags']          = $this->AdminM->getTags();
-            $data['train']        = $this->QuestionM->getTrains();
-            $this->load->view('question_package', $data);
-        }
-
 
         public function savePackage()
         {
             if (!$this->isAllowed()) return redirect(site_url());
-            $this->QuestionM->savePackage();
+            
+            // Saving package
+            $data = array(
+                'TRNPCK_STATUS'     => 1,
+                'TRNPCK_UNIQUEID'   => $this->input->post('idUniqPaket'),
+                'TRNPCK_NAME'       => $this->input->post('namePaket'),
+                'TRNHDR_ID'         => $this->input->post('chooseTrain'),
+                'TRNPCK_CREADATE'   => date('Y/m/d H:i:s'),
+                'TRNPCK_MODIDATE'   => date('Y/m/d H:i:s'),
+                'TRNPCK_CREABY'     => $this->session->userdata('npk'),
+                'TRNPCK_MODIBY'     => $this->session->userdata('npk'),
+            );
+            $this->QuestionM->savePackage($data);
             $lastInsertedId = $this->db->insert_id();
 
             $count = 0;
@@ -95,42 +68,45 @@
                     $count++;
                 }
             }
+
+            // Saving each question
             for ($i = 1; $i <= $count; $i++) {
-                $data = array(
-                    'question'      => $this->input->post('question' . $i),
-                    'answer'        => $this->input->post('answerSelect' . $i),
-                    'a'             => $this->input->post('aOption' . $i),
-                    'b'             => $this->input->post('bOption' . $i),
-                    'c'             => $this->input->post('cOption' . $i),
-                    'd'             => $this->input->post('dOption' . $i),
-                    'q_level'       => $this->input->post('levelSelect' . $i),
-                    'created_date'  => date('Y/m/d H:i:s'),
-                    'modified_date' => date('Y/m/d H:i:s'),
-                    'created_by'    => $this->session->userdata('npk'),
-                    'modified_by'   => $this->session->userdata('npk'),
-                    'status'        => 1,
-                    'package_id'    => $lastInsertedId,
+                $que = array(
+                    'TRNQUE_QUESTION'   => $this->input->post('question' . $i),
+                    'TRNQUE_ANSWER'     => $this->input->post('answerSelect' . $i),
+                    'TRNQUE_AOPT'       => $this->input->post('aOption' . $i),
+                    'TRNQUE_BOPT'       => $this->input->post('bOption' . $i),
+                    'TRNQUE_COPT'       => $this->input->post('cOption' . $i),
+                    'TRNQUE_DOPT'       => $this->input->post('dOption' . $i),
+                    'TRNQUE_LEVEL'      => $this->input->post('levelSelect' . $i),
+                    'TRNQUE_CREADATE'   => date('Y/m/d H:i:s'),
+                    'TRNQUE_MODIDATE'   => date('Y/m/d H:i:s'),
+                    'TRNQUE_CREABY'     => $this->session->userdata('npk'),
+                    'TRNQUE_MODIBY'     => $this->session->userdata('npk'),
+                    'TRNQUE_STATUS'     => 1,
+                    'TRNPCK_ID'         => $lastInsertedId,
                 );
-
-                $this->QuestionM->saveQuestion($data);
+                $this->QuestionM->saveQuestion($que);
             }
-
-            redirect('Question/getPackage');
-        }
-
-
-        public function retrievePackage($id)
-        {
-            if (!$this->isAllowed()) return redirect(site_url());
-            $data['package'] = $this->QuestionM->getPackage($id);
-            $data['questions'] = $this->QuestionM->getQuestions($id);
-            echo json_encode($data);
+            redirect('Question');
         }
 
         public function editPackage()
         {
             if (!$this->isAllowed()) return redirect(site_url());
-            $this->QuestionM->editPackage();
+            
+            // Editing package
+            $data = array(
+                'TRNPCK_NAME'       => $this->input->post('namePaket'),
+                'TRNPCK_UNIQUEID'   => $this->input->post('idUniqPaket'),
+                'TRNHDR_ID'         => $this->input->post('chooseTrain'),
+                'TRNPCK_MODIDATE'   => date('Y/m/d H:i:s'),
+                'TRNPCK_MODIBY'     => $this->session->userdata('npk'),
+            );
+            $where = array(
+                'TRNPCK_ID'         => $this->input->post('package_id')
+            );
+            $this->QuestionM->editPackage($data, $where);
             $oldCount = $this->QuestionM->getQuestions($this->input->post('package_id'));
 
             $arrNew = array();
@@ -146,48 +122,63 @@
                 $questionIds = array_column($oldCount, 'question_id');
             }
 
+            // Deleting unrelated questions
             $difference = array_diff($questionIds, $arrNew);
             foreach ($difference as $value) {
-                $this->QuestionM->deleteQuestion($value);
+                $data = array(
+                    'TRNQUE_STATUS'     => 0,
+                    'TRNQUE_MODIDATE'   => date('Y/m/d H:i:s'),
+                    'TRNQUE_MODIBY'     => $this->session->userdata('npk'),
+                );
+                $where = array(
+                    'TRNQUE_ID'         => $value
+                );
+                $this->QuestionM->editQuestion($data, $where);
             }
 
+            // Saving new questions/updating existing questions
             for ($i = 1; $i <= $count; $i++) {
                 $data = array(
-                    'question'      => $this->input->post('question' . $i),
-                    'answer'        => $this->input->post('answerSelect' . $i),
-                    'a'             => $this->input->post('aOption' . $i),
-                    'b'             => $this->input->post('bOption' . $i),
-                    'c'             => $this->input->post('cOption' . $i),
-                    'd'             => $this->input->post('dOption' . $i),
-                    'q_level'       => $this->input->post('levelSelect' . $i),
-                    'modified_date' => date('Y/m/d H:i:s'),
-                    'modified_by'   => $this->session->userdata('npk'),
-                    'status'        => 1,
+                    'TRNQUE_QUESTION'   => $this->input->post('question' . $i),
+                    'TRNQUE_ANSWER'     => $this->input->post('answerSelect' . $i),
+                    'TRNQUE_AOPT'       => $this->input->post('aOption' . $i),
+                    'TRNQUE_BOPT'       => $this->input->post('bOption' . $i),
+                    'TRNQUE_COPT'       => $this->input->post('cOption' . $i),
+                    'TRNQUE_DOPT'       => $this->input->post('dOption' . $i),
+                    'TRNQUE_LEVEL'      => $this->input->post('levelSelect' . $i),
+                    'TRNQUE_MODIDATE'   => date('Y/m/d H:i:s'),
+                    'TRNQUE_MODIBY'     => $this->session->userdata('npk'),
+                    'TRNQUE_STATUS'     => 1,
                 );
 
                 if ($i <= count($oldCount)) {
                     $where = array(
-                        'question_id'    => $this->input->post('questionId' . $i),
+                        'TRNQUE_ID'     => $this->input->post('questionId' . $i),
                     );
-
                     $this->QuestionM->editQuestion($data, $where);
                 } else {
-                    $data['created_by'] = $this->session->userdata('npk');
-                    $data['created_date'] = date('Y/m/d H:i:s');
-                    $data['package_id'] = $this->input->post('package_id');
-
+                    $data['TRNQUE_CREABY']      = $this->session->userdata('npk');
+                    $data['TRNQUE_CREADATE']    = date('Y/m/d H:i:s');
+                    $data['TRNPCK_ID']          = $this->input->post('package_id');
                     $this->QuestionM->saveQuestion($data);
                 }
             }
-
-            redirect('Question/getPackage');
+            redirect('Question');
         }
-
 
         public function deletePackage($id)
         {
+            // Deleting package
             if (!$this->isAllowed()) return redirect(site_url());
-            $result = $this->QuestionM->deletePackage($id);
+            $data = array(
+                'TRNPCK_STATUS'     => 0,
+                'TRNPCK_MODIDATE'   => date('Y/m/d H:i:s'),
+                'TRNPCK_MODIBY'     => $this->session->userdata('npk'),
+            );
+            $where = array(
+                'TRNPCK_ID'         => $id
+            );
+            $result = $this->QuestionM->editPackage($data, $where);
 
             if ($result) {
                 echo json_encode(array('success' => true));
@@ -195,7 +186,7 @@
                 echo json_encode(array('success' => false, 'error' => 'Deletion failed.'));
             }
 
-            redirect('Question/getPackage');
+            redirect('Question');
         }
 
         public function savePreExam()
@@ -216,9 +207,6 @@
             $data['preExam']        = $this->QuestionM->getPreExam($id);
             $this->load->view('exam', $data);
         }
-
-
-
 
         public function saveExam()
         {
@@ -313,7 +301,7 @@
 
             $getData = [];
             foreach ($getScoreExam2 as $a) {
-                $employee = $this->OracleDBM->getEmpBy('NPK', $a->npk);
+                $employee = $this->OracleDBM->getEmpBy($a->npk);
                 if ($employee !== null && is_object($employee)) {
                     $combine = [
                         'npk' => $employee->NPK,

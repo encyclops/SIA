@@ -64,7 +64,7 @@ class Plus extends CI_Controller {
     }
 
     public function getEmp($npk) {
-        echo json_encode($this->OracleDBM->getEmpBy('NPK', $npk));
+        echo json_encode($this->OracleDBM->getEmpBy($npk));
     }
 
     public function getAdmins()

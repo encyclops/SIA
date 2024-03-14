@@ -44,7 +44,7 @@ class Training extends CI_Controller
 		$data["package"]  = $this->QuestionM->getpackageQuest($id);
 		$detailEmployeeE = [];
 		foreach ($emps as $emp) {
-			$employee   = $this->OracleDBM->getEmpBy('NPK', $emp->npk);
+			$employee   = $this->OracleDBM->getEmpBy($emp->npk);
 			$prog       = $this->TrainingM->getProgress($id, $emp->npk);
 			$combinedData = [
 				'NPK'       => $employee->NPK,
