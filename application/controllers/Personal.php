@@ -30,9 +30,9 @@ class Personal extends CI_Controller
 		$data['getMyTrendAccess']   	= $this->ChartM->getMyTrendAccess();
 		$data['getFavoriteSubstance']   = $this->ChartM->getFavoriteSubstance();
 		$data['getHighestEmployee']   	= $this->ChartM->getHighestEmployee();
-		$data['getFavoriteTraining']   	= $this->ChartM->getFavoriteTraining();
-		$data['getNotDoneLesson']   	= $this->ChartM->getNotDoneLesson();
-		$data['getNotOpenTrain']   		= $this->ChartM->getNotDoneEmployee();
+		// $data['getFavoriteTraining']   	= $this->ChartM->getFavoriteTraining();
+		// $data['getNotDoneLesson']   	= $this->ChartM->getNotDoneLesson();
+		// $data['getNotOpenTrain']   		= $this->ChartM->getNotDoneEmployee();
 		$data['notif']					= $this->TrainingM->getNotif($npk);
 		$data['notifMateri']   = $this->TrainingM->getNotifMateri($npk);
 		$data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);;

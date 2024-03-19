@@ -11,6 +11,7 @@
             $this->load->model("OracleDBM");
             $this->load->model("QuestionM");
             $this->load->model("TrainingM");
+            $this->load->model("SettingM");
             $this->load->model("AdminM");
             $this->load->helper(array('form', 'url'));
             $this->load->library('session');
@@ -22,12 +23,12 @@
             if (!$this->isAllowed()) return redirect(site_url());
             $npk = $this->session->userdata('npk');
             $data['package']        = $this->QuestionM->getPackages();
-            // $data['notif']        = $this->TrainingM->getNotif($npk);
-            // $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
-            // $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+            $data['notif']        = $this->TrainingM->getNotif($npk);
+            $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+            $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
 
             $data['tags']          = $this->AdminM->getTags();
-            // $data['train']        = $this->TrainingM->getTrainingByStatus('> 0');
+            $data['train']        = $this->TrainingM->filterTraining('> 0');
             $this->load->view('question_package', $data);
         }
 
@@ -139,13 +140,13 @@
             // Saving new questions/updating existing questions
             for ($i = 1; $i <= $count; $i++) {
                 $data = array(
-                    'TRNQUE_QUESTION'   => $this->input->post('question' . $i),
-                    'TRNQUE_ANSWER'     => $this->input->post('answerSelect' . $i),
-                    'TRNQUE_AOPT'       => $this->input->post('aOption' . $i),
-                    'TRNQUE_BOPT'       => $this->input->post('bOption' . $i),
-                    'TRNQUE_COPT'       => $this->input->post('cOption' . $i),
-                    'TRNQUE_DOPT'       => $this->input->post('dOption' . $i),
-                    'TRNQUE_LEVEL'      => $this->input->post('levelSelect' . $i),
+                    'TRNQUE_QUESTION'   => $this->input->post('TRNQUE_QUESTION' . $i),
+                    'TRNQUE_ANSWER'     => $this->input->post('TRNQUE_ANSWER' . $i),
+                    'TRNQUE_AOPT'       => $this->input->post('TRNQUE_AOPT' . $i),
+                    'TRNQUE_BOPT'       => $this->input->post('TRNQUE_BOPT' . $i),
+                    'TRNQUE_COPT'       => $this->input->post('TRNQUE_COPT' . $i),
+                    'TRNQUE_DOPT'       => $this->input->post('TRNQUE_DOPT' . $i),
+                    'TRNQUE_LEVEL'      => $this->input->post('TRNQUE_LEVEL' . $i),
                     'TRNQUE_MODIDATE'   => date('Y/m/d H:i:s'),
                     'TRNQUE_MODIBY'     => $this->session->userdata('npk'),
                     'TRNQUE_STATUS'     => 1,
@@ -196,19 +197,50 @@
             redirect('Question');
         }
 
-        public function getPreExam($id)
+        public function getQuestExam($id, $secondParameter)
         {
             if (!$this->isAllowed()) return redirect(site_url());
+            $id = $this->decodeMD5($id);
+            $secondParameter = $this->decodeMD5($secondParameter);
             $npk = $this->session->userdata('npk');
             $data['notif']        = $this->TrainingM->getNotif($npk);
             $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
             $data['score'] = 'x';
-            $data['preExam']        = $this->QuestionM->getPreExam($id);
+            $data['idTraining'] = $id;
+            if ($secondParameter == 1) {
+                $data['preExam']        = $this->QuestionM->getPreExam($id);
+            } else {
+                $data['preExam']        = $this->QuestionM->getPostExam($id);
+            }
+            $data['maxQuestShow'] = $this->SettingM->getSettingValue('TRNQUE_MAX');
+
             $this->load->view('exam', $data);
         }
 
-        public function saveExam()
+        private function decodeMD5($hashedValue)
+        {
+            for ($i = 0; $i < 100000; $i++) {
+                if (md5($i) == $hashedValue) {
+                    return $i;
+                }
+            }
+            return null;
+        }
+
+        // public function getPreExam($id)
+        // {
+        //     if (!$this->isAllowed()) return redirect(site_url());
+        //     $npk = $this->session->userdata('npk');
+        //     $data['notif']        = $this->TrainingM->getNotif($npk);
+        //     $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
+        //     $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
+        //     $data['score'] = 'x';
+        //     $data['preExam']        = $this->QuestionM->getPreExam($id);
+        //     $this->load->view('exam', $data);
+        // }
+
+        public function saveExam($idTraining)
         {
             $npk = $this->session->userdata('npk');
 
@@ -225,14 +257,14 @@
 
             $trueAnswer = 0;
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 1; $i < $count; $i++) {
                 $idQuestion = $this->input->post('idQuestion' . $i);
                 $answerUser = $this->input->post('answer' . $i);
 
                 $answerKey = $this->QuestionM->getAnswerKey($idQuestion);
 
                 //  $this->QuestionM->saveAnswerUser($npk);
-                if ($answerKey->answer       == $answerUser) {
+                if ($answerKey       == $answerUser) {
                     $trueAnswer++;
                 }
 
@@ -243,32 +275,43 @@
                 // );
                 // $this->QuestionM->saveAnswerUser($data);
             }
-            print_r($totalQuestion) + "true1";
             $score = round(($trueAnswer / $totalQuestion) * 100, 2);
             $data = array(
-                'score' => $answerUser,
-                'npk' =>    $this->session->userdata('npk'),
-                'package_id' => $idPackage,
+                'TRNACC_PRESCORE' => $score,
+                'TRNPCK_ID' => $idPackage,
             );
             $this->score2 = $score;
-            $data['trueAnswer'] = $trueAnswer;
-            $data['totalQuestion'] = $totalQuestion;
-            print_r($this->score2);
-            $this->QuestionM->savePreExam();
-            redirect('Question/getScore/' . $this->score2);
+            $this->session->set_userdata('score', $score);
+            $checkPreorPost = $this->QuestionM->checkPreOrPost($npk, $idTraining);
+
+            if ($checkPreorPost != null) {
+                $data = array(
+                    'TRNACC_PRESCORE' => $score,
+                    'TRNPCK_ID_PRE' => $idPackage,
+                );
+                $this->QuestionM->savePreExam($data, $npk, $idTraining);
+            } else {
+                print_r($checkPreorPost);
+                $data = array(
+                    'TRNACC_POSTSCORE' => $score,
+                    'TRNPCK_ID_POST' => $idPackage,
+                );
+                $this->QuestionM->savePreExam($data, $npk, $idTraining);
+            }
+            redirect('Question/getScore/');
         }
 
-        public function getScore($score3)
+        public function getScore()
         {
             if (!$this->isAllowed()) return redirect(site_url());
+
             $npk = $this->session->userdata('npk');
             $data['notif'] = $this->TrainingM->getNotif($npk);
             $data['package'] = $this->QuestionM->getPackages();
             $data['notifMateri'] = $this->TrainingM->getNotifMateri($npk);
             $data['totalNotif'] = count($data['notif']) + count($data['notifMateri']);
 
-            $score = $score3; // Remove the $ symbol
-            $data['score'] = $score;
+            $data['score'] =  $this->session->userdata('score');
             $this->load->view('examResult', $data);
         }
 
@@ -301,7 +344,7 @@
 
             $getData = [];
             foreach ($getScoreExam2 as $a) {
-                $employee = $this->OracleDBM->getEmpBy($a->npk);
+                $employee = $this->OracleDBM->getEmpByNPK($a->npk);
                 if ($employee !== null && is_object($employee)) {
                     $combine = [
                         'npk' => $employee->NPK,

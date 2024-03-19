@@ -1,4 +1,4 @@
-    <?php
+<?php
     defined('BASEPATH') or exit('No direct script access allowed');
 
     class FPET extends CI_Controller
@@ -9,6 +9,7 @@
             parent::__construct();
             $this->load->model("OracleDBM");
             $this->load->model("TrainingM");
+            $this->load->model("SettingM");
             $this->load->model("FPETM");
             $this->load->model("AdminM");
             $this->load->helper(array('form', 'url'));
@@ -20,8 +21,8 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $npk = $this->session->userdata('npk');
-            $data['training']   = $this->TrainingM->getTrainingByNPK(true, '', '');
-            $data['substance']  = $this->TrainingM->getAllSubstance();
+            $data['training']   = $this->TrainingM->searchTraining(true, '', '');
+            $data['substance']  = $this->TrainingM->getAllSubstances();
             $data['employee']   = $this->OracleDBM->getAllEmp();
             $data['dept']       = $this->OracleDBM->getAllDept();
             $data['notif']        = $this->TrainingM->getNotif($npk);
@@ -32,18 +33,19 @@
             $getFpetDataEmployee2    = $this->FPETM->getFpet();
             $getFpetData = [];
             foreach ($getFpetDataEmployee2 as $a) {
-                $employee   = $this->OracleDBM->getEmpBy($a->trainerNpk);
+                $employee   = $this->OracleDBM->getEmpByNPK($a->AWIEMP_NPK);
                 $combine = [
                     'npk'       => $employee->NPK,
                     'nama'      => $employee->NAMA,
-                    'target'      => $a->target,
-                    'idFpet'      => $a->idFpet,
-                    'statusApproved'  => $a->statusApproved,  // Corrected key
-                    'statusApprovedHr' => $a->statusApprovedHr,  // Corrected key
+                    'target'      => $a->FPETFM_TARGET,
+                    'idFpet'      => $a->FPETFM_ID,
+                    'statusApproved'  => $a->FPETFM_APPROVED,  // Corrected key
+                    'statusApprovedHr' => $a->FPETFM_HRAPPROVED,  // Corrected key
                 ];
                 $getFpetData[] = $combine;
             }
             $data['fpet']   = $getFpetData;
+            $data['defHR']  = $this->OracleDBM->getEmpByNPK($this->SettingM->getSettingValue('FPETFM_DEFAULTHR'));
 
             $this->load->view('fpet/masterFpet', $data);
         }
@@ -53,8 +55,8 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
             $npk = $this->session->userdata('npk');
-            $data['training']   = $this->TrainingM->getTrainingByNPK(true, '', '');
-            $data['substance']  = $this->TrainingM->getAllSubstance();
+            $data['training']   = $this->TrainingM->searchTraining(true, '', '');
+            $data['substance']  = $this->TrainingM->getAllSubstances();
             $data['employee']   = $this->OracleDBM->getAllEmp();
             $data['dept']       = $this->OracleDBM->getAllDept();
             $data['notif']        = $this->TrainingM->getNotif($npk);
@@ -65,14 +67,14 @@
             $getFpetDataEmployee2    = $this->FPETM->getApprovedFpet($npk);
             $getFpetData = [];
             foreach ($getFpetDataEmployee2 as $a) {
-                $employee   = $this->OracleDBM->getEmpBy($a->trainerNpk);
+                $employee   = $this->OracleDBM->getEmpByNPK($a->AWIEMP_NPK);
                 $combine = [
                     'npk'       => $employee->NPK,
                     'nama'      => $employee->NAMA,
-                    'target'      => $a->target,
-                    'idFpet'      => $a->idFpet,
-                    'statusApproved'  => $a->statusApproved,
-                    'statusApprovedHr' => $a->statusApprovedHr,
+                    'target'      => $a->FPETFM_TARGET,
+                    'idFpet'      => $a->FPETFM_ID,
+                    'statusApproved'  => $a->FPETFM_APPROVED,
+                    'statusApprovedHr' => $a->FPETFM_HRAPPROVED,
                 ];
                 $getFpetData[] = $combine;
             }
@@ -92,7 +94,7 @@
 
             // Retrieve form data from POST request
             $approved = $this->input->post('approved');
-            $trainer = $this->input->post('trainer');
+            $partisipanTraining = $this->input->post('partisipanTraining');
             $approvedHr = $this->input->post('approvedHr');
             $actual = $this->input->post('actual');
             $target = $this->input->post('target');
@@ -104,25 +106,25 @@
             // Assuming you want to save this data to the database
             // Load the model if not already loaded
             $this->load->model('FPETM');
-
+            print_r($partisipanTraining + "s");
             // Prepare data to be saved
             $data = array(
-                'trainSuggest' =>  $this->input->post('trainSuggest'),
-                'approved' => $approved,
-                'trainerNpk' => $trainer,
-                'approvedHr' => $approvedHr,
-                'actual' => $actual,
-                'target' => $target,
-                'eval' => $eval,
-                'notes' => $notes,
-                'status' => 2,
-                'rActual' => $rActual, // Add rActual to the data array
-                'rTarget' => $rTarget, // Add rTarget to the data array
-                'rEval' => $rEval,
-                'statusApproved' => 2,
-                'statusApprovedHr' => 2,
-                'created_date'              => date('Y/m/d H:i:s'),
-                'created_by'                => $this->session->userdata('npk')
+                'FPETFM_TRAINSUGGEST' =>  $this->input->post('trainSuggest'),
+                'FPETFM_APPROVER' => $approved,
+                'AWIEMP_NPK' => $partisipanTraining,
+                'FPETFM_HRAPPROVER' => $approvedHr,
+                'FPETFM_ACTUAL' => $actual,
+                'FPETFM_TARGET' => $target,
+                'FPETFM_EVAL' => $eval,
+                'FPETFM_NOTES' => $notes,
+                'FPETFM_STATUS' => 2,
+                'FPETFM_PACTUAL' => $rActual, // Add rActual to the data array
+                'FPETFM_PTARGET' => $rTarget, // Add rTarget to the data array
+                'FPETFM_PEVAL' => $rEval,
+                'FPETFM_APPROVED' => 2,
+                'FPETFM_HRAPPROVED' => 2,
+                'FPETFM_CREADATE'              => date('Y/m/d H:i:s'),
+                'FPETFM_CREABY'                => $this->session->userdata('npk')
             );
 
             $saved = $this->FPETM->saveFPET($data);
@@ -134,6 +136,14 @@
         {
             $data["dataFpet"] = $this->FPETM->detailFpet($id);
             echo json_encode($data);
+        }
+        public function removeNotif()
+        {
+            $id = $this->input->post('id');
+            $npk = $this->input->post('npk');
+            echo "<script>console.log('aa + $id' + $npk);</script>";
+            $this->TrainingM->removeNotif($id, $npk);
+            echo json_encode(['status' => 'success', 'message' => 'Notification removed successfully.']);
         }
 
         public function removeFpet($id)
@@ -171,8 +181,8 @@
         {
             if (!$this->isAllowed()) return redirect(site_url());
 
-            $trainer = $this->input->post('npk');
-
+            $participant = $this->input->post('npk');
+            print_r($participant);
             $rEstablished = $this->input->post('rEstablished');
             $chooseTrain = $this->input->post('chooseTrain');
             $title = $this->input->post('title');
@@ -181,44 +191,42 @@
             $cost = $this->input->post('cost');
             $idFpet = $this->input->post('idFpet');
 
+            $this->load->model('FPETM');
+
             $data = array(
                 // Add data from the form fields
 
-                'judul_training_header' => $title,
-                'pemateri' => $educator,
-                'schedule' => $schedule,
-                'cost' => $cost,
-                // 'idFpet' => $idFpet,
-                'categoryTrain' => $this->input->post('categoryTrain'),
-                'modified_date' => date('Y/m/d H:i:s'),
-                'modified_by' => $this->session->userdata('npk'),
-                'status' => 1
+                //  'chooseTrain' => $chooseTrain,
+                'TRNHDR_TITLE' => $title,
+                'TRNHDR_INSTRUCTOR' => $educator,
+                'TRNHDR_SCHEDULE' => $schedule,
+                'TRNHDR_COST' => $cost,
+                //  'idFpet' => $idFpet,
+                'TRNHDR_CATEGORY' => $this->input->post('categoryTrain'),
+                'TRNHDR_MODIDATE' => date('Y/m/d H:i:s'),
+                'TRNHDR_MODIBY' => $this->session->userdata('npk'),
+                'TRNHDR_STATUS' => 1
             );
+            $lastInsertedId = 0;
 
-            // $data2 = array(
-            //     'rEstablished' => $rEstablished
-            // );
-
-            $data3 = array(
-                'npk' => $trainer,
-                'id_training_header' => $chooseTrain,
-            );
             if ($rEstablished == 1) {
-                $this->FPETM->addParticipantTraining($data3, $chooseTrain);
+
                 $lastInsertedId = $chooseTrain;
             } else {
                 $this->FPETM->makeTrain($data);
                 $lastInsertedId = $this->db->insert_id();
-                $data3 = array(
-                    'npk' => $trainer,
-                    'id_training_header' => $chooseTrain,
-                );
-                $this->FPETM->addParticipantTraining2($data3, $chooseTrain);
             }
             print_r($lastInsertedId);
+            $data3 = array(
+                'AWIEMP_NPK' => $participant,
+                'TRNHDR_ID' => $lastInsertedId,
+                'TRNACC_PERMISSION' => 1,
+            );
+            $this->FPETM->addParticipantTraining($data3);
+
 
             $this->FPETM->rejectApproveHrFpet($id, 1, $lastInsertedId, $rEstablished);
-            //     redirect(site_url('FPET/approvalMenu'));
+            redirect(site_url('FPET/approvalMenu'));
         }
 
         public function publishFpet($id)
@@ -227,16 +235,25 @@
             $this->FPETM->publishFpet($id);
             redirect(site_url('FPET'));
         }
+        public function checkParticipant()
+        {
+            $participant = $this->input->get('npk');
+            $chooseTrain = $this->input->get('id');
+            header('Content-Type: application/json');
+            echo json_encode($this->FPETM->checkParticipant($participant, $chooseTrain));
+            return $this->FPETM->checkParticipant($participant, $chooseTrain);
+        }
 
         public function modifyFpet()
         {
             // Retrieve form data from POST request
             $approved = $this->input->post('approved');
-            $trainer = $this->input->post('trainer');
+            $partisipanTraining = $this->input->post('partisipanTraining');
             $approvedHr = $this->input->post('approvedHr');
 
             // Retrieve other form data
             $actual = $this->input->post('actual');
+            $trainSuggest = $this->input->post('trainSuggest');
             $target = $this->input->post('target');
             $eval = $this->input->post('eval');
             $notes = $this->input->post('notes');
@@ -246,21 +263,22 @@
             $idFpet = $this->input->post('idFpet');
             $this->load->model('FPETM');
             $data = array(
-                'approved' => $approved,
-                'trainerNpk' => $trainer,
-                'approvedHr' => $approvedHr,
-                'actual' => $actual,
-                'target' => $target,
-                'eval' => $eval,
-                'notes' => $notes,
-                'status' => 2,
-                'rActual' => $rActual, // Add rActual to the data array
-                'rTarget' => $rTarget, // Add rTarget to the data array
-                'rEval' => $rEval,
-                'statusApproved' => 2,
-                'statusApprovedHr' => 2,
-                'modified_date'             => date('Y/m/d H:i:s'),
-                'modified_by'               => $this->session->userdata('npk')
+                'FPETFM_APPROVER' => $approved,
+                'FPETFM_TRAINSUGGEST' => $trainSuggest,
+                'AWIEMP_NPK' => $partisipanTraining,
+                'FPETFM_HRAPPROVER' => $approvedHr,
+                'FPETFM_ACTUAL' => $actual,
+                'FPETFM_TARGET' => $target,
+                'FPETFM_EVAL' => $eval,
+                'FPETFM_NOTES' => $notes,
+                'FPETFM_STATUS' => 2,
+                'FPETFM_PACTUAL' => $rActual, // Add rActual to the data array
+                'FPETFM_PTARGET' => $rTarget, // Add rTarget to the data array
+                'FPETFM_PEVAL' => $rEval,
+                'FPETFM_APPROVED' => 2,
+                'FPETFM_HRAPPROVED' => 2,
+                'FPETFM_MODIDATE'             => date('Y/m/d H:i:s'),
+                'FPETFM_MODIBY'               => $this->session->userdata('npk')
             );
 
             // Call the model function to save the data

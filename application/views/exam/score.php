@@ -109,7 +109,7 @@ ob_start();
 									<select class="form-control" id="chooseTrain" name="chooseTrain">
 										<option disabled selected>Pilih </option>
 										<?php foreach ($training as $t) : ?>
-											<option value="<?php echo $t->id_training_header; ?>"><?php echo $t->judul_training_header; ?></option>
+											<option value="<?php echo $t->TRNHDR_ID; ?>"><?php echo $t->TRNHDR_TITLE; ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>

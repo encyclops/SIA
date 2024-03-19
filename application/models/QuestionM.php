@@ -67,24 +67,56 @@ class QuestionM extends CI_Model
         return $query->result();
     }
 
-    public function getPreExam($id)
+    public function getPostExam($id)
     {
+        $npk = $this->session->userdata('npk');
         $query = $this->db->query(
-            "  SELECT * 
-            FROM training_question 
-            WHERE package_id IN (SELECT package_id 
-                                 FROM training_question_package 
-                                 WHERE status = 1 AND training_id = '2070') "
+            "   SELECT  *, KMS_TRNPCK.TRNPCK_NAME AS package_name
+                FROM    KMS_TRNQUE
+                INNER JOIN  KMS_TRNPCK
+                    ON      KMS_TRNPCK.TRNPCK_ID = KMS_TRNQUE.TRNPCK_ID
+                WHERE   KMS_TRNQUE.TRNPCK_ID IN 
+                    (   SELECT  TRNPCK_ID_POST
+                        FROM    KMS_TRNACC
+                        WHERE   AWIEMP_NPK  = $npk
+                        AND     TRNHDR_ID   = $id   )"
         );
         return $query->result();
+    }
+
+    public function getPreExam($id)
+    {
+        $npk = $this->session->userdata('npk');
+        $query = $this->db->query(
+            "   SELECT  *, KMS_TRNPCK.TRNPCK_NAME AS package_name
+                FROM    KMS_TRNQUE
+                INNER JOIN  KMS_TRNPCK
+                    ON      KMS_TRNPCK.TRNPCK_ID = KMS_TRNQUE.TRNPCK_ID
+                WHERE   KMS_TRNQUE.TRNPCK_ID IN 
+                    (   SELECT  TRNPCK_ID_PRE
+                        FROM    KMS_TRNACC
+                        WHERE   AWIEMP_NPK  = $npk
+                        AND     TRNHDR_ID   = $id   )"
+        );
+        return $query->result();
+    }
+
+    public function getMaxQuestShow()
+    {
+        $query = $this->db->query(
+            "   SELECT  SETTING_VALUE
+                FROM    KMS_SETTING
+                WHERE   SETTING_KEY = 'TRNQUE_MAX'"
+        );
+        return $query->row()->SETTING_VALUE;
     }
 
     public function getpackageQuest($id)
     {
         $query = $this->db->query(
-            "  SELECT * 
-            FROM training_question_package
-            where training_id = $id "
+            "   SELECT  * 
+                FROM    KMS_TRNPCK
+                WHERE   TRNHDR_ID = $id "
         );
         return $query->result();
     }
@@ -92,9 +124,10 @@ class QuestionM extends CI_Model
     public function getTotalQuestion($idPackage)
     {
         $query = $this->db->query(
-            "SELECT COUNT(*) as totalQ
-                 FROM training_question
-                 WHERE status = 1 and package_id = $idPackage  "
+            "   SELECT  COUNT(*) as totalQ
+                FROM    KMS_TRNQUE
+                WHERE   TRNQUE_STATUS   = 1
+                AND     TRNPCK_ID       = $idPackage    "
         );
 
         // Assuming $this->t_header is the table name, you can modify it accordingly
@@ -104,11 +137,12 @@ class QuestionM extends CI_Model
     public function getAnswerKey($id)
     {
         $query = $this->db->query(
-            "   SELECT  answer
-                FROM $this->t_question
-                WHERE question_id = $id AND status = 1"
+            "   SELECT  TRNQUE_ANSWER
+                FROM    KMS_TRNQUE
+                WHERE   TRNQUE_ID       = $id
+                AND     TRNQUE_STATUS   = 1     "
         );
-        return $query->row();
+        return $query->row()->TRNQUE_ANSWER;
     }
 
     // public function saveAnswerUser($data)
@@ -116,9 +150,13 @@ class QuestionM extends CI_Model
     //     return $this->db->insert('training_userAnswer', $data);
     // }
 
-    public function savePreExam($data)
+    public function savePreExam($data,  $npk, $idTraining)
     {
-        return $this->db->insert('training_score', $data);
+        $where = array(
+            'AWIEMP_NPK'=> $npk,
+            'TRNHDR_ID' => $idTraining
+        );
+        return $this->db->update('KMS_TRNACC', $data, $where);
     }
 
     public function savePostExam($data)

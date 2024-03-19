@@ -20,7 +20,7 @@ class AdminM extends CI_Model
         return $this->db->insert($this->t_label, $data);
     }
 
-    public function deleteTag($data, $where)
+    public function deleteLabel($data, $where)
     {
         return $this->db->update($this->t_label, $data, $where);
     }

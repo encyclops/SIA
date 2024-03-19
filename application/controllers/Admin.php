@@ -22,7 +22,7 @@ class Admin extends CI_Controller
 
         $detailEmployee = [];
         foreach ($admins as $adm) {
-            $detailEmployee[] = $this->OracleDBM->getEmpBy($adm->npk);
+            $detailEmployee[] = $this->OracleDBM->getEmpByNPK($adm->AWIEMP_NPK);
         }
         usort($detailEmployee, function($a, $b) {
             return strcmp($a->NAMA, $b->NAMA);
@@ -106,7 +106,7 @@ class Admin extends CI_Controller
         redirect(site_url('Admin'));
     }
 
-    public function deleteTag($id)
+    public function deleteLabel($id)
     {
         if (!$this->isAllowed()) return redirect(site_url());
         $count = $this->AdminM->getLabelTotal($id);
@@ -118,9 +118,9 @@ class Admin extends CI_Controller
                 'TRNLBL_MODIDATE'   => date('Y/m/d H:i:s'),
             );
             $where = array(
-                'id_tag'    => $id
+                'TRNLBL_ID' => $id
             );
-            $this->AdminM->deleteTag($data, $where);
+            $this->AdminM->deleteLabel($data, $where);
         }
         redirect(site_url('Admin'));
     }

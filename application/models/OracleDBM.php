@@ -10,7 +10,7 @@ class OracleDBM extends CI_Model
         $this->second_db = $this->load->database('default', TRUE);
     }
 
-    public function getEmpBy($value)
+    public function getEmpByNPK($value)
     {
         $query = $this->second_db->query(
             "   SELECT  NPK AS NPK, NAMA AS NAMA, NM_SIE AS DEPARTEMEN
