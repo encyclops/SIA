@@ -60,8 +60,10 @@ class QuestionM extends CI_Model
     public function getGlobalScore()
     {
         $query = $this->db->query(
-            "  SELECT *, tp.training_id, tp.package_name 
-            FROM training_score as ts inner join training_question_package as tp  on ts.package_id = tp.package_id
+            "   SELECT  *, KMS_TRNPCK.TRNHDR_ID, KMS_TRNPCK.TRNPCK_NAME 
+                FROM    KMS_TRNACC
+                inner join  KMS_TRNPCK
+                    ON  KMS_TRNACC.TRNPCK_ID_PRE = KMS_TRNPCK.TRNPCK_ID
            "
         );
         return $query->result();
@@ -150,7 +152,7 @@ class QuestionM extends CI_Model
     //     return $this->db->insert('training_userAnswer', $data);
     // }
 
-    public function savePreExam($data,  $npk, $idTraining)
+    public function savePreExam($data, $npk, $idTraining)
     {
         $where = array(
             'AWIEMP_NPK'=> $npk,
@@ -162,5 +164,18 @@ class QuestionM extends CI_Model
     public function savePostExam($data)
     {
         return $this->db->insert('training_score', $data);
+    }
+
+    public function checkPreOrPost($npk, $idTraining)
+    {
+        $query = $this->db->query(
+            "   SELECT  TRNACC_PRESCORE as preOrPost
+                FROM    KMS_TRNACC
+                WHERE   AWIEMP_NPK = $npk
+                AND     TRNHDR_ID = $idTraining  "
+        );
+
+        // Assuming $this->t_header is the table name, you can modify it accordingly
+        return $query->row()->preOrPost;
     }
 }

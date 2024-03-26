@@ -8,8 +8,8 @@ foreach ($substance as $s) {
 	$title = $s->TRNSUB_TITLE;
 	$id_header = $s->TRNHDR_ID;
 	$id_detail = $s->TRNSUB_ID;
-	$path = $s->path_file_training_detail;
-	$status = $s->status;
+	$path = $s->TRNSUB_PATH;
+	$status = $s->TRNSUB_STATUS;
 	$combinedData[] = array(
 		'title' => $title, 'id_header' => $id_header,
 		'id_detail' => $id_detail, 'path' => $path,
@@ -41,7 +41,7 @@ $combinedDataJSON = json_encode($combinedData);
 						</div>
 					</div>
 					<div class="card-body">
-						<table name="table" class="table table-hover table-head-bg-info my-2">
+						<table name="table" class="table table-hover table-head-bg-info my-2" style="max-width: 100%;">
 							<thead>
 								<tr>
 									<th scope="col" class="text-center" style="width: 50px;">No.</th>
@@ -75,12 +75,12 @@ $combinedDataJSON = json_encode($combinedData);
 										$statusTextHr = getStatusText(isset($t['statusApprovedHr']) ? $t['statusApprovedHr'] : '');
 								?>
 										<tr>
-											<th><?php echo $i ?></th>
-											<th><?php echo isset($t['nama']) ? $t['nama'] : ''; ?></th>
-											<th><?php echo isset($t['target']) ? $t['target'] : ''; ?></th>
-											<th><?php echo $statusText ?></th>
-											<th><?php echo $statusTextHr ?></th>
-											<th class="text-center"><a href="javascript:void(0)" onclick="showDetailFpet(<?php echo isset($t['idFpet']) ? $t['idFpet'] : ''; ?>)" class="btn btn-primary"></i>Detail</a></th>
+											<td><?php echo $i ?></td>
+											<td><?php echo isset($t['nama']) ? $t['nama'] : ''; ?></td>
+											<td><?php echo isset($t['target']) ? $t['target'] : ''; ?></td>
+											<td><?php echo $statusText ?></td>
+											<td><?php echo $statusTextHr ?></td>
+											<td class="text-center"><a href="javascript:void(0)" onclick="showDetailFpet(<?php echo isset($t['idFpet']) ? $t['idFpet'] : ''; ?>)" class="btn btn-primary"></i>Detail</a></td>
 										</tr>
 								<?php
 										$i++;
@@ -101,7 +101,7 @@ $combinedDataJSON = json_encode($combinedData);
 					<div class="card-header">
 						<div class="row">
 							<div class="col">
-								<div class="card-title" id="cardTitle">Form Pengajuan dan Evaluaasi Training</div>
+								<div class="card-title" id="cardTitle">Form Pengajuan dan Evaluasi Training</div>
 								<p class="card-category" id="cardCategory">FPET / Tambah FPET</p>
 							</div>
 							<div class="col">

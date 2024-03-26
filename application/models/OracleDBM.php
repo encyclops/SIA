@@ -7,7 +7,7 @@ class OracleDBM extends CI_Model
     public function __construct()
     {
         parent::__construct();
-        $this->second_db = $this->load->database('default', TRUE);
+        $this->second_db = $this->load->database('orcl', TRUE);
     }
 
     public function getEmpByNPK($value)

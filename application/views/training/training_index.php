@@ -322,7 +322,7 @@ $combinedDataJSON = json_encode($combinedData);
 										<th scope="col" class="text-center" style="width: 300px;" onclick="sortDetailEmpTable(1)">Nama Karyawan</th>
 										<th scope="col" class="text-center" style="width: 300px;" onclick="sortDetailEmpTable(2)">Departemen</th>
 										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(3)">Progres</th>
-										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(4)">Persentase</th>
+										<th scope="col" class="text-center" style="width: 100px;" onclick="sortDetailEmpTable(4)">Paket Soal</th>
 										<th scope="col" class="text-center" style="width: 100px;">Tambah Partisipan</th>
 										<th scope="col" class="text-center" style="width: 100px;">Upload Materi</th>
 										<th scope="col" class="text-center" style="width: 150px;" onclick="sortDetailEmpTable(7)">Permintaan</th>
@@ -407,13 +407,10 @@ $combinedDataJSON = json_encode($combinedData);
 						<label class="mb-2">Resume</label>
 						<a href="javascript:void(0)" id="resumeLink" onclick="makeFormResume()" class="btn btn-info btn-border float-right mb-3">
 						</a>
-
 						<div class="col-md-12">
 							<label class="my-2">Tulis catatan</label>
 							<textarea class="form-control" id="readResume" readonly name="readResume" rows="10" maxlength="1000" placeholder="Masukkan pendapat Anda"></textarea>
 						</div>
-
-
 					</div>
 					<div id="examDiv" class="card-body" style="border-bottom: 1px solid #ebedf2 !important; ">
 						<label class="mb-2">Kerjakan Soal</label>

@@ -293,16 +293,15 @@ class Training extends CI_Controller
 		// Retrieve form data from POST request
 		$textResume = $this->input->post('textResume');
 
-
 		$data = array(
-			'resume' => $textResume
-			// 'created_date'              => date('Y/m/d H:i:s'),
-			// 'created_by'                => $this->session->userdata('npk')
+			'TRNACC_RESUME'		=> $textResume,
+			'TRNACC_MODIDATE'   => date('Y/m/d H:i:s'),
+			'TRNACC_MODIBY'     => $this->session->userdata('npk')
 		);
 
 		$saved = $this->TrainingM->modifyResume($data, $idHeader);
 
-		//  redirect(site_url('FPET'));
+		//  redirect(site_url('Training'));
 	}
 	public function checkPreTest($idHeader)
 	{
@@ -310,4 +309,16 @@ class Training extends CI_Controller
 		$data['pretest'] = $this->TrainingM->checkPreTest($npk, $idHeader);
 		echo json_encode($data);
 	}
+
+	public function updateTRNPCK() {
+		$AWIEMP_NPK = $this->input->post('AWIEMP_NPK');
+        $TRNHDR_ID = $this->input->post('TRNHDR_ID');
+		$data = array(
+			'TRNPCK_ID_PRE' 	=> $this->input->post('TRNPCK_ID'),
+			'TRNPCK_ID_POST' 	=> $this->input->post('TRNPCK_ID'),
+			'TRNACC_MODIDATE'   => date('Y/m/d H:i:s'),
+			'TRNACC_MODIBY'     => $this->session->userdata('npk')
+		);
+		$this->QuestionM->savePreExam($data, $AWIEMP_NPK, $TRNHDR_ID);
+    }
 }

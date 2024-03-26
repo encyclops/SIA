@@ -65,21 +65,20 @@
 
             $count = 0;
             foreach ($this->input->post() as $key => $value) {
-                if (strpos($key, 'answer') !== false) {
+                if (strpos($key, 'TRNQUE_ANSWER') !== false) {
                     $count++;
                 }
             }
-
             // Saving each question
             for ($i = 1; $i <= $count; $i++) {
                 $que = array(
-                    'TRNQUE_QUESTION'   => $this->input->post('question' . $i),
-                    'TRNQUE_ANSWER'     => $this->input->post('answerSelect' . $i),
-                    'TRNQUE_AOPT'       => $this->input->post('aOption' . $i),
-                    'TRNQUE_BOPT'       => $this->input->post('bOption' . $i),
-                    'TRNQUE_COPT'       => $this->input->post('cOption' . $i),
-                    'TRNQUE_DOPT'       => $this->input->post('dOption' . $i),
-                    'TRNQUE_LEVEL'      => $this->input->post('levelSelect' . $i),
+                    'TRNQUE_QUESTION'   => $this->input->post('TRNQUE_QUESTION' . $i),
+                    'TRNQUE_ANSWER'     => $this->input->post('TRNQUE_ANSWER' . $i),
+                    'TRNQUE_AOPT'       => $this->input->post('TRNQUE_AOPT' . $i),
+                    'TRNQUE_BOPT'       => $this->input->post('TRNQUE_BOPT' . $i),
+                    'TRNQUE_COPT'       => $this->input->post('TRNQUE_COPT' . $i),
+                    'TRNQUE_DOPT'       => $this->input->post('TRNQUE_DOPT' . $i),
+                    'TRNQUE_LEVEL'      => $this->input->post('TRNQUE_LEVEL' . $i),
                     'TRNQUE_CREADATE'   => date('Y/m/d H:i:s'),
                     'TRNQUE_MODIDATE'   => date('Y/m/d H:i:s'),
                     'TRNQUE_CREABY'     => $this->session->userdata('npk'),
@@ -199,7 +198,7 @@
 
         public function getQuestExam($id, $secondParameter)
         {
-            if (!$this->isAllowed()) return redirect(site_url());
+            // if (!$this->isAllowed()) return redirect(site_url());
             $id = $this->decodeMD5($id);
             $secondParameter = $this->decodeMD5($secondParameter);
             $npk = $this->session->userdata('npk');
@@ -284,7 +283,7 @@
             $this->session->set_userdata('score', $score);
             $checkPreorPost = $this->QuestionM->checkPreOrPost($npk, $idTraining);
 
-            if ($checkPreorPost != null) {
+            if ($checkPreorPost == null) {
                 $data = array(
                     'TRNACC_PRESCORE' => $score,
                     'TRNPCK_ID_PRE' => $idPackage,
@@ -303,7 +302,7 @@
 
         public function getScore()
         {
-            if (!$this->isAllowed()) return redirect(site_url());
+            // if (!$this->isAllowed()) return redirect(site_url());
 
             $npk = $this->session->userdata('npk');
             $data['notif'] = $this->TrainingM->getNotif($npk);
@@ -329,7 +328,6 @@
         //     $this->load->view('examResult', $data);
         // }
 
-
         public function getGlobalScore()
         {
             if (!$this->isAllowed()) return redirect(site_url());
@@ -344,16 +342,16 @@
 
             $getData = [];
             foreach ($getScoreExam2 as $a) {
-                $employee = $this->OracleDBM->getEmpByNPK($a->npk);
+                $employee = $this->OracleDBM->getEmpByNPK($a->AWIEMP_NPK);
                 if ($employee !== null && is_object($employee)) {
                     $combine = [
                         'npk' => $employee->NPK,
                         'nama' => $employee->NAMA,
-                        'training_id' => $a->training_id,
-                        'package_name' => $a->package_name,
-                        'scorePre' => $a->scorePre,
-                        'scorePost' => $a->scorePost,
-                        'package_id' => $a->package_id
+                        'training_id' => $a->TRNHDR_ID,
+                        'package_name' => $a->TRNPCK_NAME,
+                        'scorePre' => $a->TRNACC_PRESCORE,
+                        'scorePost' => $a->TRNACC_POSTSCORE,
+                        'package_id' => $a->TRNPCK_ID_PRE
                     ];
                     $getData[] = $combine;
                 } else {

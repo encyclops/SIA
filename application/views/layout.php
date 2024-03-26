@@ -50,7 +50,6 @@ function isActive($url)
 							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-bell"></i>
 								<span class="notification" id="totalNotif"><?php echo $totalNotif; ?></span>
-
 							</a>
 							<ul class="dropdown-menu notif-box" aria-labelledby="navbarDropdown">
 								<li>
@@ -95,6 +94,11 @@ function isActive($url)
 								</li> -->
 							</ul>
 						</li>
+						<li class="nav-item dropdown hidden-caret">
+							<a class="nav-link dropdown-toggle" href="javascript:void(0)" onclick="confirmLogout()" data-toggle="tooltip" data-placement="top" title="Logout">
+								<i class="la la-sign-out"></i>
+							</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -136,21 +140,21 @@ function isActive($url)
 								<!-- <span class="badge badge-count">50</span> -->
 							</a>
 						</li>
-						<li class="nav-item <?php echo isActive('Personal') ?>">
-							<a href="<?php echo base_url('Personal') ?>">
-								<i class="la la-pencil-square"></i>
-								<p>Rangkuman Saya</p>
-								<!-- <span class="badge badge-count">5</span> -->
-							</a>
-						</li>
-						<li class="nav-item <?php echo isActive('FPET/index') ?>">
-							<a href="<?php echo base_url('FPET/index') ?>">
-								<i class="la la-user-secret"></i>
-								<p>FPET</p>
-								<!-- <span class="badge badge-count">50</span> -->
-							</a>
-						</li>
 					<?php } ?>
+					<li class="nav-item <?php echo isActive('Personal') ?>">
+						<a href="<?php echo base_url('Personal') ?>">
+							<i class="la la-pencil-square"></i>
+							<p>Rangkuman Saya</p>
+							<!-- <span class="badge badge-count">5</span> -->
+						</a>
+					</li>
+					<li class="nav-item <?php echo isActive('FPET/index') ?>">
+						<a href="<?php echo base_url('FPET/index') ?>">
+							<i class="la la-user-secret"></i>
+							<p>FPET</p>
+							<!-- <span class="badge badge-count">50</span> -->
+						</a>
+					</li>
 					<li class="nav-item <?php echo isActive('FPET/approvalMenu') ?>">
 						<a href="<?php echo base_url('FPET/approvalMenu') ?>">
 							<i class="la la-pencil-square"></i>
@@ -158,9 +162,9 @@ function isActive($url)
 							<!-- <span class="badge badge-count">5</span> -->
 						</a>
 					</li>
-
-					<li class="nav-item <?php echo isActive('Question') ?>">
-						<a href="<?php echo base_url('Question') ?>">
+					<?php if ($this->session->userdata('role') == 'admin') { ?>
+					<li class="nav-item <?php echo isActive('Question/index') ?>">
+						<a href="<?php echo base_url('Question/index') ?>">
 							<i class="la la-pencil-square"></i>
 							<p>Paket Soal</p>
 							<!-- <span class="badge badge-count">5</span> -->
@@ -192,16 +196,23 @@ function isActive($url)
 
 						</a>
 					</li>
+					<li class="nav-item <?php echo isActive('Setting') ?>">
+						<a href="<?php echo base_url('Setting') ?>">
+							<i class="la la-gear"></i>
+							<p>Pengaturan</p>
+						</a>
+					</li>
+					<?php } ?>
 				</ul>
-				<ul class="nav" style="margin-top: 5px;">
+				<!-- <ul class="nav" style="margin-top: 5px;">
 					<li class="nav-item">
 						<a href="javascript:void(0)" onclick="confirmLogout()">
 							<i class="la la-sign-out"></i>
 							<p>Logout</p>
-							<!-- <span class="badge badge-count">5</span> -->
+							<span class="badge badge-count">5</span>
 						</a>
 					</li>
-				</ul>
+				</ul> -->
 			</div>
 		</div>
 		<div class="main-panel">

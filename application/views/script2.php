@@ -759,11 +759,12 @@
 							const accessPromise = getAccessData(emp.NPK, id).then(acc => {
 								if (isAdmin) {
 									console.log(acc);
+									createSelectCell(packageIds, packageNames, tr, 'soalSelect' + emp.NPK, '-- Pilih Paket --');
 									createMultipleCells(emp.NPK, tr, id, acc.TRNACC_FILE, acc.TRNACC_PART, emp.STATUS);
 								}
 							});
 
-							createSelectCell(packageIds, packageNames, tr, 'soalSelect' + emp.NPK, '-- Pilih Paket --');
+							
 
 							t.appendChild(tr);
 							counterEmp++;
@@ -774,6 +775,15 @@
 					Promise.all(promises).then(() => {
 						if (tableBodyDetOnly) isDataTableExist(counterEmp, 1, 5, 'emptyParticipantDet', 'tBodyDetailOnlyEmp');
 						if (tableBody) isDataTableExist(counterEmp, 1, 8, 'emptyParticipant', 'tBodyDetailEmp');
+						
+						console.log("Attaching event listeners to select elements");
+						$("[name^='soalSelect']").each(function() {
+							$(this).on('change', function() {
+								var changedValue = $(this).val(); // Retrieve the changed value
+								var elementId = $(this).attr('id').substring('soalSelect'.length); // Retrieve the id of the element
+								assignPackage(changedValue, elementId, data.header[0].TRNHDR_ID); // Call the 'assignPackage' function
+							});
+						});
 					});
 					document.getElementById('idTraining').value = data.header[0].TRNHDR_ID;
 					// Set the value of the TRNHDR_ID as the href attribute of the anchor element
@@ -843,8 +853,8 @@
 						}
 					});
 
-					if (data.TNRACC_RESUME && data.resume.length > 0) {
-						var resumeText = data.resume[0].resume;
+					if (data.resume && data.resume.length > 0) {
+						var resumeText = data.resume[0].TRNACC_RESUME;
 						document.getElementById('readResume').value = resumeText;
 
 						document.getElementById("resumeLink").innerText = "Detail Resume";
@@ -1487,6 +1497,7 @@
 			for (var i = 1; i <= max; i++) {
 				var elementId = field.id + i;
 				var element = document.getElementById(elementId);
+				console.log(elementId);
 
 				if (!elementId.includes('TRNQUE_ID') && (element.value == '' || element.value == 'default')) {
 					element.style.borderColor = 'red';
@@ -1688,6 +1699,25 @@
 		}
 
 		isDataTableExist(max, 1, 8, 'emptyData', 'tBodyAllSoal');
+	}
+
+	function assignPackage(value, npk, id) {
+		console.log('asssssign');
+		$.ajax({
+			url: 'Training/updateTRNPCK', // Replace ControllerName with your actual controller name
+			method: 'POST',
+			data: {
+				AWIEMP_NPK: npk,
+				TRNHDR_ID: id,
+				TRNPCK_ID: value
+			},
+			success: function(response) {
+				console.log(response);
+			},
+			error: function(xhr, status, error) {
+				console.error(xhr.responseText);
+			}
+		});
 	}
 
 	function generateQuestionRows() {

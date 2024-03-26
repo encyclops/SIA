@@ -79,6 +79,6 @@ class Plus extends CI_Controller {
 	}
 
     public function getDatas() {
-        print_r($this->ChartM->getNotDoneEmployee());
+        print_r($this->OracleDBM->getAllEmp());
     }
 }

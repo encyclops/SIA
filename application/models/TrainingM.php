@@ -313,7 +313,7 @@ class TrainingM extends CI_Model
                     FROM KMS_TRNHDR
                     WHERE KMS_TRNHDR.TRNHDR_STATUS $status
                 ) AS subquery " . $quer . "
-                ORDER BY subquery.detail_request, subquery.participant_request DESC"
+                ORDER BY subquery.detail_request, subquery.participant_request DESC, TRNHDR_STATUS DESC, TRNHDR_TITLE"
         );
 
         return $query->result();
@@ -549,10 +549,9 @@ class TrainingM extends CI_Model
 
     public function modifyResume($data, $idHeader)
     {
-
         $where = array(
             'TRNHDR_ID'    => $idHeader,
-            'npk'   =>  $this->session->userdata('npk'),
+            'AWIEMP_NPK'   => $this->session->userdata('npk'),
         );
 
         return $this->db->update('KMS_TRNACC', $data, $where);

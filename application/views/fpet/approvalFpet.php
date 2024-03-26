@@ -8,8 +8,8 @@ foreach ($substance as $s) {
     $title = $s->TRNSUB_TITLE;
     $id_header = $s->TRNHDR_ID;
     $id_detail = $s->TRNSUB_ID;
-    $path = $s->path_file_training_detail;
-    $status = $s->status;
+    $path = $s->TRNSUB_PATH;
+    $status = $s->TRNSUB_STATUS;
     $combinedData[] = array(
         'title' => $title, 'id_header' => $id_header,
         'id_detail' => $id_detail, 'path' => $path,
@@ -123,7 +123,7 @@ $combinedDataJSON = json_encode($combinedData);
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <div class="card-title" id="cardTitle">Form Pengajuan dan Evaluaasi Training</div>
+                                <div class="card-title" id="cardTitle">Form Pengajuan dan Evaluasi Training</div>
                                 <p class="card-category" id="cardCategory">FPET / Tambah FPET</p>
                             </div>
                             <div class="col">

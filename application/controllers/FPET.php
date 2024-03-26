@@ -106,7 +106,6 @@
             // Assuming you want to save this data to the database
             // Load the model if not already loaded
             $this->load->model('FPETM');
-            print_r($partisipanTraining + "s");
             // Prepare data to be saved
             $data = array(
                 'FPETFM_TRAINSUGGEST' =>  $this->input->post('trainSuggest'),
@@ -120,7 +119,7 @@
                 'FPETFM_STATUS' => 2,
                 'FPETFM_PACTUAL' => $rActual, // Add rActual to the data array
                 'FPETFM_PTARGET' => $rTarget, // Add rTarget to the data array
-                'FPETFM_PEVAL' => $rEval,
+                'FPETFM_PEVAL' => 0,
                 'FPETFM_APPROVED' => 2,
                 'FPETFM_HRAPPROVED' => 2,
                 'FPETFM_CREADATE'              => date('Y/m/d H:i:s'),
@@ -274,7 +273,7 @@
                 'FPETFM_STATUS' => 2,
                 'FPETFM_PACTUAL' => $rActual, // Add rActual to the data array
                 'FPETFM_PTARGET' => $rTarget, // Add rTarget to the data array
-                'FPETFM_PEVAL' => $rEval,
+                'FPETFM_PEVAL' => 0,
                 'FPETFM_APPROVED' => 2,
                 'FPETFM_HRAPPROVED' => 2,
                 'FPETFM_MODIDATE'             => date('Y/m/d H:i:s'),
